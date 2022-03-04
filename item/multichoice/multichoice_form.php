@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_form_class.php');
+require_once($CFG->dirroot.'/mod/peerassess/item/peerassess_item_form_class.php');
 
-class feedback_multichoice_form extends feedback_item_form {
+class peerassess_multichoice_form extends peerassess_item_form {
     protected $type = "multichoice";
 
     public function definition() {
@@ -27,49 +27,49 @@ class feedback_multichoice_form extends feedback_item_form {
 
         $mform =& $this->_form;
 
-        $mform->addElement('header', 'general', get_string($this->type, 'feedback'));
+        $mform->addElement('header', 'general', get_string($this->type, 'peerassess'));
 
-        $mform->addElement('advcheckbox', 'required', get_string('required', 'feedback'), '' , null , array(0, 1));
+        $mform->addElement('advcheckbox', 'required', get_string('required', 'peerassess'), '' , null , array(0, 1));
 
         $mform->addElement('text',
                             'name',
-                            get_string('item_name', 'feedback'),
-                            array('size' => FEEDBACK_ITEM_NAME_TEXTBOX_SIZE,
+                            get_string('item_name', 'peerassess'),
+                            array('size' => peerassess_ITEM_NAME_TEXTBOX_SIZE,
                                   'maxlength' => 255));
 
         $mform->addElement('text',
                             'label',
-                            get_string('item_label', 'feedback'),
-                            array('size' => FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE,
+                            get_string('item_label', 'peerassess'),
+                            array('size' => peerassess_ITEM_LABEL_TEXTBOX_SIZE,
                                   'maxlength' => 255));
 
         $mform->addElement('select',
                             'subtype',
-                            get_string('multichoicetype', 'feedback').'&nbsp;',
-                            array('r'=>get_string('radio', 'feedback'),
-                                  'c'=>get_string('check', 'feedback'),
-                                  'd'=>get_string('dropdown', 'feedback')));
+                            get_string('multichoicetype', 'peerassess').'&nbsp;',
+                            array('r'=>get_string('radio', 'peerassess'),
+                                  'c'=>get_string('check', 'peerassess'),
+                                  'd'=>get_string('dropdown', 'peerassess')));
 
         $mform->addElement('select',
                             'horizontal',
-                            get_string('adjustment', 'feedback').'&nbsp;',
-                            array(0 => get_string('vertical', 'feedback'),
-                                  1 => get_string('horizontal', 'feedback')));
+                            get_string('adjustment', 'peerassess').'&nbsp;',
+                            array(0 => get_string('vertical', 'peerassess'),
+                                  1 => get_string('horizontal', 'peerassess')));
         $mform->hideIf('horizontal', 'subtype', 'eq', 'd');
 
         $mform->addElement('selectyesno',
                            'hidenoselect',
-                           get_string('hide_no_select_option', 'feedback'));
+                           get_string('hide_no_select_option', 'peerassess'));
         $mform->hideIf('hidenoselect', 'subtype', 'ne', 'r');
 
         $mform->addElement('selectyesno',
                            'ignoreempty',
-                           get_string('do_not_analyse_empty_submits', 'feedback'));
+                           get_string('do_not_analyse_empty_submits', 'peerassess'));
 
-        $mform->addElement('textarea', 'values', get_string('multichoice_values', 'feedback'),
+        $mform->addElement('textarea', 'values', get_string('multichoice_values', 'peerassess'),
             'wrap="virtual" rows="10" cols="65"');
 
-        $mform->addElement('static', 'hint', '', get_string('use_one_line_for_each_value', 'feedback'));
+        $mform->addElement('static', 'hint', '', get_string('use_one_line_for_each_value', 'peerassess'));
 
         parent::definition();
         $this->set_data($item);
@@ -83,7 +83,7 @@ class feedback_multichoice_form extends feedback_item_form {
 
         $item->subtype = $info->subtype;
 
-        $itemvalues = str_replace(FEEDBACK_MULTICHOICE_LINE_SEP, "\n", $info->presentation);
+        $itemvalues = str_replace(peerassess_MULTICHOICE_LINE_SEP, "\n", $info->presentation);
         $itemvalues = str_replace("\n\n", "\n", $itemvalues);
         $item->values = $itemvalues;
 
@@ -95,14 +95,14 @@ class feedback_multichoice_form extends feedback_item_form {
             return false;
         }
 
-        $presentation = str_replace("\n", FEEDBACK_MULTICHOICE_LINE_SEP, trim($item->values));
+        $presentation = str_replace("\n", peerassess_MULTICHOICE_LINE_SEP, trim($item->values));
         if (!isset($item->subtype)) {
             $subtype = 'r';
         } else {
             $subtype = substr($item->subtype, 0, 1);
         }
         if (isset($item->horizontal) AND $item->horizontal == 1 AND $subtype != 'd') {
-            $presentation .= FEEDBACK_MULTICHOICE_ADJUST_SEP.'1';
+            $presentation .= peerassess_MULTICHOICE_ADJUST_SEP.'1';
         }
         if (!isset($item->hidenoselect)) {
             $item->hidenoselect = 1;
@@ -111,7 +111,7 @@ class feedback_multichoice_form extends feedback_item_form {
             $item->ignoreempty = 0;
         }
 
-        $item->presentation = $subtype.FEEDBACK_MULTICHOICE_TYPE_SEP.$presentation;
+        $item->presentation = $subtype.peerassess_MULTICHOICE_TYPE_SEP.$presentation;
         return $item;
     }
 }

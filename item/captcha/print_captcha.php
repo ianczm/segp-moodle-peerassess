@@ -18,10 +18,10 @@ require_once('../../../../config.php');
 
 $id = required_param('id', PARAM_INT);
 
-$PAGE->set_url('/mod/feedback/item/captcha/print_captcha.php', array('id'=>$id));
+$PAGE->set_url('/mod/peerassess/item/captcha/print_captcha.php', array('id'=>$id));
 
 if ($id) {
-    if (! $cm = get_coursemodule_from_id('feedback', $id)) {
+    if (! $cm = get_coursemodule_from_id('peerassess', $id)) {
         print_error('invalidcoursemodule');
     }
 
@@ -29,17 +29,17 @@ if ($id) {
         print_error('coursemisconf');
     }
 
-    if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
+    if (! $peerassess = $DB->get_record("peerassess", array("id"=>$cm->instance))) {
         print_error('invalidcoursemodule');
     }
 }
 
-if (!isset($SESSION->feedback->item->captcha)) {
-    print_error('captchanotset', 'feedback');
+if (!isset($SESSION->peerassess->item->captcha)) {
+    print_error('captchanotset', 'peerassess');
 }
 
 $height = 40;
-$charcount = $SESSION->feedback->item->captcha->charcount;
+$charcount = $SESSION->peerassess->item->captcha->charcount;
 $fontfile = $CFG->libdir.'/default.ttf';
 
 $ttfbox = imagettfbbox ( 30, 0, $fontfile, 'H' );//the text to measure
@@ -110,7 +110,7 @@ for ($i = 0; $i < $charcount; $i++) {
     imagettftext($image, 30, $angle_text, $left_text, 35, $color_text, $fontfile, $text);
 }
 
-$SESSION->feedback->item->captcha->checkchar = $checkchar;
+$SESSION->peerassess->item->captcha->checkchar = $checkchar;
 
 // output the picture
 header("Content-type: image/png");

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-function xmldb_feedback_install() {
+function xmldb_peerassess_install() {
     global $DB;
 
 }

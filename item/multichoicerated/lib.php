@@ -15,29 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 defined('MOODLE_INTERNAL') OR die('not allowed');
-require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
+require_once($CFG->dirroot.'/mod/peerassess/item/peerassess_item_class.php');
 
-define('FEEDBACK_RADIORATED_ADJUST_SEP', '<<<<<');
+define('peerassess_RADIORATED_ADJUST_SEP', '<<<<<');
 
-define('FEEDBACK_MULTICHOICERATED_MAXCOUNT', 10); //count of possible items
-define('FEEDBACK_MULTICHOICERATED_VALUE_SEP', '####');
-define('FEEDBACK_MULTICHOICERATED_VALUE_SEP2', '/');
-define('FEEDBACK_MULTICHOICERATED_TYPE_SEP', '>>>>>');
-define('FEEDBACK_MULTICHOICERATED_LINE_SEP', '|');
-define('FEEDBACK_MULTICHOICERATED_ADJUST_SEP', '<<<<<');
-define('FEEDBACK_MULTICHOICERATED_IGNOREEMPTY', 'i');
-define('FEEDBACK_MULTICHOICERATED_HIDENOSELECT', 'h');
+define('peerassess_MULTICHOICERATED_MAXCOUNT', 10); //count of possible items
+define('peerassess_MULTICHOICERATED_VALUE_SEP', '####');
+define('peerassess_MULTICHOICERATED_VALUE_SEP2', '/');
+define('peerassess_MULTICHOICERATED_TYPE_SEP', '>>>>>');
+define('peerassess_MULTICHOICERATED_LINE_SEP', '|');
+define('peerassess_MULTICHOICERATED_ADJUST_SEP', '<<<<<');
+define('peerassess_MULTICHOICERATED_IGNOREEMPTY', 'i');
+define('peerassess_MULTICHOICERATED_HIDENOSELECT', 'h');
 
-class feedback_item_multichoicerated extends feedback_item_base {
+class peerassess_item_multichoicerated extends peerassess_item_base {
     protected $type = "multichoicerated";
 
-    public function build_editform($item, $feedback, $cm) {
+    public function build_editform($item, $peerassess, $cm) {
         global $DB, $CFG;
         require_once('multichoicerated_form.php');
 
-        //get the lastposition number of the feedback_items
+        //get the lastposition number of the peerassess_items
         $position = $item->position;
-        $lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
+        $lastposition = $DB->count_records('peerassess_item', array('peerassess'=>$peerassess->id));
         if ($position == -1) {
             $i_formselect_last = $lastposition + 1;
             $i_formselect_value = $lastposition + 1;
@@ -56,12 +56,12 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $item->hidenoselect = $this->hidenoselect($item);
 
         //all items for dependitem
-        $feedbackitems = feedback_get_depend_candidates_for_item($feedback, $item);
+        $peerassessitems = peerassess_get_depend_candidates_for_item($peerassess, $item);
         $commonparams = array('cmid'=>$cm->id,
                              'id'=>isset($item->id) ? $item->id : null,
                              'typ'=>$item->typ,
-                             'items'=>$feedbackitems,
-                             'feedback'=>$feedback->id);
+                             'items'=>$peerassessitems,
+                             'peerassess'=>$peerassess->id);
 
         //build the form
         $customdata = array('item' => $item,
@@ -70,7 +70,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
                             'position' => $position,
                             'info' => $info);
 
-        $this->item_form = new feedback_multichoicerated_form('edit_item.php', $customdata);
+        $this->item_form = new peerassess_multichoicerated_form('edit_item.php', $customdata);
     }
 
     public function save_item() {
@@ -91,19 +91,19 @@ class feedback_item_multichoicerated extends feedback_item_base {
 
         $item->hasvalue = $this->get_hasvalue();
         if (!$item->id) {
-            $item->id = $DB->insert_record('feedback_item', $item);
+            $item->id = $DB->insert_record('peerassess_item', $item);
         } else {
-            $DB->update_record('feedback_item', $item);
+            $DB->update_record('peerassess_item', $item);
         }
 
-        return $DB->get_record('feedback_item', array('id'=>$item->id));
+        return $DB->get_record('peerassess_item', array('id'=>$item->id));
     }
 
 
     /**
      * Helper function for collected data, both for analysis page and export to excel
      *
-     * @param stdClass $item the db-object from feedback_item
+     * @param stdClass $item the db-object from peerassess_item
      * @param int $groupid
      * @param int $courseid
      * @return array
@@ -116,13 +116,13 @@ class feedback_item_multichoicerated extends feedback_item_base {
         //die moeglichen Antworten extrahieren
         $info = $this->get_info($item);
         $lines = null;
-        $lines = explode (FEEDBACK_MULTICHOICERATED_LINE_SEP, $info->presentation);
+        $lines = explode (peerassess_MULTICHOICERATED_LINE_SEP, $info->presentation);
         if (!is_array($lines)) {
             return null;
         }
 
         //die Werte holen
-        $values = feedback_get_group_values($item, $groupid, $courseid, $this->ignoreempty($item));
+        $values = peerassess_get_group_values($item, $groupid, $courseid, $this->ignoreempty($item));
         if (!$values) {
             return null;
         }
@@ -131,7 +131,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $analysed_answer = array();
         $sizeoflines = count($lines);
         for ($i = 1; $i <= $sizeoflines; $i++) {
-            $item_values = explode(FEEDBACK_MULTICHOICERATED_VALUE_SEP, $lines[$i-1]);
+            $item_values = explode(peerassess_MULTICHOICERATED_VALUE_SEP, $lines[$i-1]);
             $ans = new stdClass();
             $ans->answertext = $item_values[1];
             $avg = 0.0;
@@ -162,11 +162,11 @@ class feedback_item_multichoicerated extends feedback_item_base {
 
         $info = $this->get_info($item);
 
-        $presentation = explode (FEEDBACK_MULTICHOICERATED_LINE_SEP, $info->presentation);
+        $presentation = explode (peerassess_MULTICHOICERATED_LINE_SEP, $info->presentation);
         $index = 1;
         foreach ($presentation as $pres) {
             if ($value->value == $index) {
-                $item_label = explode(FEEDBACK_MULTICHOICERATED_VALUE_SEP, $pres);
+                $item_label = explode(peerassess_MULTICHOICERATED_VALUE_SEP, $pres);
                 $printval = format_string($item_label[1]);
                 break;
             }
@@ -211,7 +211,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
             }
             $chart = new \core\chart_bar();
             $chart->set_horizontal(true);
-            $series = new \core\chart_series(format_string(get_string("responses", "feedback")), $data['series']);
+            $series = new \core\chart_series(format_string(get_string("responses", "peerassess")), $data['series']);
             $series->set_labels($data['series_labels']);
             $chart->add_series($series);
             $chart->set_labels($data['labels']);
@@ -219,7 +219,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
 
             $avg = format_float($avg, 2);
             echo '<tr><td align="left" colspan="2"><b>';
-            echo get_string('average', 'feedback').': '.$avg.'</b>';
+            echo get_string('average', 'peerassess').': '.$avg.'</b>';
             echo '</td></tr>';
         }
     }
@@ -256,7 +256,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
             //mittelwert anzeigen
             $worksheet->write_string($row_offset,
                                 count($data) + 2,
-                                get_string('average', 'feedback'),
+                                get_string('average', 'peerassess'),
                                 $xls_formats->value_bold);
 
             $worksheet->write_number($row_offset + 1,
@@ -275,17 +275,17 @@ class feedback_item_multichoicerated extends feedback_item_base {
      */
     protected function get_options($item) {
         $info = $this->get_info($item);
-        $lines = explode(FEEDBACK_MULTICHOICERATED_LINE_SEP, $info->presentation);
+        $lines = explode(peerassess_MULTICHOICERATED_LINE_SEP, $info->presentation);
         $options = array();
         foreach ($lines as $idx => $line) {
-            list($weight, $optiontext) = explode(FEEDBACK_MULTICHOICERATED_VALUE_SEP, $line);
+            list($weight, $optiontext) = explode(peerassess_MULTICHOICERATED_VALUE_SEP, $line);
             $a = new stdclass();
             $a->weight = $weight;
             $a->name = format_text($optiontext, FORMAT_HTML, array('noclean' => true, 'para' => false));
-            $options[$idx + 1] = get_string('multichoiceoption', 'feedback', $a);
+            $options[$idx + 1] = get_string('multichoiceoption', 'peerassess', $a);
         }
         if ($info->subtype === 'r' && !$this->hidenoselect($item)) {
-            $options = array(0 => get_string('not_selected', 'feedback')) + $options;
+            $options = array(0 => get_string('not_selected', 'peerassess')) + $options;
         }
 
         return $options;
@@ -295,7 +295,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
      * Adds an input element to the complete form
      *
      * @param stdClass $item
-     * @param mod_feedback_complete_form $form
+     * @param mod_peerassess_complete_form $form
      */
     public function complete_form_element($item, $form) {
         $info = $this->get_info($item);
@@ -316,7 +316,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
                 $objs[] = ['radio', $inputname, '', $label, $idx];
             }
             // Span to hold the element id. The id is used for drag and drop reordering.
-            $objs[] = ['static', '', '', html_writer::span('', '', ['id' => 'feedback_item_' . $item->id])];
+            $objs[] = ['static', '', '', html_writer::span('', '', ['id' => 'peerassess_item_' . $item->id])];
             $separator = $info->horizontal ? ' ' : '<br>';
             $class .= ' multichoicerated-' . ($info->horizontal ? 'horizontal' : 'vertical');
             $el = $form->add_form_group_element($item, 'group_'.$inputname, $name, $objs, $separator, $class);
@@ -347,14 +347,14 @@ class feedback_item_multichoicerated extends feedback_item_base {
         if (is_array($dbvalue)) {
             $dbvalues = $dbvalue;
         } else {
-            $dbvalues = explode(FEEDBACK_MULTICHOICERATED_LINE_SEP, $dbvalue);
+            $dbvalues = explode(peerassess_MULTICHOICERATED_LINE_SEP, $dbvalue);
         }
 
         $info = $this->get_info($item);
-        $presentation = explode (FEEDBACK_MULTICHOICERATED_LINE_SEP, $info->presentation);
+        $presentation = explode (peerassess_MULTICHOICERATED_LINE_SEP, $info->presentation);
         $index = 1;
         foreach ($presentation as $pres) {
-            $presvalues = explode(FEEDBACK_MULTICHOICERATED_VALUE_SEP, $pres);
+            $presvalues = explode(peerassess_MULTICHOICERATED_VALUE_SEP, $pres);
 
             foreach ($dbvalues as $dbval) {
                 if ($dbval == $index AND trim($presvalues[1]) == $dependvalue) {
@@ -376,7 +376,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $info->presentation = '';
         $info->horizontal = false;
 
-        $parts = explode(FEEDBACK_MULTICHOICERATED_TYPE_SEP, $item->presentation);
+        $parts = explode(peerassess_MULTICHOICERATED_TYPE_SEP, $item->presentation);
         @list($info->subtype, $info->presentation) = $parts;
 
         if (!isset($info->subtype)) {
@@ -384,7 +384,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         }
 
         if ($info->subtype != 'd') {
-            $parts = explode(FEEDBACK_MULTICHOICERATED_ADJUST_SEP, $info->presentation);
+            $parts = explode(peerassess_MULTICHOICERATED_ADJUST_SEP, $info->presentation);
             @list($info->presentation, $info->horizontal) = $parts;
 
             if (isset($info->horizontal) AND $info->horizontal == 1) {
@@ -395,8 +395,8 @@ class feedback_item_multichoicerated extends feedback_item_base {
         }
 
         $info->values = $this->prepare_presentation_values_print($info->presentation,
-                                                    FEEDBACK_MULTICHOICERATED_VALUE_SEP,
-                                                    FEEDBACK_MULTICHOICERATED_VALUE_SEP2);
+                                                    peerassess_MULTICHOICERATED_VALUE_SEP,
+                                                    peerassess_MULTICHOICERATED_VALUE_SEP2);
         return $info;
     }
 
@@ -427,7 +427,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
 
     public function prepare_presentation_values_print($valuestring, $valuesep1, $valuesep2) {
         $valuestring = str_replace(array("\n","\r"), "", $valuestring);
-        return $this->prepare_presentation_values(FEEDBACK_MULTICHOICERATED_LINE_SEP,
+        return $this->prepare_presentation_values(peerassess_MULTICHOICERATED_LINE_SEP,
                                                   "\n",
                                                   $valuestring,
                                                   $valuesep1,
@@ -438,35 +438,35 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $valuestring = str_replace("\r", "\n", $valuestring);
         $valuestring = str_replace("\n\n", "\n", $valuestring);
         return $this->prepare_presentation_values("\n",
-                        FEEDBACK_MULTICHOICERATED_LINE_SEP,
+                        peerassess_MULTICHOICERATED_LINE_SEP,
                         $valuestring,
                         $valuesep1,
                         $valuesep2);
     }
 
     public function set_ignoreempty($item, $ignoreempty=true) {
-        $item->options = str_replace(FEEDBACK_MULTICHOICERATED_IGNOREEMPTY, '', $item->options);
+        $item->options = str_replace(peerassess_MULTICHOICERATED_IGNOREEMPTY, '', $item->options);
         if ($ignoreempty) {
-            $item->options .= FEEDBACK_MULTICHOICERATED_IGNOREEMPTY;
+            $item->options .= peerassess_MULTICHOICERATED_IGNOREEMPTY;
         }
     }
 
     public function ignoreempty($item) {
-        if (strstr($item->options, FEEDBACK_MULTICHOICERATED_IGNOREEMPTY)) {
+        if (strstr($item->options, peerassess_MULTICHOICERATED_IGNOREEMPTY)) {
             return true;
         }
         return false;
     }
 
     public function set_hidenoselect($item, $hidenoselect=true) {
-        $item->options = str_replace(FEEDBACK_MULTICHOICERATED_HIDENOSELECT, '', $item->options);
+        $item->options = str_replace(peerassess_MULTICHOICERATED_HIDENOSELECT, '', $item->options);
         if ($hidenoselect) {
-            $item->options .= FEEDBACK_MULTICHOICERATED_HIDENOSELECT;
+            $item->options .= peerassess_MULTICHOICERATED_HIDENOSELECT;
         }
     }
 
     public function hidenoselect($item) {
-        if (strstr($item->options, FEEDBACK_MULTICHOICERATED_HIDENOSELECT)) {
+        if (strstr($item->options, peerassess_MULTICHOICERATED_HIDENOSELECT)) {
             return true;
         }
         return false;

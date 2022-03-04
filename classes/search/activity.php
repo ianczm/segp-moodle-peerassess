@@ -15,21 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Search area for mod_feedback activities.
+ * Search area for mod_peerassess activities.
  *
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @copyright  2015 David Monllao {@link http://www.davidmonllao.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_feedback\search;
+namespace mod_peerassess\search;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Search area for mod_feedback activities.
+ * Search area for mod_peerassess activities.
  *
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @copyright  2015 David Monllao {@link http://www.davidmonllao.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

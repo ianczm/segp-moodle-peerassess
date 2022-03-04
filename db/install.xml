@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/feedback/db" VERSION="20160511" COMMENT="XMLDB file for Moodle mod/feedback"
+<XMLDB PATH="mod/peerassess/db" VERSION="20160511" COMMENT="XMLDB file for Moodle mod/peerassess"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="feedback" COMMENT="all feedbacks">
+    <TABLE NAME="peerassess" COMMENT="all peerassesss">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -25,13 +25,13 @@
         <FIELD NAME="completionsubmit" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If this field is set to 1, then the activity will be automatically marked as 'complete' once the user submits their choice."/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for peerassess"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="feedback_template" COMMENT="templates of feedbackstructures">
+    <TABLE NAME="peerassess_template" COMMENT="templates of peerassessstructures">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -39,16 +39,16 @@
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_template"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for peerassess_template"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="feedback_item" COMMENT="feedback_items">
+    <TABLE NAME="peerassess_item" COMMENT="peerassess_items">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="feedback" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="peerassess" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="template" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="label" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
@@ -62,15 +62,15 @@
         <FIELD NAME="options" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_item"/>
-        <KEY NAME="feedback" TYPE="foreign" FIELDS="feedback" REFTABLE="feedback" REFFIELDS="id"/>
-        <KEY NAME="template" TYPE="foreign" FIELDS="template" REFTABLE="feedback_template" REFFIELDS="id"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for peerassess_item"/>
+        <KEY NAME="peerassess" TYPE="foreign" FIELDS="peerassess" REFTABLE="peerassess" REFFIELDS="id"/>
+        <KEY NAME="template" TYPE="foreign" FIELDS="template" REFTABLE="peerassess_template" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="feedback_completed" COMMENT="filled out feedback">
+    <TABLE NAME="peerassess_completed" COMMENT="filled out peerassess">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="feedback" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="peerassess" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="random_response" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -78,17 +78,17 @@
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_completed"/>
-        <KEY NAME="feedback" TYPE="foreign" FIELDS="feedback" REFTABLE="feedback" REFFIELDS="id"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for peerassess_completed"/>
+        <KEY NAME="peerassess" TYPE="foreign" FIELDS="peerassess" REFTABLE="peerassess" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="feedback_completedtmp" COMMENT="filled out feedback">
+    <TABLE NAME="peerassess_completedtmp" COMMENT="filled out peerassess">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="feedback" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="peerassess" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="guestid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -97,14 +97,14 @@
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_completedtmp"/>
-        <KEY NAME="feedback" TYPE="foreign" FIELDS="feedback" REFTABLE="feedback" REFFIELDS="id"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for peerassess_completedtmp"/>
+        <KEY NAME="peerassess" TYPE="foreign" FIELDS="peerassess" REFTABLE="peerassess" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="feedback_value" COMMENT="values of the completeds">
+    <TABLE NAME="peerassess_value" COMMENT="values of the completeds">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -114,15 +114,15 @@
         <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_value"/>
-        <KEY NAME="item" TYPE="foreign" FIELDS="item" REFTABLE="feedback_item" REFFIELDS="id"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for peerassess_value"/>
+        <KEY NAME="item" TYPE="foreign" FIELDS="item" REFTABLE="peerassess_item" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="course_id" UNIQUE="false" FIELDS="course_id"/>
         <INDEX NAME="completed_item" UNIQUE="true" FIELDS="completed, item, course_id"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="feedback_valuetmp" COMMENT="values of the completedstmp">
+    <TABLE NAME="peerassess_valuetmp" COMMENT="values of the completedstmp">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -132,23 +132,23 @@
         <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_valuetmp"/>
-        <KEY NAME="item" TYPE="foreign" FIELDS="item" REFTABLE="feedback_item" REFFIELDS="id"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for peerassess_valuetmp"/>
+        <KEY NAME="item" TYPE="foreign" FIELDS="item" REFTABLE="peerassess_item" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="course_id" UNIQUE="false" FIELDS="course_id"/>
         <INDEX NAME="completed_item" UNIQUE="true" FIELDS="completed, item, course_id"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="feedback_sitecourse_map" COMMENT="feedback sitecourse map">
+    <TABLE NAME="peerassess_sitecourse_map" COMMENT="peerassess sitecourse map">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="feedbackid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="peerassessid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for feedback_sitecourse_map"/>
-        <KEY NAME="feedbackid" TYPE="foreign" FIELDS="feedbackid" REFTABLE="feedback" REFFIELDS="id"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for peerassess_sitecourse_map"/>
+        <KEY NAME="peerassessid" TYPE="foreign" FIELDS="peerassessid" REFTABLE="peerassess" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>

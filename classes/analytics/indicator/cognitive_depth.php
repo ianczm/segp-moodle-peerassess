@@ -15,21 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Cognitive depth indicator - feedback.
+ * Cognitive depth indicator - peerassess.
  *
- * @package   mod_feedback
+ * @package   mod_peerassess
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_feedback\analytics\indicator;
+namespace mod_peerassess\analytics\indicator;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Cognitive depth indicator - feedback.
+ * Cognitive depth indicator - peerassess.
  *
- * @package   mod_feedback
+ * @package   mod_peerassess
  * @copyright 2017 David Monllao {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -43,7 +43,7 @@ class cognitive_depth extends activity_base {
      * @return \lang_string
      */
     public static function get_name() : \lang_string {
-        return new \lang_string('indicator:cognitivedepth', 'mod_feedback');
+        return new \lang_string('indicator:cognitivedepth', 'mod_peerassess');
     }
 
     public function get_indicator_type() {
@@ -54,7 +54,7 @@ class cognitive_depth extends activity_base {
         $this->fill_instance_data($cm);
 
         if (!empty($this->instancedata[$cm->instance]->publish_stats)) {
-            // If stats are published we count that the user viewed feedback.
+            // If stats are published we count that the user viewed peerassess.
             return self::COGNITIVE_LEVEL_3;
         }
         return self::COGNITIVE_LEVEL_2;

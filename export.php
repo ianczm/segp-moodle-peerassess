@@ -19,7 +19,7 @@
  *
  * @author Andreas Grabs
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod_feedback
+ * @package mod_peerassess
  */
 
 require_once("../../config.php");
@@ -29,13 +29,13 @@ require_once("lib.php");
 $id = required_param('id', PARAM_INT);
 $action = optional_param('action', false, PARAM_ALPHA);
 
-$url = new moodle_url('/mod/feedback/export.php', array('id'=>$id));
+$url = new moodle_url('/mod/peerassess/export.php', array('id'=>$id));
 if ($action !== false) {
     $url->param('action', $action);
 }
 $PAGE->set_url($url);
 
-if (! $cm = get_coursemodule_from_id('feedback', $id)) {
+if (! $cm = get_coursemodule_from_id('peerassess', $id)) {
     print_error('invalidcoursemodule');
 }
 
@@ -43,7 +43,7 @@ if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
     print_error('coursemisconf');
 }
 
-if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
+if (! $peerassess = $DB->get_record("peerassess", array("id"=>$cm->instance))) {
     print_error('invalidcoursemodule');
 }
 
@@ -51,31 +51,31 @@ $context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
 
-require_capability('mod/feedback:edititems', $context);
+require_capability('mod/peerassess:edititems', $context);
 
 if ($action == 'exportfile') {
-    if (!$exportdata = feedback_get_xml_data($feedback->id)) {
+    if (!$exportdata = peerassess_get_xml_data($peerassess->id)) {
         print_error('nodata');
     }
-    @feedback_send_xml_data($exportdata, 'feedback_'.$feedback->id.'.xml');
+    @peerassess_send_xml_data($exportdata, 'peerassess_'.$peerassess->id.'.xml');
     exit;
 }
 
 redirect('view.php?id='.$id);
 exit;
 
-function feedback_get_xml_data($feedbackid) {
+function peerassess_get_xml_data($peerassessid) {
     global $DB;
 
     $space = '     ';
-    //get all items of the feedback
-    if (!$items = $DB->get_records('feedback_item', array('feedback'=>$feedbackid), 'position')) {
+    //get all items of the peerassess
+    if (!$items = $DB->get_records('peerassess_item', array('peerassess'=>$peerassessid), 'position')) {
         return false;
     }
 
     //writing the header of the xml file including the charset of the currrent used language
     $data = '<?xml version="1.0" encoding="UTF-8" ?>'."\n";
-    $data .= '<FEEDBACK VERSION="200701" COMMENT="XML-Importfile for mod/feedback">'."\n";
+    $data .= '<peerassess VERSION="200701" COMMENT="XML-Importfile for mod/peerassess">'."\n";
     $data .= $space.'<ITEMS>'."\n";
 
     //writing all the items
@@ -159,12 +159,12 @@ function feedback_get_xml_data($feedbackid) {
 
     //writing the footer of the xml file
     $data .= $space.'</ITEMS>'."\n";
-    $data .= '</FEEDBACK>'."\n";
+    $data .= '</peerassess>'."\n";
 
     return $data;
 }
 
-function feedback_send_xml_data($data, $filename) {
+function peerassess_send_xml_data($data, $filename) {
     @header('Content-Type: application/xml; charset=UTF-8');
     @header('Content-Disposition: attachment; filename="'.$filename.'"');
     print($data);

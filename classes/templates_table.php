@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains class mod_feedback_templates_table
+ * Contains class mod_peerassess_templates_table
  *
- * @package   mod_feedback
+ * @package   mod_peerassess
  * @copyright 2016 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,13 +28,13 @@ global $CFG;
 require_once($CFG->libdir . '/tablelib.php');
 
 /**
- * Class mod_feedback_templates_table
+ * Class mod_peerassess_templates_table
  *
- * @package   mod_feedback
+ * @package   mod_peerassess
  * @copyright 2016 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_feedback_templates_table extends flexible_table {
+class mod_peerassess_templates_table extends flexible_table {
 
     /**
      * Constructor
@@ -46,7 +46,7 @@ class mod_feedback_templates_table extends flexible_table {
         parent::__construct($uniqueid);
 
         $tablecolumns = array('template', 'action');
-        $tableheaders = array(get_string('template', 'feedback'), '');
+        $tableheaders = array(get_string('template', 'peerassess'), '');
 
         $this->set_attribute('class', 'templateslist');
 
@@ -66,21 +66,21 @@ class mod_feedback_templates_table extends flexible_table {
     public function display($templates) {
         global $OUTPUT;
         if (empty($templates)) {
-            echo $OUTPUT->box(get_string('no_templates_available_yet', 'feedback'),
+            echo $OUTPUT->box(get_string('no_templates_available_yet', 'peerassess'),
                              'generalbox boxaligncenter');
             return;
         }
 
         $this->setup();
-        $strdeletefeedback = get_string('delete_template', 'feedback');
+        $strdeletepeerassess = get_string('delete_template', 'peerassess');
 
         foreach ($templates as $template) {
             $data = array();
             $data[] = format_string($template->name);
             $url = new moodle_url($this->baseurl, array('deletetempl' => $template->id, 'sesskey' => sesskey()));
 
-            $deleteaction = new confirm_action(get_string('confirmdeletetemplate', 'feedback'));
-            $data[] = $OUTPUT->action_icon($url, new pix_icon('t/delete', $strdeletefeedback), $deleteaction);
+            $deleteaction = new confirm_action(get_string('confirmdeletetemplate', 'peerassess'));
+            $data[] = $OUTPUT->action_icon($url, new pix_icon('t/delete', $strdeletepeerassess), $deleteaction);
             $this->add_data($data);
         }
         $this->finish_output();

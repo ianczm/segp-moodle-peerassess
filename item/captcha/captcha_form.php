@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_form_class.php');
+require_once($CFG->dirroot.'/mod/peerassess/item/peerassess_item_form_class.php');
 
-class feedback_captcha_form extends feedback_item_form {
+class peerassess_captcha_form extends peerassess_item_form {
     protected $type = "captcha";
 
     public function definition() {
@@ -28,20 +28,20 @@ class feedback_captcha_form extends feedback_item_form {
 
         $mform =& $this->_form;
 
-        $mform->addElement('header', 'general', get_string($this->type, 'feedback'));
-        $mform->addElement('advcheckbox', 'required', get_string('required', 'feedback'), '' , null , array(0, 1));
+        $mform->addElement('header', 'general', get_string($this->type, 'peerassess'));
+        $mform->addElement('advcheckbox', 'required', get_string('required', 'peerassess'), '' , null , array(0, 1));
         $mform->addElement('text',
                             'name',
-                            get_string('item_name', 'feedback'),
-                            array('size'=>FEEDBACK_ITEM_NAME_TEXTBOX_SIZE, 'maxlength'=>255));
+                            get_string('item_name', 'peerassess'),
+                            array('size'=>peerassess_ITEM_NAME_TEXTBOX_SIZE, 'maxlength'=>255));
         $mform->addElement('text',
                             'label',
-                            get_string('item_label', 'feedback'),
-                            array('size'=>FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength'=>255));
+                            get_string('item_label', 'peerassess'),
+                            array('size'=>peerassess_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength'=>255));
 
         $mform->addElement('select',
                             'presentation',
-                            get_string('count_of_nums', 'feedback').'&nbsp;',
+                            get_string('count_of_nums', 'peerassess').'&nbsp;',
                             array_slice(range(0, 10), 3, 10, true));
 
         parent::definition();

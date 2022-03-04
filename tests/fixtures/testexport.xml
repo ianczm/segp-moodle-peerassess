@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<FEEDBACK VERSION="200701" COMMENT="XML-Importfile for mod/feedback">
+<peerassess VERSION="200701" COMMENT="XML-Importfile for mod/peerassess">
      <ITEMS>
           <ITEM TYPE="info" REQUIRED="0">
                <ITEMID>
@@ -232,4 +232,4 @@
                </DEPENDVALUE>
           </ITEM>
      </ITEMS>
-</FEEDBACK>
+</peerassess>

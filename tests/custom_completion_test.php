@@ -17,19 +17,19 @@
 /**
  * Contains unit tests for core_completion/activity_custom_completion.
  *
- * @package   mod_feedback
+ * @package   mod_peerassess
  * @copyright Simey Lameze <simey@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 declare(strict_types=1);
 
-namespace mod_feedback;
+namespace mod_peerassess;
 
 use advanced_testcase;
 use cm_info;
 use coding_exception;
-use mod_feedback\completion\custom_completion;
+use mod_peerassess\completion\custom_completion;
 use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die();
@@ -38,9 +38,9 @@ global $CFG;
 require_once($CFG->libdir . '/completionlib.php');
 
 /**
- * Class for unit testing mod_feedback/activity_custom_completion.
+ * Class for unit testing mod_peerassess/activity_custom_completion.
  *
- * @package   mod_feedback
+ * @package   mod_peerassess
  * @copyright Simey Lameze <simey@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

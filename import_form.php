@@ -19,7 +19,7 @@
  *
  * @author Andreas Grabs
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod_feedback
+ * @package mod_peerassess
  */
 
 //It must be included from a Moodle page
@@ -29,16 +29,16 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir.'/formslib.php');
 
-class feedback_import_form extends moodleform {
+class peerassess_import_form extends moodleform {
     public function definition() {
         global $CFG;
         $mform =& $this->_form;
 
-        $strdeleteolditmes = get_string('delete_old_items', 'feedback').
-                             ' ('.get_string('oldvalueswillbedeleted', 'feedback').')';
+        $strdeleteolditmes = get_string('delete_old_items', 'peerassess').
+                             ' ('.get_string('oldvalueswillbedeleted', 'peerassess').')';
 
-        $strnodeleteolditmes = get_string('append_new_items', 'feedback').
-                               ' ('.get_string('oldvaluespreserved', 'feedback').')';
+        $strnodeleteolditmes = get_string('append_new_items', 'peerassess').
+                               ' ('.get_string('oldvaluespreserved', 'peerassess').')';
 
         $mform->addElement('radio', 'deleteolditems', '', $strdeleteolditmes, true);
         $mform->addElement('radio', 'deleteolditems', '', $strnodeleteolditmes);

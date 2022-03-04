@@ -19,7 +19,7 @@
  *
  * @author Andreas Grabs
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod_feedback
+ * @package mod_peerassess
  */
 defined('MOODLE_INTERNAL') OR die('not allowed');
 
@@ -38,49 +38,49 @@ if (isset($cmid) AND intval($cmid) AND $cmid > 0) {
 $context = context_module::instance($usedid);
 
 $courseid = optional_param('courseid', false, PARAM_INT);
-// $current_tab = $SESSION->feedback->current_tab;
+// $current_tab = $SESSION->peerassess->current_tab;
 if (!isset($current_tab)) {
     $current_tab = '';
 }
 
-$viewurl = new moodle_url('/mod/feedback/view.php', array('id' => $usedid));
-$row[] = new tabobject('view', $viewurl->out(), get_string('overview', 'feedback'));
+$viewurl = new moodle_url('/mod/peerassess/view.php', array('id' => $usedid));
+$row[] = new tabobject('view', $viewurl->out(), get_string('overview', 'peerassess'));
 $urlparams = ['id' => $usedid];
-if ($feedback->course == SITEID && $courseid) {
+if ($peerassess->course == SITEID && $courseid) {
     $urlparams['courseid'] = $courseid;
 }
 
-if (has_capability('mod/feedback:edititems', $context)) {
-    $editurl = new moodle_url('/mod/feedback/edit.php', $urlparams + ['do_show' => 'edit']);
-    $row[] = new tabobject('edit', $editurl->out(), get_string('edit_items', 'feedback'));
+if (has_capability('mod/peerassess:edititems', $context)) {
+    $editurl = new moodle_url('/mod/peerassess/edit.php', $urlparams + ['do_show' => 'edit']);
+    $row[] = new tabobject('edit', $editurl->out(), get_string('edit_items', 'peerassess'));
 
-    $templateurl = new moodle_url('/mod/feedback/edit.php', $urlparams + ['do_show' => 'templates']);
-    $row[] = new tabobject('templates', $templateurl->out(), get_string('templates', 'feedback'));
+    $templateurl = new moodle_url('/mod/peerassess/edit.php', $urlparams + ['do_show' => 'templates']);
+    $row[] = new tabobject('templates', $templateurl->out(), get_string('templates', 'peerassess'));
 }
 
-if ($feedback->course == SITEID && has_capability('mod/feedback:mapcourse', $context)) {
-    $mapurl = new moodle_url('/mod/feedback/mapcourse.php', $urlparams);
-    $row[] = new tabobject('mapcourse', $mapurl->out(), get_string('mappedcourses', 'feedback'));
+if ($peerassess->course == SITEID && has_capability('mod/peerassess:mapcourse', $context)) {
+    $mapurl = new moodle_url('/mod/peerassess/mapcourse.php', $urlparams);
+    $row[] = new tabobject('mapcourse', $mapurl->out(), get_string('mappedcourses', 'peerassess'));
 }
 
-if (has_capability('mod/feedback:viewreports', $context)) {
-    if ($feedback->course == SITEID) {
-        $analysisurl = new moodle_url('/mod/feedback/analysis_course.php', $urlparams);
+if (has_capability('mod/peerassess:viewreports', $context)) {
+    if ($peerassess->course == SITEID) {
+        $analysisurl = new moodle_url('/mod/peerassess/analysis_course.php', $urlparams);
     } else {
-        $analysisurl = new moodle_url('/mod/feedback/analysis.php', $urlparams);
+        $analysisurl = new moodle_url('/mod/peerassess/analysis.php', $urlparams);
     }
-    $row[] = new tabobject('analysis', $analysisurl->out(), get_string('analysis', 'feedback'));
+    $row[] = new tabobject('analysis', $analysisurl->out(), get_string('analysis', 'peerassess'));
 
-    $reporturl = new moodle_url('/mod/feedback/show_entries.php', $urlparams);
+    $reporturl = new moodle_url('/mod/peerassess/show_entries.php', $urlparams);
     $row[] = new tabobject('showentries',
                             $reporturl->out(),
-                            get_string('show_entries', 'feedback'));
+                            get_string('show_entries', 'peerassess'));
 
-    if ($feedback->anonymous == FEEDBACK_ANONYMOUS_NO AND $feedback->course != SITEID) {
-        $nonrespondenturl = new moodle_url('/mod/feedback/show_nonrespondents.php', $urlparams);
+    if ($peerassess->anonymous == peerassess_ANONYMOUS_NO AND $peerassess->course != SITEID) {
+        $nonrespondenturl = new moodle_url('/mod/peerassess/show_nonrespondents.php', $urlparams);
         $row[] = new tabobject('nonrespondents',
                                 $nonrespondenturl->out(),
-                                get_string('show_nonrespondents', 'feedback'));
+                                get_string('show_nonrespondents', 'peerassess'));
     }
 }
 

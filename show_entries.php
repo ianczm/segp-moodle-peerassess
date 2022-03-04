@@ -19,7 +19,7 @@
  *
  * @author Andreas Grabs
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod_feedback
+ * @package mod_peerassess
  */
 
 require_once("../../config.php");
@@ -38,36 +38,36 @@ $courseid = optional_param('courseid', null, PARAM_INT);
 //get the objects
 ////////////////////////////////////////////////////////
 
-list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
+list($course, $cm) = get_course_and_cm_from_cmid($id, 'peerassess');
 
-$baseurl = new moodle_url('/mod/feedback/show_entries.php', array('id' => $cm->id));
+$baseurl = new moodle_url('/mod/peerassess/show_entries.php', array('id' => $cm->id));
 $PAGE->set_url(new moodle_url($baseurl, array('userid' => $userid, 'showcompleted' => $showcompleted,
         'delete' => $deleteid)));
 
 $context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
-$feedback = $PAGE->activityrecord;
+$peerassess = $PAGE->activityrecord;
 
-require_capability('mod/feedback:viewreports', $context);
+require_capability('mod/peerassess:viewreports', $context);
 
 if ($deleteid) {
     // This is a request to delete a reponse.
-    require_capability('mod/feedback:deletesubmissions', $context);
+    require_capability('mod/peerassess:deletesubmissions', $context);
     require_sesskey();
-    $feedbackstructure = new mod_feedback_completion($feedback, $cm, 0, true, $deleteid);
-    feedback_delete_completed($feedbackstructure->get_completed(), $feedback, $cm);
+    $peerassessstructure = new mod_peerassess_completion($peerassess, $cm, 0, true, $deleteid);
+    peerassess_delete_completed($peerassessstructure->get_completed(), $peerassess, $cm);
     redirect($baseurl);
 } else if ($showcompleted || $userid) {
     // Viewing individual response.
-    $feedbackstructure = new mod_feedback_completion($feedback, $cm, 0, true, $showcompleted, $userid);
+    $peerassessstructure = new mod_peerassess_completion($peerassess, $cm, 0, true, $showcompleted, $userid);
 } else {
     // Viewing list of reponses.
-    $feedbackstructure = new mod_feedback_structure($feedback, $cm, $courseid);
+    $peerassessstructure = new mod_peerassess_structure($peerassess, $cm, $courseid);
 }
 
-$responsestable = new mod_feedback_responses_table($feedbackstructure);
-$anonresponsestable = new mod_feedback_responses_anon_table($feedbackstructure);
+$responsestable = new mod_peerassess_responses_table($peerassessstructure);
+$anonresponsestable = new mod_peerassess_responses_anon_table($peerassessstructure);
 
 if ($responsestable->is_downloading()) {
     $responsestable->download();
@@ -77,16 +77,16 @@ if ($anonresponsestable->is_downloading()) {
 }
 
 // Process course select form.
-$courseselectform = new mod_feedback_course_select_form($baseurl, $feedbackstructure, $feedback->course == SITEID);
+$courseselectform = new mod_peerassess_course_select_form($baseurl, $peerassessstructure, $peerassess->course == SITEID);
 if ($data = $courseselectform->get_data()) {
     redirect(new moodle_url($baseurl, ['courseid' => $data->courseid]));
 }
 // Print the page header.
 navigation_node::override_active_url($baseurl);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title($feedback->name);
+$PAGE->set_title($peerassess->name);
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($feedback->name));
+echo $OUTPUT->heading(format_string($peerassess->name));
 
 $current_tab = 'showentries';
 require('tabs.php');
@@ -98,20 +98,20 @@ require('tabs.php');
 
 if ($userid || $showcompleted) {
     // Print the response of the given user.
-    $completedrecord = $feedbackstructure->get_completed();
+    $completedrecord = $peerassessstructure->get_completed();
 
     if ($userid) {
         $usr = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
         $responsetitle = userdate($completedrecord->timemodified) . ' (' . fullname($usr) . ')';
     } else {
-        $responsetitle = get_string('response_nr', 'feedback') . ': ' .
-                $completedrecord->random_response . ' (' . get_string('anonymous', 'feedback') . ')';
+        $responsetitle = get_string('response_nr', 'peerassess') . ': ' .
+                $completedrecord->random_response . ' (' . get_string('anonymous', 'peerassess') . ')';
     }
 
     echo $OUTPUT->heading($responsetitle, 4);
 
-    $form = new mod_feedback_complete_form(mod_feedback_complete_form::MODE_VIEW_RESPONSE,
-            $feedbackstructure, 'feedback_viewresponse_form');
+    $form = new mod_peerassess_complete_form(mod_peerassess_complete_form::MODE_VIEW_RESPONSE,
+            $peerassessstructure, 'peerassess_viewresponse_form');
     $form->display();
 
     list($prevresponseurl, $returnurl, $nextresponseurl) = $userid ?
@@ -141,18 +141,18 @@ if ($userid || $showcompleted) {
     // Print the list of responses.
     $courseselectform->display();
 
-    // Show non-anonymous responses (always retrieve them even if current feedback is anonymous).
+    // Show non-anonymous responses (always retrieve them even if current peerassess is anonymous).
     $totalrows = $responsestable->get_total_responses_count();
-    if (!$feedbackstructure->is_anonymous() || $totalrows) {
-        echo $OUTPUT->heading(get_string('non_anonymous_entries', 'feedback', $totalrows), 4);
+    if (!$peerassessstructure->is_anonymous() || $totalrows) {
+        echo $OUTPUT->heading(get_string('non_anonymous_entries', 'peerassess', $totalrows), 4);
         $responsestable->display();
     }
 
-    // Show anonymous responses (always retrieve them even if current feedback is not anonymous).
-    $feedbackstructure->shuffle_anonym_responses();
+    // Show anonymous responses (always retrieve them even if current peerassess is not anonymous).
+    $peerassessstructure->shuffle_anonym_responses();
     $totalrows = $anonresponsestable->get_total_responses_count();
-    if ($feedbackstructure->is_anonymous() || $totalrows) {
-        echo $OUTPUT->heading(get_string('anonymous_entries', 'feedback', $totalrows), 4);
+    if ($peerassessstructure->is_anonymous() || $totalrows) {
+        echo $OUTPUT->heading(get_string('anonymous_entries', 'peerassess', $totalrows), 4);
         $anonresponsestable->display();
     }
 

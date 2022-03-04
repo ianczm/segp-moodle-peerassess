@@ -15,13 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for exporting partial feedback data.
+ * Class for exporting partial peerassess data.
  *
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @copyright  2017 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_feedback\external;
+namespace mod_peerassess\external;
 defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
@@ -30,12 +30,12 @@ use external_util;
 use external_files;
 
 /**
- * Class for exporting partial feedback data (some fields are only viewable by admins).
+ * Class for exporting partial peerassess data (some fields are only viewable by admins).
  *
  * @copyright  2017 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class feedback_summary_exporter extends exporter {
+class peerassess_summary_exporter extends exporter {
 
     protected static function define_properties() {
         return array(
@@ -45,26 +45,26 @@ class feedback_summary_exporter extends exporter {
             ),
             'course' => array(
                 'type' => PARAM_INT,
-                'description' => 'Course id this feedback is part of.',
+                'description' => 'Course id this peerassess is part of.',
             ),
             'name' => array(
                 'type' => PARAM_TEXT,
-                'description' => 'Feedback name.',
+                'description' => 'peerassess name.',
             ),
             'intro' => array(
                 'default' => '',
                 'type' => PARAM_RAW,
-                'description' => 'Feedback introduction text.',
+                'description' => 'peerassess introduction text.',
             ),
             'introformat' => array(
                 'choices' => array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN),
                 'type' => PARAM_INT,
                 'default' => FORMAT_MOODLE,
-                'description' => 'Feedback intro text format.',
+                'description' => 'peerassess intro text format.',
             ),
             'anonymous' => array(
                 'type' => PARAM_INT,
-                'description' => 'Whether the feedback is anonymous.',
+                'description' => 'Whether the peerassess is anonymous.',
             ),
             'email_notification' => array(
                 'type' => PARAM_BOOL,
@@ -155,10 +155,10 @@ class feedback_summary_exporter extends exporter {
             'coursemodule' => $context->instanceid,
         );
 
-        $values['introfiles'] = external_util::get_area_files($context->id, 'mod_feedback', 'intro', false, false);
+        $values['introfiles'] = external_util::get_area_files($context->id, 'mod_peerassess', 'intro', false, false);
 
         if (!empty($this->data->page_after_submit)) {
-            $values['pageaftersubmitfiles'] = external_util::get_area_files($context->id, 'mod_feedback', 'page_after_submit');
+            $values['pageaftersubmitfiles'] = external_util::get_area_files($context->id, 'mod_peerassess', 'page_after_submit');
         }
 
         return $values;
@@ -171,7 +171,7 @@ class feedback_summary_exporter extends exporter {
      */
     protected function get_format_parameters_for_intro() {
         return [
-            'component' => 'mod_feedback',
+            'component' => 'mod_peerassess',
             'filearea' => 'intro',
             'options' => array('noclean' => true),
         ];
@@ -184,7 +184,7 @@ class feedback_summary_exporter extends exporter {
      */
     protected function get_format_parameters_for_page_after_submit() {
         return [
-            'component' => 'mod_feedback',
+            'component' => 'mod_peerassess',
             'filearea' => 'page_after_submit',
             'itemid' => 0
         ];

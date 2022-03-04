@@ -15,24 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 defined('MOODLE_INTERNAL') OR die('not allowed');
-require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
+require_once($CFG->dirroot.'/mod/peerassess/item/peerassess_item_class.php');
 
-define('FEEDBACK_MULTICHOICE_TYPE_SEP', '>>>>>');
-define('FEEDBACK_MULTICHOICE_LINE_SEP', '|');
-define('FEEDBACK_MULTICHOICE_ADJUST_SEP', '<<<<<');
-define('FEEDBACK_MULTICHOICE_IGNOREEMPTY', 'i');
-define('FEEDBACK_MULTICHOICE_HIDENOSELECT', 'h');
+define('peerassess_MULTICHOICE_TYPE_SEP', '>>>>>');
+define('peerassess_MULTICHOICE_LINE_SEP', '|');
+define('peerassess_MULTICHOICE_ADJUST_SEP', '<<<<<');
+define('peerassess_MULTICHOICE_IGNOREEMPTY', 'i');
+define('peerassess_MULTICHOICE_HIDENOSELECT', 'h');
 
-class feedback_item_multichoice extends feedback_item_base {
+class peerassess_item_multichoice extends peerassess_item_base {
     protected $type = "multichoice";
 
-    public function build_editform($item, $feedback, $cm) {
+    public function build_editform($item, $peerassess, $cm) {
         global $DB, $CFG;
         require_once('multichoice_form.php');
 
-        //get the lastposition number of the feedback_items
+        //get the lastposition number of the peerassess_items
         $position = $item->position;
-        $lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
+        $lastposition = $DB->count_records('peerassess_item', array('peerassess'=>$peerassess->id));
         if ($position == -1) {
             $i_formselect_last = $lastposition + 1;
             $i_formselect_value = $lastposition + 1;
@@ -51,12 +51,12 @@ class feedback_item_multichoice extends feedback_item_base {
         $item->hidenoselect = $this->hidenoselect($item);
 
         //all items for dependitem
-        $feedbackitems = feedback_get_depend_candidates_for_item($feedback, $item);
+        $peerassessitems = peerassess_get_depend_candidates_for_item($peerassess, $item);
         $commonparams = array('cmid'=>$cm->id,
                              'id'=>isset($item->id) ? $item->id : null,
                              'typ'=>$item->typ,
-                             'items'=>$feedbackitems,
-                             'feedback'=>$feedback->id);
+                             'items'=>$peerassessitems,
+                             'peerassess'=>$peerassess->id);
 
         //build the form
         $customdata = array('item' => $item,
@@ -65,7 +65,7 @@ class feedback_item_multichoice extends feedback_item_base {
                             'position' => $position,
                             'info' => $info);
 
-        $this->item_form = new feedback_multichoice_form('edit_item.php', $customdata);
+        $this->item_form = new peerassess_multichoice_form('edit_item.php', $customdata);
     }
 
     public function save_item() {
@@ -86,12 +86,12 @@ class feedback_item_multichoice extends feedback_item_base {
 
         $item->hasvalue = $this->get_hasvalue();
         if (!$item->id) {
-            $item->id = $DB->insert_record('feedback_item', $item);
+            $item->id = $DB->insert_record('peerassess_item', $item);
         } else {
-            $DB->update_record('feedback_item', $item);
+            $DB->update_record('peerassess_item', $item);
         }
 
-        return $DB->get_record('feedback_item', array('id'=>$item->id));
+        return $DB->get_record('peerassess_item', array('id'=>$item->id));
     }
 
 
@@ -101,7 +101,7 @@ class feedback_item_multichoice extends feedback_item_base {
     /**
      * Helper function for collected data, both for analysis page and export to excel
      *
-     * @param stdClass $item the db-object from feedback_item
+     * @param stdClass $item the db-object from peerassess_item
      * @param int $groupid
      * @param int $courseid
      * @return array
@@ -115,13 +115,13 @@ class feedback_item_multichoice extends feedback_item_base {
 
         //get the possible answers
         $answers = null;
-        $answers = explode (FEEDBACK_MULTICHOICE_LINE_SEP, $info->presentation);
+        $answers = explode (peerassess_MULTICHOICE_LINE_SEP, $info->presentation);
         if (!is_array($answers)) {
             return null;
         }
 
         //get the values
-        $values = feedback_get_group_values($item, $groupid, $courseid, $this->ignoreempty($item));
+        $values = peerassess_get_group_values($item, $groupid, $courseid, $this->ignoreempty($item));
         if (!$values) {
             return null;
         }
@@ -136,7 +136,7 @@ class feedback_item_multichoice extends feedback_item_base {
                 $ans->answercount = 0;
                 foreach ($values as $value) {
                     //ist die Antwort gleich dem index der Antworten + 1?
-                    $vallist = explode(FEEDBACK_MULTICHOICE_LINE_SEP, $value->value);
+                    $vallist = explode(peerassess_MULTICHOICE_LINE_SEP, $value->value);
                     foreach ($vallist as $val) {
                         if ($val == $i) {
                             $ans->answercount++;
@@ -175,10 +175,10 @@ class feedback_item_multichoice extends feedback_item_base {
             return $printval;
         }
 
-        $presentation = explode (FEEDBACK_MULTICHOICE_LINE_SEP, $info->presentation);
+        $presentation = explode (peerassess_MULTICHOICE_LINE_SEP, $info->presentation);
 
         if ($info->subtype == 'c') {
-            $vallist = array_values(explode (FEEDBACK_MULTICHOICE_LINE_SEP, $value->value));
+            $vallist = array_values(explode (peerassess_MULTICHOICE_LINE_SEP, $value->value));
             $sizeofvallist = count($vallist);
             $sizeofpresentation = count($presentation);
             for ($i = 0; $i < $sizeofvallist; $i++) {
@@ -236,7 +236,7 @@ class feedback_item_multichoice extends feedback_item_base {
             }
             $chart = new \core\chart_bar();
             $chart->set_horizontal(true);
-            $series = new \core\chart_series(format_string(get_string("responses", "feedback")), $data['series']);
+            $series = new \core\chart_series(format_string(get_string("responses", "peerassess")), $data['series']);
             $series->set_labels($data['series_labels']);
             $chart->add_series($series);
             $chart->set_labels($data['labels']);
@@ -288,13 +288,13 @@ class feedback_item_multichoice extends feedback_item_base {
      */
     protected function get_options($item) {
         $info = $this->get_info($item);
-        $presentation = explode (FEEDBACK_MULTICHOICE_LINE_SEP, $info->presentation);
+        $presentation = explode (peerassess_MULTICHOICE_LINE_SEP, $info->presentation);
         $options = array();
         foreach ($presentation as $idx => $optiontext) {
             $options[$idx + 1] = format_text($optiontext, FORMAT_HTML, array('noclean' => true, 'para' => false));
         }
         if ($info->subtype === 'r' && !$this->hidenoselect($item)) {
-            $options = array(0 => get_string('not_selected', 'feedback')) + $options;
+            $options = array(0 => get_string('not_selected', 'peerassess')) + $options;
         }
 
         return $options;
@@ -307,7 +307,7 @@ class feedback_item_multichoice extends feedback_item_base {
      * group of checkboxes or a dropdown list.
      *
      * @param stdClass $item
-     * @param mod_feedback_complete_form $form
+     * @param mod_peerassess_complete_form $form
      */
     public function complete_form_element($item, $form) {
         $info = $this->get_info($item);
@@ -332,7 +332,7 @@ class feedback_item_multichoice extends feedback_item_base {
         } else if ($info->subtype === 'c' && $form->is_frozen()) {
             // Display list of checkbox values in the response view.
             $objs = [];
-            foreach (explode(FEEDBACK_MULTICHOICE_LINE_SEP, $form->get_item_value($item)) as $v) {
+            foreach (explode(peerassess_MULTICHOICE_LINE_SEP, $form->get_item_value($item)) as $v) {
                 $objs[] = ['static', $inputname."[$v]", '', isset($options[$v]) ? $options[$v] : ''];
             }
             $element = $form->add_form_group_element($item, 'group_'.$inputname, $name, $objs, $separator, $class);
@@ -349,10 +349,10 @@ class feedback_item_multichoice extends feedback_item_base {
                     $form->set_element_type($inputname.'['.$idx.']', PARAM_INT);
                 }
                 // Span to hold the element id. The id is used for drag and drop reordering.
-                $objs[] = ['static', '', '', html_writer::span('', '', ['id' => 'feedback_item_' . $item->id])];
+                $objs[] = ['static', '', '', html_writer::span('', '', ['id' => 'peerassess_item_' . $item->id])];
                 $element = $form->add_form_group_element($item, 'group_'.$inputname, $name, $objs, $separator, $class);
                 if ($tmpvalue) {
-                    foreach (explode(FEEDBACK_MULTICHOICE_LINE_SEP, $tmpvalue) as $v) {
+                    foreach (explode(peerassess_MULTICHOICE_LINE_SEP, $tmpvalue) as $v) {
                         $form->set_element_default($inputname.'['.$v.']', $v);
                     }
                 }
@@ -366,7 +366,7 @@ class feedback_item_multichoice extends feedback_item_base {
                     $objs[] = ['radio', $inputname, '', $label, $idx];
                 }
                 // Span to hold the element id. The id is used for drag and drop reordering.
-                $objs[] = ['static', '', '', html_writer::span('', '', ['id' => 'feedback_item_' . $item->id])];
+                $objs[] = ['static', '', '', html_writer::span('', '', ['id' => 'peerassess_item_' . $item->id])];
                 $element = $form->add_form_group_element($item, 'group_'.$inputname, $name, $objs, $separator, $class);
                 $form->set_element_default($inputname, $tmpvalue);
                 $form->set_element_type($inputname, PARAM_INT);
@@ -394,7 +394,7 @@ class feedback_item_multichoice extends feedback_item_base {
         $value = is_array($value) ? $value : [$value];
 
         $value = array_unique(array_filter($value));
-        return join(FEEDBACK_MULTICHOICE_LINE_SEP, $value);
+        return join(peerassess_MULTICHOICE_LINE_SEP, $value);
     }
 
     /**
@@ -409,11 +409,11 @@ class feedback_item_multichoice extends feedback_item_base {
         if (is_array($dbvalue)) {
             $dbvalues = $dbvalue;
         } else {
-            $dbvalues = explode(FEEDBACK_MULTICHOICE_LINE_SEP, $dbvalue);
+            $dbvalues = explode(peerassess_MULTICHOICE_LINE_SEP, $dbvalue);
         }
 
         $info = $this->get_info($item);
-        $presentation = explode (FEEDBACK_MULTICHOICE_LINE_SEP, $info->presentation);
+        $presentation = explode (peerassess_MULTICHOICE_LINE_SEP, $info->presentation);
         $index = 1;
         foreach ($presentation as $pres) {
             foreach ($dbvalues as $dbval) {
@@ -436,14 +436,14 @@ class feedback_item_multichoice extends feedback_item_base {
         $info->presentation = '';
         $info->horizontal = false;
 
-        $parts = explode(FEEDBACK_MULTICHOICE_TYPE_SEP, $item->presentation);
+        $parts = explode(peerassess_MULTICHOICE_TYPE_SEP, $item->presentation);
         @list($info->subtype, $info->presentation) = $parts;
         if (!isset($info->subtype)) {
             $info->subtype = 'r';
         }
 
         if ($info->subtype != 'd') {
-            $parts = explode(FEEDBACK_MULTICHOICE_ADJUST_SEP, $info->presentation);
+            $parts = explode(peerassess_MULTICHOICE_ADJUST_SEP, $info->presentation);
             @list($info->presentation, $info->horizontal) = $parts;
             if (isset($info->horizontal) AND $info->horizontal == 1) {
                 $info->horizontal = true;
@@ -455,28 +455,28 @@ class feedback_item_multichoice extends feedback_item_base {
     }
 
     public function set_ignoreempty($item, $ignoreempty=true) {
-        $item->options = str_replace(FEEDBACK_MULTICHOICE_IGNOREEMPTY, '', $item->options);
+        $item->options = str_replace(peerassess_MULTICHOICE_IGNOREEMPTY, '', $item->options);
         if ($ignoreempty) {
-            $item->options .= FEEDBACK_MULTICHOICE_IGNOREEMPTY;
+            $item->options .= peerassess_MULTICHOICE_IGNOREEMPTY;
         }
     }
 
     public function ignoreempty($item) {
-        if (strstr($item->options, FEEDBACK_MULTICHOICE_IGNOREEMPTY)) {
+        if (strstr($item->options, peerassess_MULTICHOICE_IGNOREEMPTY)) {
             return true;
         }
         return false;
     }
 
     public function set_hidenoselect($item, $hidenoselect=true) {
-        $item->options = str_replace(FEEDBACK_MULTICHOICE_HIDENOSELECT, '', $item->options);
+        $item->options = str_replace(peerassess_MULTICHOICE_HIDENOSELECT, '', $item->options);
         if ($hidenoselect) {
-            $item->options .= FEEDBACK_MULTICHOICE_HIDENOSELECT;
+            $item->options .= peerassess_MULTICHOICE_HIDENOSELECT;
         }
     }
 
     public function hidenoselect($item) {
-        if (strstr($item->options, FEEDBACK_MULTICHOICE_HIDENOSELECT)) {
+        if (strstr($item->options, peerassess_MULTICHOICE_HIDENOSELECT)) {
             return true;
         }
         return false;

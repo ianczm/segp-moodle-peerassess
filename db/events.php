@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Feedback event handler definition.
+ * peerassess event handler definition.
  *
- * @package mod_feedback
+ * @package mod_peerassess
  * @category event
  * @copyright 2016 Marina Glancy
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,7 +28,7 @@ $observers = array(
 
     array(
         'eventname'   => '\core\event\course_content_deleted',
-        'callback'    => 'mod_feedback_observer::course_content_deleted',
+        'callback'    => 'mod_peerassess_observer::course_content_deleted',
     ),
 
 );

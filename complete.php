@@ -15,42 +15,42 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * prints the form so the user can fill out the feedback
+ * prints the form so the user can fill out the peerassess
  *
  * @author Andreas Grabs
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod_feedback
+ * @package mod_peerassess
  */
 
 require_once("../../config.php");
 require_once("lib.php");
 
-feedback_init_feedback_session();
+peerassess_init_peerassess_session();
 
 $id = required_param('id', PARAM_INT);
 $courseid = optional_param('courseid', null, PARAM_INT);
 $gopage = optional_param('gopage', 0, PARAM_INT);
 $gopreviouspage = optional_param('gopreviouspage', null, PARAM_RAW);
 
-list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
-$feedback = $DB->get_record("feedback", array("id" => $cm->instance), '*', MUST_EXIST);
+list($course, $cm) = get_course_and_cm_from_cmid($id, 'peerassess');
+$peerassess = $DB->get_record("peerassess", array("id" => $cm->instance), '*', MUST_EXIST);
 
 $urlparams = array('id' => $cm->id, 'gopage' => $gopage, 'courseid' => $courseid);
-$PAGE->set_url('/mod/feedback/complete.php', $urlparams);
+$PAGE->set_url('/mod/peerassess/complete.php', $urlparams);
 
 require_course_login($course, true, $cm);
-$PAGE->set_activity_record($feedback);
+$PAGE->set_activity_record($peerassess);
 
 $context = context_module::instance($cm->id);
-$feedbackcompletion = new mod_feedback_completion($feedback, $cm, $courseid);
+$peerassesscompletion = new mod_peerassess_completion($peerassess, $cm, $courseid);
 
-$courseid = $feedbackcompletion->get_courseid();
+$courseid = $peerassesscompletion->get_courseid();
 
-// Check whether the feedback is mapped to the given courseid.
-if (!has_capability('mod/feedback:edititems', $context) &&
-        !$feedbackcompletion->check_course_is_mapped()) {
+// Check whether the peerassess is mapped to the given courseid.
+if (!has_capability('mod/peerassess:edititems', $context) &&
+        !$peerassesscompletion->check_course_is_mapped()) {
     echo $OUTPUT->header();
-    echo $OUTPUT->notification(get_string('cannotaccess', 'mod_feedback'));
+    echo $OUTPUT->notification(get_string('cannotaccess', 'mod_peerassess'));
     echo $OUTPUT->footer();
     exit;
 }
@@ -60,22 +60,22 @@ if ($courseid AND $courseid != SITEID) {
     require_course_login(get_course($courseid)); // This overwrites the object $COURSE .
 }
 
-if (!$feedbackcompletion->can_complete()) {
+if (!$peerassesscompletion->can_complete()) {
     print_error('error');
 }
 
-$PAGE->navbar->add(get_string('feedback:complete', 'feedback'));
+$PAGE->navbar->add(get_string('peerassess:complete', 'peerassess'));
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title($feedback->name);
+$PAGE->set_title($peerassess->name);
 $PAGE->set_pagelayout('incourse');
 
-// Check if the feedback is open (timeopen, timeclose).
-if (!$feedbackcompletion->is_open()) {
+// Check if the peerassess is open (timeopen, timeclose).
+if (!$peerassesscompletion->is_open()) {
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(format_string($feedback->name));
+    echo $OUTPUT->heading(format_string($peerassess->name));
     echo $OUTPUT->box_start('generalbox boxaligncenter');
-    echo $OUTPUT->notification(get_string('feedback_is_not_open', 'feedback'));
-    echo $OUTPUT->continue_button(course_get_url($courseid ?: $feedback->course));
+    echo $OUTPUT->notification(get_string('peerassess_is_not_open', 'peerassess'));
+    echo $OUTPUT->continue_button(course_get_url($courseid ?: $peerassess->course));
     echo $OUTPUT->box_end();
     echo $OUTPUT->footer();
     exit;
@@ -83,16 +83,16 @@ if (!$feedbackcompletion->is_open()) {
 
 // Mark activity viewed for completion-tracking.
 if (isloggedin() && !isguestuser()) {
-    $feedbackcompletion->set_module_viewed();
+    $peerassesscompletion->set_module_viewed();
 }
 
 // Check if user is prevented from re-submission.
-$cansubmit = $feedbackcompletion->can_submit();
+$cansubmit = $peerassesscompletion->can_submit();
 
-// Initialise the form processing feedback completion.
-if (!$feedbackcompletion->is_empty() && $cansubmit) {
+// Initialise the form processing peerassess completion.
+if (!$peerassesscompletion->is_empty() && $cansubmit) {
     // Process the page via the form.
-    $urltogo = $feedbackcompletion->process_page($gopage, $gopreviouspage);
+    $urltogo = $peerassesscompletion->process_page($gopage, $gopreviouspage);
 
     if ($urltogo !== null) {
         redirect($urltogo);
@@ -100,41 +100,41 @@ if (!$feedbackcompletion->is_empty() && $cansubmit) {
 }
 
 // Print the page header.
-$strfeedbacks = get_string("modulenameplural", "feedback");
-$strfeedback  = get_string("modulename", "feedback");
+$strpeerassesss = get_string("modulenameplural", "peerassess");
+$strpeerassess  = get_string("modulename", "peerassess");
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($feedback->name));
+echo $OUTPUT->heading(format_string($peerassess->name));
 
-if ($feedbackcompletion->is_empty()) {
-    \core\notification::error(get_string('no_items_available_yet', 'feedback'));
+if ($peerassesscompletion->is_empty()) {
+    \core\notification::error(get_string('no_items_available_yet', 'peerassess'));
 } else if ($cansubmit) {
-    if ($feedbackcompletion->just_completed()) {
+    if ($peerassesscompletion->just_completed()) {
         // Display information after the submit.
-        if ($feedback->page_after_submit) {
-            echo $OUTPUT->box($feedbackcompletion->page_after_submit(),
+        if ($peerassess->page_after_submit) {
+            echo $OUTPUT->box($peerassesscompletion->page_after_submit(),
                     'generalbox boxaligncenter');
         }
-        if ($feedbackcompletion->can_view_analysis()) {
+        if ($peerassesscompletion->can_view_analysis()) {
             echo '<p align="center">';
-            $analysisurl = new moodle_url('/mod/feedback/analysis.php', array('id' => $cm->id, 'courseid' => $courseid));
-            echo html_writer::link($analysisurl, get_string('completed_feedbacks', 'feedback'));
+            $analysisurl = new moodle_url('/mod/peerassess/analysis.php', array('id' => $cm->id, 'courseid' => $courseid));
+            echo html_writer::link($analysisurl, get_string('completed_peerassesss', 'peerassess'));
             echo '</p>';
         }
 
-        if ($feedback->site_after_submit) {
-            $url = feedback_encode_target_url($feedback->site_after_submit);
+        if ($peerassess->site_after_submit) {
+            $url = peerassess_encode_target_url($peerassess->site_after_submit);
         } else {
             $url = course_get_url($courseid ?: $course->id);
         }
         echo $OUTPUT->continue_button($url);
     } else {
         // Display the form with the questions.
-        echo $feedbackcompletion->render_items();
+        echo $peerassesscompletion->render_items();
     }
 } else {
     echo $OUTPUT->box_start('generalbox boxaligncenter');
-    echo $OUTPUT->notification(get_string('this_feedback_is_already_submitted', 'feedback'));
+    echo $OUTPUT->notification(get_string('this_peerassess_is_already_submitted', 'peerassess'));
     echo $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
     echo $OUTPUT->box_end();
 }

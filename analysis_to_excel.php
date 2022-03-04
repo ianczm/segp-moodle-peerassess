@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * prints an analysed excel-spreadsheet of the feedback
+ * prints an analysed excel-spreadsheet of the peerassess
  *
  * @copyright Andreas Grabs
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod_feedback
+ * @package mod_peerassess
  */
 
 require_once("../../config.php");
@@ -29,33 +29,33 @@ require_once("$CFG->libdir/excellib.class.php");
 $id = required_param('id', PARAM_INT); // Course module id.
 $courseid = optional_param('courseid', '0', PARAM_INT);
 
-$url = new moodle_url('/mod/feedback/analysis_to_excel.php', array('id' => $id));
+$url = new moodle_url('/mod/peerassess/analysis_to_excel.php', array('id' => $id));
 if ($courseid) {
     $url->param('courseid', $courseid);
 }
 $PAGE->set_url($url);
 
-list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
+list($course, $cm) = get_course_and_cm_from_cmid($id, 'peerassess');
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
-require_capability('mod/feedback:viewreports', $context);
+require_capability('mod/peerassess:viewreports', $context);
 
-$feedback = $PAGE->activityrecord;
+$peerassess = $PAGE->activityrecord;
 
 // Buffering any output. This prevents some output before the excel-header will be send.
 ob_start();
 ob_end_clean();
 
 // Get the questions (item-names).
-$feedbackstructure = new mod_feedback_structure($feedback, $cm, $course->id);
-if (!$items = $feedbackstructure->get_items(true)) {
-    print_error('no_items_available_yet', 'feedback', $cm->url);
+$peerassessstructure = new mod_peerassess_structure($peerassess, $cm, $course->id);
+if (!$items = $peerassessstructure->get_items(true)) {
+    print_error('no_items_available_yet', 'peerassess', $cm->url);
 }
 
 $mygroupid = groups_get_activity_group($cm);
 
 // Creating a workbook.
-$filename = "feedback_" . clean_filename($cm->get_formatted_name()) . ".xls";
+$filename = "peerassess_" . clean_filename($cm->get_formatted_name()) . ".xls";
 $workbook = new MoodleExcelWorkbook($filename);
 
 // Creating the worksheet.
@@ -80,30 +80,30 @@ $rowoffset1 = 0;
 $worksheet1->write_string($rowoffset1, 0, userdate(time()), $xlsformats->head1);
 
 // Get the completeds.
-$completedscount = $feedbackstructure->count_completed_responses($mygroupid);
+$completedscount = $peerassessstructure->count_completed_responses($mygroupid);
 // Write the count of completeds.
 // Keep consistency and write count of completeds even when they are 0.
 $rowoffset1++;
 $worksheet1->write_string($rowoffset1,
     0,
-    get_string('completed_feedbacks', 'feedback').': '.strval($completedscount),
+    get_string('completed_peerassesss', 'peerassess').': '.strval($completedscount),
     $xlsformats->head1);
 
 $rowoffset1++;
 $worksheet1->write_string($rowoffset1,
     0,
-    get_string('questions', 'feedback').': '. strval(count($items)),
+    get_string('questions', 'peerassess').': '. strval(count($items)),
     $xlsformats->head1);
 
 $rowoffset1 += 2;
-$worksheet1->write_string($rowoffset1, 0, get_string('item_label', 'feedback'), $xlsformats->head1);
-$worksheet1->write_string($rowoffset1, 1, get_string('question', 'feedback'), $xlsformats->head1);
-$worksheet1->write_string($rowoffset1, 2, get_string('responses', 'feedback'), $xlsformats->head1);
+$worksheet1->write_string($rowoffset1, 0, get_string('item_label', 'peerassess'), $xlsformats->head1);
+$worksheet1->write_string($rowoffset1, 1, get_string('question', 'peerassess'), $xlsformats->head1);
+$worksheet1->write_string($rowoffset1, 2, get_string('responses', 'peerassess'), $xlsformats->head1);
 $rowoffset1++;
 
 foreach ($items as $item) {
     // Get the class of item-typ.
-    $itemobj = feedback_get_item_class($item->typ);
+    $itemobj = peerassess_get_item_class($item->typ);
     $rowoffset1 = $itemobj->excelprint_item($worksheet1,
         $rowoffset1,
         $xlsformats,

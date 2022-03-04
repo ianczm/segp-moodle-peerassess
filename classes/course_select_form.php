@@ -15,38 +15,38 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains class mod_feedback_course_map_form
+ * Contains class mod_peerassess_course_map_form
  *
- * @package   mod_feedback
+ * @package   mod_peerassess
  * @copyright 2016 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Form for mapping courses to the feedback
+ * Form for mapping courses to the peerassess
  *
- * @package   mod_feedback
+ * @package   mod_peerassess
  * @copyright 2016 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_feedback_course_select_form extends moodleform {
+class mod_peerassess_course_select_form extends moodleform {
     /** @var moodle_url */
     protected $action;
-    /** @var mod_feedback_structure $feedbackstructure */
-    protected $feedbackstructure;
+    /** @var mod_peerassess_structure $peerassessstructure */
+    protected $peerassessstructure;
 
     /**
      * Constructor
      *
      * @param string|moodle_url $action the action attribute for the form
-     * @param mod_feedback_structure $feedbackstructure
+     * @param mod_peerassess_structure $peerassessstructure
      * @param bool $editable
      */
-    public function __construct($action, mod_feedback_structure $feedbackstructure, $editable = true) {
+    public function __construct($action, mod_peerassess_structure $peerassessstructure, $editable = true) {
         $this->action = new moodle_url($action, ['courseid' => null]);
-        $this->feedbackstructure = $feedbackstructure;
-        parent::__construct($action, null, 'post', '', ['id' => 'feedback_course_filter'], $editable);
+        $this->peerassessstructure = $peerassessstructure;
+        parent::__construct($action, null, 'post', '', ['id' => 'peerassess_course_filter'], $editable);
     }
 
     /**
@@ -54,19 +54,19 @@ class mod_feedback_course_select_form extends moodleform {
      */
     public function definition() {
         $mform = $this->_form;
-        $feedbackstructure = $this->feedbackstructure;
+        $peerassessstructure = $this->peerassessstructure;
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        if (!$this->_form->_freezeAll && ($courses = $feedbackstructure->get_completed_courses()) && count($courses) > 1) {
+        if (!$this->_form->_freezeAll && ($courses = $peerassessstructure->get_completed_courses()) && count($courses) > 1) {
             $elements = [];
-            $elements[] = $mform->createElement('autocomplete', 'courseid', get_string('filter_by_course', 'feedback'),
+            $elements[] = $mform->createElement('autocomplete', 'courseid', get_string('filter_by_course', 'peerassess'),
                 ['' => get_string('fulllistofcourses')] + $courses);
             $elements[] = $mform->createElement('submit', 'submitbutton', get_string('filter'));
-            if ($feedbackstructure->get_courseid()) {
+            if ($peerassessstructure->get_courseid()) {
                 $elements[] = $mform->createElement('static', 'showall', '',
-                    html_writer::link($this->action, get_string('show_all', 'feedback')));
+                    html_writer::link($this->action, get_string('show_all', 'peerassess')));
             }
             if (defined('BEHAT_SITE_RUNNING')) {
                 // TODO MDL-53734 remove this - behat does not recognise autocomplete element inside a group.
@@ -74,10 +74,10 @@ class mod_feedback_course_select_form extends moodleform {
                     $mform->addElement($element);
                 }
             } else {
-                $mform->addGroup($elements, 'coursefilter', get_string('filter_by_course', 'feedback'), array(' '), false);
+                $mform->addGroup($elements, 'coursefilter', get_string('filter_by_course', 'peerassess'), array(' '), false);
             }
         }
 
-        $this->set_data(['courseid' => $feedbackstructure->get_courseid(), 'id' => $feedbackstructure->get_cm()->id]);
+        $this->set_data(['courseid' => $peerassessstructure->get_courseid(), 'id' => $peerassessstructure->get_cm()->id]);
     }
 }

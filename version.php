@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Feedback version information
+ * peerassess version information
  *
- * @package mod_feedback
+ * @package mod_peerassess
  * @author     Andreas Grabs
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,4 +29,4 @@ $plugin->requires  = 2021051100;    // Requires this Moodle version.
 $plugin->component = 'mod_peerassess';   // Full name of the plugin (used for diagnostics)
 $plugin->cron      = 0;
 
-$feedback_version_intern = 1; //this version is used for restore older backups
+$peerassess_version_intern = 1; //this version is used for restore older backups

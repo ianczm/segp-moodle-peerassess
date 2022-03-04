@@ -16,9 +16,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines backup_feedback_activity_task class
+ * Defines backup_peerassess_activity_task class
  *
- * @package     mod_feedback
+ * @package     mod_peerassess
  * @category    backup
  * @copyright   2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,13 +26,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/feedback/backup/moodle2/backup_feedback_stepslib.php');
-require_once($CFG->dirroot . '/mod/feedback/backup/moodle2/backup_feedback_settingslib.php');
+require_once($CFG->dirroot . '/mod/peerassess/backup/moodle2/backup_peerassess_stepslib.php');
+require_once($CFG->dirroot . '/mod/peerassess/backup/moodle2/backup_peerassess_settingslib.php');
 
 /**
- * Provides the steps to perform one complete backup of the Feedback instance
+ * Provides the steps to perform one complete backup of the peerassess instance
  */
-class backup_feedback_activity_task extends backup_activity_task {
+class backup_peerassess_activity_task extends backup_activity_task {
 
     /**
      * No specific settings for this activity
@@ -41,11 +41,11 @@ class backup_feedback_activity_task extends backup_activity_task {
     }
 
     /**
-     * Defines a backup step to store the instance data in the feedback.xml file
+     * Defines a backup step to store the instance data in the peerassess.xml file
      */
     protected function define_my_steps() {
-        // feedback only has one structure step
-        $this->add_step(new backup_feedback_activity_structure_step('feedback structure', 'feedback.xml'));
+        // peerassess only has one structure step
+        $this->add_step(new backup_peerassess_activity_structure_step('peerassess structure', 'peerassess.xml'));
     }
 
     /**
@@ -59,21 +59,21 @@ class backup_feedback_activity_task extends backup_activity_task {
 
         $base = preg_quote($CFG->wwwroot, "/");
 
-        // Link to the list of feedbacks
-        $search="/(".$base."\/mod\/feedback\/index.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@FEEDBACKINDEX*$2@$', $content);
+        // Link to the list of peerassesss
+        $search="/(".$base."\/mod\/peerassess\/index.php\?id\=)([0-9]+)/";
+        $content= preg_replace($search, '$@peerassessINDEX*$2@$', $content);
 
-        // Link to feedback view by moduleid
-        $search="/(".$base."\/mod\/feedback\/view.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@FEEDBACKVIEWBYID*$2@$', $content);
+        // Link to peerassess view by moduleid
+        $search="/(".$base."\/mod\/peerassess\/view.php\?id\=)([0-9]+)/";
+        $content= preg_replace($search, '$@peerassessVIEWBYID*$2@$', $content);
 
-        // Link to feedback analyis by moduleid
-        $search="/(".$base."\/mod\/feedback\/analysis.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@FEEDBACKANALYSISBYID*$2@$', $content);
+        // Link to peerassess analyis by moduleid
+        $search="/(".$base."\/mod\/peerassess\/analysis.php\?id\=)([0-9]+)/";
+        $content= preg_replace($search, '$@peerassessANALYSISBYID*$2@$', $content);
 
-        // Link to feedback entries by moduleid
-        $search="/(".$base."\/mod\/feedback\/show_entries.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@FEEDBACKSHOWENTRIESBYID*$2@$', $content);
+        // Link to peerassess entries by moduleid
+        $search="/(".$base."\/mod\/peerassess\/show_entries.php\?id\=)([0-9]+)/";
+        $content= preg_replace($search, '$@peerassessSHOWENTRIESBYID*$2@$', $content);
 
         return $content;
     }

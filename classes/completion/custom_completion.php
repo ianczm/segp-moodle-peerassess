@@ -16,17 +16,17 @@
 
 declare(strict_types=1);
 
-namespace mod_feedback\completion;
+namespace mod_peerassess\completion;
 
 use core_completion\activity_custom_completion;
 
 /**
- * Activity custom completion subclass for the feedback activity.
+ * Activity custom completion subclass for the peerassess activity.
  *
- * Class for defining mod_feedback's custom completion rules and fetching the completion statuses
- * of the custom completion rules for a given feedback instance and a user.
+ * Class for defining mod_peerassess's custom completion rules and fetching the completion statuses
+ * of the custom completion rules for a given peerassess instance and a user.
  *
- * @package mod_feedback
+ * @package mod_peerassess
  * @copyright Simey Lameze <simey@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -43,8 +43,8 @@ class custom_completion extends activity_custom_completion {
 
         $this->validate_rule($rule);
 
-        // Feedback only supports completionsubmit as a custom rule.
-        $status = $DB->record_exists('feedback_completed', ['feedback' => $this->cm->instance, 'userid' => $this->userid]);
+        // peerassess only supports completionsubmit as a custom rule.
+        $status = $DB->record_exists('peerassess_completed', ['peerassess' => $this->cm->instance, 'userid' => $this->userid]);
         return $status ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE;
     }
 
@@ -64,7 +64,7 @@ class custom_completion extends activity_custom_completion {
      */
     public function get_custom_rule_descriptions(): array {
         return [
-            'completionsubmit' => get_string('completiondetail:submit', 'feedback')
+            'completionsubmit' => get_string('completiondetail:submit', 'peerassess')
         ];
     }
 

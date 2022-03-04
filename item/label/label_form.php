@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_form_class.php');
+require_once($CFG->dirroot.'/mod/peerassess/item/peerassess_item_form_class.php');
 
-class feedback_label_form extends feedback_item_form {
+class peerassess_label_form extends peerassess_item_form {
     protected $type = "label";
     private $area;
 
@@ -38,8 +38,8 @@ class feedback_label_form extends feedback_item_form {
         $mform->addElement('hidden', 'label', '');
         $mform->setType('label', PARAM_ALPHA);
 
-        $mform->addElement('header', 'general', get_string($this->type, 'feedback'));
-        $mform->addElement('editor', 'presentation_editor', get_string('labelcontents', 'feedback'), null, $presentationoptions);
+        $mform->addElement('header', 'general', get_string($this->type, 'peerassess'));
+        $mform->addElement('editor', 'presentation_editor', get_string('labelcontents', 'peerassess'), null, $presentationoptions);
         $mform->setType('presentation_editor', PARAM_RAW);
 
         parent::definition();

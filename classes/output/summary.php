@@ -15,33 +15,33 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains class mod_feedback\output\summary
+ * Contains class mod_peerassess\output\summary
  *
- * @package   mod_feedback
+ * @package   mod_peerassess
  * @copyright 2016 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_feedback\output;
+namespace mod_peerassess\output;
 
 use renderable;
 use templatable;
 use renderer_base;
 use stdClass;
 use moodle_url;
-use mod_feedback_structure;
+use mod_peerassess_structure;
 
 /**
- * Class to help display feedback summary
+ * Class to help display peerassess summary
  *
- * @package   mod_feedback
+ * @package   mod_peerassess
  * @copyright 2016 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class summary implements renderable, templatable {
 
-    /** @var mod_feedback_structure */
-    protected $feedbackstructure;
+    /** @var mod_peerassess_structure */
+    protected $peerassessstructure;
 
     /** @var int */
     protected $mygroupid;
@@ -50,15 +50,15 @@ class summary implements renderable, templatable {
      * Constructor.
      *
      * @todo MDL-71494 Final deprecation of the $extradetails parameter in Moodle 4.3
-     * @param mod_feedback_structure $feedbackstructure
+     * @param mod_peerassess_structure $peerassessstructure
      * @param int $mygroupid currently selected group
      * @param bool|null $extradetails Deprecated
      */
-    public function __construct($feedbackstructure, $mygroupid = false, $extradetails = null) {
+    public function __construct($peerassessstructure, $mygroupid = false, $extradetails = null) {
         if (isset($extradetails)) {
             debugging('The $extradetails parameter is deprecated.', DEBUG_DEVELOPER);
         }
-        $this->feedbackstructure = $feedbackstructure;
+        $this->peerassessstructure = $peerassessstructure;
         $this->mygroupid = $mygroupid;
     }
 
@@ -70,8 +70,8 @@ class summary implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output) {
         $r = new stdClass();
-        $r->completedcount = $this->feedbackstructure->count_completed_responses($this->mygroupid);
-        $r->itemscount = count($this->feedbackstructure->get_items(true));
+        $r->completedcount = $this->peerassessstructure->count_completed_responses($this->mygroupid);
+        $r->itemscount = count($this->peerassessstructure->get_items(true));
 
         return $r;
     }

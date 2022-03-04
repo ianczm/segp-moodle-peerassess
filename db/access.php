@@ -17,7 +17,7 @@
 /**
  * Plugin capabilities
  *
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @copyright  Andreas Grabs
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
 
-    'mod/feedback:addinstance' => array(
+    'mod/peerassess:addinstance' => array(
         'riskbitmask' => RISK_XSS,
 
         'captype' => 'write',
@@ -38,7 +38,7 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
     ),
 
-    'mod/feedback:view' => array(
+    'mod/peerassess:view' => array(
 
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
@@ -52,7 +52,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/feedback:complete' => array(
+    'mod/peerassess:complete' => array(
 
         'riskbitmask' => RISK_SPAM,
 
@@ -64,7 +64,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/feedback:viewanalysepage' => array(
+    'mod/peerassess:viewanalysepage' => array(
 
         'riskbitmask' => RISK_PERSONAL,
 
@@ -77,7 +77,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/feedback:deletesubmissions' => array(
+    'mod/peerassess:deletesubmissions' => array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
@@ -87,7 +87,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/feedback:mapcourse' => array(
+    'mod/peerassess:mapcourse' => array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
@@ -96,7 +96,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/feedback:edititems' => array(
+    'mod/peerassess:edititems' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_XSS,
 
@@ -108,7 +108,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/feedback:createprivatetemplate' => array(
+    'mod/peerassess:createprivatetemplate' => array(
 
         'riskbitmask' => RISK_SPAM,
 
@@ -120,7 +120,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/feedback:createpublictemplate' => array(
+    'mod/peerassess:createpublictemplate' => array(
 
         'riskbitmask' => RISK_SPAM,
 
@@ -132,7 +132,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/feedback:deletetemplate' => array(
+    'mod/peerassess:deletetemplate' => array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
@@ -142,7 +142,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/feedback:viewreports' => array(
+    'mod/peerassess:viewreports' => array(
 
         'riskbitmask' => RISK_PERSONAL,
 
@@ -155,7 +155,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/feedback:receivemail' => array(
+    'mod/peerassess:receivemail' => array(
 
         'riskbitmask' => RISK_PERSONAL,
 

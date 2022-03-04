@@ -19,7 +19,7 @@
  *
  * @author Andreas Grabs
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod_feedback
+ * @package mod_peerassess
  */
 
 require_once("../../config.php");
@@ -35,9 +35,9 @@ $message = optional_param_array('message', '', PARAM_CLEANHTML);
 $format = optional_param('format', FORMAT_MOODLE, PARAM_INT);
 $messageuser = optional_param_array('messageuser', false, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
-$perpage = optional_param('perpage', FEEDBACK_DEFAULT_PAGE_COUNT, PARAM_INT);  // how many per page
+$perpage = optional_param('perpage', peerassess_DEFAULT_PAGE_COUNT, PARAM_INT);  // how many per page
 $showall = optional_param('showall', false, PARAM_INT);  // should we show all users
-// $SESSION->feedback->current_tab = $do_show;
+// $SESSION->peerassess->current_tab = $do_show;
 $current_tab = 'nonrespondents';
 
 ////////////////////////////////////////////////////////
@@ -48,18 +48,18 @@ if ($message) {
     $message = $message['text'];
 }
 
-list ($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
-if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
+list ($course, $cm) = get_course_and_cm_from_cmid($id, 'peerassess');
+if (! $peerassess = $DB->get_record("peerassess", array("id"=>$cm->instance))) {
     print_error('invalidcoursemodule');
 }
 
-//this page only can be shown on nonanonymous feedbacks in courses
+//this page only can be shown on nonanonymous peerassesss in courses
 //we should never reach this page
-if ($feedback->anonymous != FEEDBACK_ANONYMOUS_NO OR $feedback->course == SITEID) {
+if ($peerassess->anonymous != peerassess_ANONYMOUS_NO OR $peerassess->course == SITEID) {
     print_error('error');
 }
 
-$url = new moodle_url('/mod/feedback/show_nonrespondents.php', array('id'=>$cm->id));
+$url = new moodle_url('/mod/peerassess/show_nonrespondents.php', array('id'=>$cm->id));
 
 $PAGE->set_url($url);
 
@@ -74,25 +74,25 @@ if (($formdata = data_submitted()) AND !confirm_sesskey()) {
     print_error('invalidsesskey');
 }
 
-require_capability('mod/feedback:viewreports', $context);
+require_capability('mod/peerassess:viewreports', $context);
 
 $canbulkmessaging = has_capability('moodle/course:bulkmessaging', $coursecontext);
 if ($action == 'sendmessage' AND $canbulkmessaging) {
     $shortname = format_string($course->shortname,
                             true,
                             array('context' => $coursecontext));
-    $strfeedbacks = get_string("modulenameplural", "feedback");
+    $strpeerassesss = get_string("modulenameplural", "peerassess");
 
     $htmlmessage = "<body id=\"email\">";
 
     $link1 = $CFG->wwwroot.'/course/view.php?id='.$course->id;
-    $link2 = $CFG->wwwroot.'/mod/feedback/index.php?id='.$course->id;
-    $link3 = $CFG->wwwroot.'/mod/feedback/view.php?id='.$cm->id;
+    $link2 = $CFG->wwwroot.'/mod/peerassess/index.php?id='.$course->id;
+    $link3 = $CFG->wwwroot.'/mod/peerassess/view.php?id='.$cm->id;
 
     $htmlmessage .= '<div class="navbar">'.
     '<a target="_blank" href="'.$link1.'">'.$shortname.'</a> &raquo; '.
-    '<a target="_blank" href="'.$link2.'">'.$strfeedbacks.'</a> &raquo; '.
-    '<a target="_blank" href="'.$link3.'">'.format_string($feedback->name, true).'</a>'.
+    '<a target="_blank" href="'.$link2.'">'.$strpeerassesss.'</a> &raquo; '.
+    '<a target="_blank" href="'.$link3.'">'.format_string($peerassess->name, true).'</a>'.
     '</div>';
 
     $htmlmessage .= $message;
@@ -105,7 +105,7 @@ if ($action == 'sendmessage' AND $canbulkmessaging) {
             $eventdata = new \core\message\message();
             $eventdata->courseid         = $course->id;
             $eventdata->name             = 'message';
-            $eventdata->component        = 'mod_feedback';
+            $eventdata->component        = 'mod_peerassess';
             $eventdata->userfrom         = $USER;
             $eventdata->userto           = $senduser;
             $eventdata->subject          = $subject;
@@ -115,7 +115,7 @@ if ($action == 'sendmessage' AND $canbulkmessaging) {
             $eventdata->smallmessage     = '';
             $eventdata->courseid         = $course->id;
             $eventdata->contexturl       = $link3;
-            $eventdata->contexturlname   = $feedback->name;
+            $eventdata->contexturlname   = $peerassess->name;
             $good = $good && message_send($eventdata);
         }
         if (!empty($good)) {
@@ -134,9 +134,9 @@ if ($action == 'sendmessage' AND $canbulkmessaging) {
 
 /// Print the page header
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title($feedback->name);
+$PAGE->set_title($peerassess->name);
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($feedback->name));
+echo $OUTPUT->heading(format_string($peerassess->name));
 
 require('tabs.php');
 
@@ -159,7 +159,7 @@ $groupselect = groups_print_activity_menu($cm, $url->out(), true);
 $mygroupid = groups_get_activity_group($cm);
 
 // preparing the table for output
-$baseurl = new moodle_url('/mod/feedback/show_nonrespondents.php');
+$baseurl = new moodle_url('/mod/peerassess/show_nonrespondents.php');
 $baseurl->params(array('id'=>$id, 'showall'=>$showall));
 
 $tablecolumns = array('userpic', 'fullname', 'status');
@@ -170,7 +170,7 @@ if ($canbulkmessaging) {
 
     // Build the select/deselect all control.
     $selectallid = 'selectall-non-respondents';
-    $mastercheckbox = new \core\output\checkbox_toggleall('feedback-non-respondents', true, [
+    $mastercheckbox = new \core\output\checkbox_toggleall('peerassess-non-respondents', true, [
         'id' => $selectallid,
         'name' => $selectallid,
         'value' => 1,
@@ -183,7 +183,7 @@ if ($canbulkmessaging) {
     $tableheaders[] = $OUTPUT->render($mastercheckbox);
 }
 
-$table = new flexible_table('feedback-shownonrespondents-'.$course->id);
+$table = new flexible_table('peerassess-shownonrespondents-'.$course->id);
 
 $table->define_columns($tablecolumns);
 $table->define_headers($tableheaders);
@@ -222,7 +222,7 @@ if ($groupmode > 0) {
     $usedgroupid = false;
 }
 
-$matchcount = feedback_count_incomplete_users($cm, $usedgroupid);
+$matchcount = peerassess_count_incomplete_users($cm, $usedgroupid);
 $table->initialbars(false);
 
 if ($showall) {
@@ -234,11 +234,11 @@ if ($showall) {
     $pagecount = $table->get_page_size();
 }
 
-// Return students record including if they started or not the feedback.
-$students = feedback_get_incomplete_users($cm, $usedgroupid, $sort, $startpage, $pagecount, true);
+// Return students record including if they started or not the peerassess.
+$students = peerassess_get_incomplete_users($cm, $usedgroupid, $sort, $startpage, $pagecount, true);
 //####### viewreports-start
 //print the list of students
-echo $OUTPUT->heading(get_string('non_respondents_students', 'feedback', $matchcount), 4);
+echo $OUTPUT->heading(get_string('non_respondents_students', 'peerassess', $matchcount), 4);
 echo isset($groupselect) ? $groupselect : '';
 echo '<div class="clearer"></div>';
 
@@ -247,7 +247,7 @@ if (empty($students)) {
 } else {
 
     if ($canbulkmessaging) {
-        echo '<form class="mform" action="show_nonrespondents.php" method="post" id="feedback_sendmessageform">';
+        echo '<form class="mform" action="show_nonrespondents.php" method="post" id="peerassess_sendmessageform">';
     }
 
     foreach ($students as $student) {
@@ -256,20 +256,20 @@ if (empty($students)) {
         $profilelink = '<strong><a href="'.$profileurl.'">'.fullname($student).'</a></strong>';
         $data = array($OUTPUT->user_picture($student, array('courseid' => $course->id)), $profilelink);
 
-        if ($student->feedbackstarted) {
-            $data[] = get_string('started', 'feedback');
+        if ($student->peerassessstarted) {
+            $data[] = get_string('started', 'peerassess');
         } else {
-            $data[] = get_string('not_started', 'feedback');
+            $data[] = get_string('not_started', 'peerassess');
         }
 
         //selections to bulk messaging
         if ($canbulkmessaging) {
-            $checkbox = new \core\output\checkbox_toggleall('feedback-non-respondents', false, [
+            $checkbox = new \core\output\checkbox_toggleall('peerassess-non-respondents', false, [
                 'id' => 'messageuser-' . $student->id,
                 'name' => 'messageuser[]',
                 'classes' => 'mr-1',
                 'value' => $student->id,
-                'label' => get_string('includeuserinrecipientslist', 'mod_feedback', fullname($student)),
+                'label' => get_string('includeuserinrecipientslist', 'mod_peerassess', fullname($student)),
                 'labelclasses' => 'accesshide',
             ]);
             $data[] = $OUTPUT->render($checkbox);
@@ -282,7 +282,7 @@ if (empty($students)) {
 
     if ($showall) {
         $allurl->param('showall', 0);
-        echo $OUTPUT->container(html_writer::link($allurl, get_string('showperpage', '', FEEDBACK_DEFAULT_PAGE_COUNT)),
+        echo $OUTPUT->container(html_writer::link($allurl, get_string('showperpage', '', peerassess_DEFAULT_PAGE_COUNT)),
                                     array(), 'showall');
 
     } else if ($matchcount > 0 && $perpage < $matchcount) {
@@ -291,16 +291,16 @@ if (empty($students)) {
     }
     if ($canbulkmessaging) {
         echo '<fieldset class="clearfix">';
-        echo '<legend class="ftoggler">'.get_string('send_message', 'feedback').'</legend>';
+        echo '<legend class="ftoggler">'.get_string('send_message', 'peerassess').'</legend>';
         echo '<div>';
-        echo '<label for="feedback_subject">'.get_string('subject', 'feedback').'&nbsp;</label>';
-        echo '<input type="text" id="feedback_subject" size="50" maxlength="255" name="subject" value="'.s($subject).'" />';
+        echo '<label for="peerassess_subject">'.get_string('subject', 'peerassess').'&nbsp;</label>';
+        echo '<input type="text" id="peerassess_subject" size="50" maxlength="255" name="subject" value="'.s($subject).'" />';
         echo '</div>';
         echo $OUTPUT->print_textarea('message', 'edit-message', $message, 15, 25);
         print_string('formathtml');
         echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
         echo '<br /><div class="buttons">';
-        echo '<input type="submit" name="send_message" value="'.get_string('send', 'feedback').'" class="btn btn-secondary" />';
+        echo '<input type="submit" name="send_message" value="'.get_string('send', 'peerassess').'" class="btn btn-secondary" />';
         echo '</div>';
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<input type="hidden" name="action" value="sendmessage" />';

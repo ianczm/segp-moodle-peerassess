@@ -1,17 +1,17 @@
-/* styles using by feedback */
-.path-mod-feedback span.feedback_info {
+/* styles using by peerassess */
+.path-mod-peerassess span.peerassess_info {
     font-weight: bold;
 }
 
-.path-mod-feedback div.feedback_is_dependent {
+.path-mod-peerassess div.peerassess_is_dependent {
     background: #ddd;
 }
 
-.path-mod-feedback span.feedback_depend {
+.path-mod-peerassess span.peerassess_depend {
     color: #f00;
 }
 
-.path-mod-feedback hr.feedback_pagebreak {
+.path-mod-peerassess hr.peerassess_pagebreak {
     height: 4px;
     color: #aaa;
     background-color: #aaa;
@@ -19,81 +19,81 @@
     margin: 0;
 }
 
-.path-mod-feedback .drag_target_active {
+.path-mod-peerassess .drag_target_active {
     opacity: .25;
 }
 
-.path-mod-feedback .drag_item_active {
+.path-mod-peerassess .drag_item_active {
     opacity: .5;
 }
 
-.path-mod-feedback .feedback_bar_image {
+.path-mod-peerassess .peerassess_bar_image {
     height: 10px;
 }
 
-.path-mod-feedback #analysis-form label {
+.path-mod-peerassess #analysis-form label {
     display: inline;
 }
 
-.path-mod-feedback .templateslist td.cell.action,
-.path-mod-feedback .templateslist th.header.action {
+.path-mod-peerassess .templateslist td.cell.action,
+.path-mod-peerassess .templateslist th.header.action {
     width: 10%;
 }
 
 /* Analysis page */
-.path-mod-feedback table.analysis {
+.path-mod-peerassess table.analysis {
     width: 100%;
     border-top: 1px solid #aaa;
     margin-top: 10px;
 }
 
-.path-mod-feedback table.analysis tr:first-child th {
+.path-mod-peerassess table.analysis tr:first-child th {
     padding-top: 10px;
 }
 
-.path-mod-feedback table.analysis tr:hover {
+.path-mod-peerassess table.analysis tr:hover {
     background: #f5f5f5;
 }
 
-.path-mod-feedback table.analysis td.singlevalue:before,
-.path-mod-feedback table.analysis td.optionname:before {
+.path-mod-peerassess table.analysis td.singlevalue:before,
+.path-mod-peerassess table.analysis td.optionname:before {
     content: '- ';
 }
 
-.path-mod-feedback table.analysis.itemtype_textarea td {
+.path-mod-peerassess table.analysis.itemtype_textarea td {
     padding: 4px 0;
 }
 
-.path-mod-feedback table.analysis tr.isempty {
+.path-mod-peerassess table.analysis tr.isempty {
     display: none;
 }
 
 /* Responses list */
-.path-mod-feedback #showentrytable td.cell.completed_timemodified,
-.path-mod-feedback #showentryanontable td.cell.random_response {
+.path-mod-peerassess #showentrytable td.cell.completed_timemodified,
+.path-mod-peerassess #showentryanontable td.cell.random_response {
     font-weight: bold;
 }
 
-.path-mod-feedback #showentrytable td.cell.userpic,
-.path-mod-feedback #showentrytable td.cell.deleteentry,
-.path-mod-feedback #showentryanontable td.cell.deleteentry {
+.path-mod-peerassess #showentrytable td.cell.userpic,
+.path-mod-peerassess #showentrytable td.cell.deleteentry,
+.path-mod-peerassess #showentryanontable td.cell.deleteentry {
     width: 10px;
 }
 
 /* Responses navigation */
-.path-mod-feedback .response_navigation {
+.path-mod-peerassess .response_navigation {
     margin: .5em 0;
 }
 
-.path-mod-feedback .response_navigation a {
+.path-mod-peerassess .response_navigation a {
     display: block;
 }
 
-.path-mod-feedback .response_navigation a.back_to_list {
+.path-mod-peerassess .response_navigation a.back_to_list {
     text-align: center;
 }
 
-.path-mod-feedback .response_navigation .prev_response:before {
+.path-mod-peerassess .response_navigation .prev_response:before {
     /*rtl:raw:
     content: ' ► ';
     */
@@ -101,7 +101,7 @@
     content: ' ◄ ';
 }
 
-.path-mod-feedback .response_navigation .next_response:after {
+.path-mod-peerassess .response_navigation .next_response:after {
     /*rtl:raw:
     content: ' ◄ ';
     */
@@ -109,10 +109,10 @@
     content: ' ► ';
 }
 
-.path-mod-feedback .response_navigation .next_response {
+.path-mod-peerassess .response_navigation .next_response {
     text-align: right;
 }
 
-.path-mod-feedback .response_navigation .prev_response {
+.path-mod-peerassess .response_navigation .prev_response {
     text-align: left;
 }

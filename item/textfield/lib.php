@@ -15,18 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 defined('MOODLE_INTERNAL') OR die('not allowed');
-require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
+require_once($CFG->dirroot.'/mod/peerassess/item/peerassess_item_class.php');
 
-class feedback_item_textfield extends feedback_item_base {
+class peerassess_item_textfield extends peerassess_item_base {
     protected $type = "textfield";
 
-    public function build_editform($item, $feedback, $cm) {
+    public function build_editform($item, $peerassess, $cm) {
         global $DB, $CFG;
         require_once('textfield_form.php');
 
-        //get the lastposition number of the feedback_items
+        //get the lastposition number of the peerassess_items
         $position = $item->position;
-        $lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
+        $lastposition = $DB->count_records('peerassess_item', array('peerassess'=>$peerassess->id));
         if ($position == -1) {
             $i_formselect_last = $lastposition + 1;
             $i_formselect_value = $lastposition + 1;
@@ -54,12 +54,12 @@ class feedback_item_textfield extends feedback_item_base {
         $item->itemmaxlength = $itemlength;
 
         //all items for dependitem
-        $feedbackitems = feedback_get_depend_candidates_for_item($feedback, $item);
+        $peerassessitems = peerassess_get_depend_candidates_for_item($peerassess, $item);
         $commonparams = array('cmid' => $cm->id,
                              'id' => isset($item->id) ? $item->id : null,
                              'typ' => $item->typ,
-                             'items' => $feedbackitems,
-                             'feedback' => $feedback->id);
+                             'items' => $peerassessitems,
+                             'peerassess' => $peerassess->id);
 
         //build the form
         $customdata = array('item' => $item,
@@ -67,7 +67,7 @@ class feedback_item_textfield extends feedback_item_base {
                             'positionlist' => $positionlist,
                             'position' => $position);
 
-        $this->item_form = new feedback_textfield_form('edit_item.php', $customdata);
+        $this->item_form = new peerassess_textfield_form('edit_item.php', $customdata);
     }
 
     public function save_item() {
@@ -85,19 +85,19 @@ class feedback_item_textfield extends feedback_item_base {
 
         $item->hasvalue = $this->get_hasvalue();
         if (!$item->id) {
-            $item->id = $DB->insert_record('feedback_item', $item);
+            $item->id = $DB->insert_record('peerassess_item', $item);
         } else {
-            $DB->update_record('feedback_item', $item);
+            $DB->update_record('peerassess_item', $item);
         }
 
-        return $DB->get_record('feedback_item', array('id'=>$item->id));
+        return $DB->get_record('peerassess_item', array('id'=>$item->id));
     }
 
 
     /**
      * Helper function for collected data for exporting to excel
      *
-     * @param stdClass $item the db-object from feedback_item
+     * @param stdClass $item the db-object from peerassess_item
      * @param int $groupid
      * @param int $courseid
      * @return stdClass
@@ -108,7 +108,7 @@ class feedback_item_textfield extends feedback_item_base {
         $analysed_val->data = null;
         $analysed_val->name = $item->name;
 
-        $values = feedback_get_group_values($item, $groupid, $courseid);
+        $values = peerassess_get_group_values($item, $groupid, $courseid);
         if ($values) {
             $data = array();
             foreach ($values as $value) {
@@ -128,7 +128,7 @@ class feedback_item_textfield extends feedback_item_base {
     }
 
     public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
-        $values = feedback_get_group_values($item, $groupid, $courseid);
+        $values = peerassess_get_group_values($item, $groupid, $courseid);
         if ($values) {
             echo "<table class=\"analysis itemtype_{$item->typ}\">";
             echo '<tr><th colspan="2" align="left">';
@@ -174,7 +174,7 @@ class feedback_item_textfield extends feedback_item_base {
      * Adds an input element to the complete form
      *
      * @param stdClass $item
-     * @param mod_feedback_complete_form $form
+     * @param mod_peerassess_complete_form $form
      */
     public function complete_form_element($item, $form) {
         $name = $this->get_display_name($item);
@@ -189,7 +189,7 @@ class feedback_item_textfield extends feedback_item_base {
 
     /**
      * Converts the value from complete_form data to the string value that is stored in the db.
-     * @param mixed $value element from mod_feedback_complete_form::get_data() with the name $item->typ.'_'.$item->id
+     * @param mixed $value element from mod_peerassess_complete_form::get_data() with the name $item->typ.'_'.$item->id
      * @return string
      */
     public function create_value($value) {
