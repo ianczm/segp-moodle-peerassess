@@ -17,30 +17,30 @@
 /**
  * Feedback module external functions tests
  *
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @category   external
  * @copyright  2017 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.3
  */
 
-namespace mod_feedback\external;
+namespace mod_peerassess\external;
 
 use externallib_advanced_testcase;
-use feedback_item_multichoice;
-use mod_feedback_external;
+use peerassess_item_multichoice;
+use mod_peerassess_external;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
-require_once($CFG->dirroot . '/mod/feedback/lib.php');
+require_once($CFG->dirroot . '/mod/peerassess/lib.php');
 
 /**
  * Feedback module external functions tests
  *
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @category   external
  * @copyright  2017 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -58,10 +58,10 @@ class external_test extends externallib_advanced_testcase {
 
         // Setup test data.
         $this->course = $this->getDataGenerator()->create_course();
-        $this->feedback = $this->getDataGenerator()->create_module('feedback',
+        $this->peerassess = $this->getDataGenerator()->create_module('peerassess',
             array('course' => $this->course->id, 'email_notification' => 1));
-        $this->context = \context_module::instance($this->feedback->cmid);
-        $this->cm = get_coursemodule_from_instance('feedback', $this->feedback->id);
+        $this->context = \context_module::instance($this->peerassess->cmid);
+        $this->cm = get_coursemodule_from_instance('peerassess', $this->peerassess->id);
 
         // Create users.
         $this->student = self::getDataGenerator()->create_user();
@@ -75,47 +75,47 @@ class external_test extends externallib_advanced_testcase {
     }
 
     /**
-     * Helper method to add items to an existing feedback.
+     * Helper method to add items to an existing peerassess.
      *
-     * @param \stdClass $feedback feedback instance
-     * @param integer $pagescount the number of pages we want in the feedback
+     * @param \stdClass $peerassess peerassess instance
+     * @param integer $pagescount the number of pages we want in the peerassess
      * @return array list of items created
      */
-    public function populate_feedback($feedback, $pagescount = 1) {
-        $feedbackgenerator = $this->getDataGenerator()->get_plugin_generator('mod_feedback');
+    public function populate_peerassess($peerassess, $pagescount = 1) {
+        $peerassessgenerator = $this->getDataGenerator()->get_plugin_generator('mod_peerassess');
         $itemscreated = [];
 
         // Create at least one page.
-        $itemscreated[] = $feedbackgenerator->create_item_label($feedback);
-        $itemscreated[] = $feedbackgenerator->create_item_info($feedback);
-        $itemscreated[] = $feedbackgenerator->create_item_numeric($feedback);
+        $itemscreated[] = $peerassessgenerator->create_item_label($peerassess);
+        $itemscreated[] = $peerassessgenerator->create_item_info($peerassess);
+        $itemscreated[] = $peerassessgenerator->create_item_numeric($peerassess);
 
         // Check if we want more pages.
         for ($i = 1; $i < $pagescount; $i++) {
-            $itemscreated[] = $feedbackgenerator->create_item_pagebreak($feedback);
-            $itemscreated[] = $feedbackgenerator->create_item_multichoice($feedback);
-            $itemscreated[] = $feedbackgenerator->create_item_multichoicerated($feedback);
-            $itemscreated[] = $feedbackgenerator->create_item_textarea($feedback);
-            $itemscreated[] = $feedbackgenerator->create_item_textfield($feedback);
-            $itemscreated[] = $feedbackgenerator->create_item_numeric($feedback);
+            $itemscreated[] = $peerassessgenerator->create_item_pagebreak($peerassess);
+            $itemscreated[] = $peerassessgenerator->create_item_multichoice($peerassess);
+            $itemscreated[] = $peerassessgenerator->create_item_multichoicerated($peerassess);
+            $itemscreated[] = $peerassessgenerator->create_item_textarea($peerassess);
+            $itemscreated[] = $peerassessgenerator->create_item_textfield($peerassess);
+            $itemscreated[] = $peerassessgenerator->create_item_numeric($peerassess);
         }
         return $itemscreated;
     }
 
 
     /**
-     * Test test_mod_feedback_get_feedbacks_by_courses
+     * Test test_mod_peerassess_get_peerassesss_by_courses
      */
-    public function test_mod_feedback_get_feedbacks_by_courses() {
+    public function test_mod_peerassess_get_peerassesss_by_courses() {
         global $DB;
 
         // Create additional course.
         $course2 = self::getDataGenerator()->create_course();
 
-        // Second feedback.
+        // Second peerassess.
         $record = new \stdClass();
         $record->course = $course2->id;
-        $feedback2 = self::getDataGenerator()->create_module('feedback', $record);
+        $peerassess2 = self::getDataGenerator()->create_module('peerassess', $record);
 
         // Execute real Moodle enrolment as we'll call unenrol() method on the instance later.
         $enrol = enrol_get_plugin('manual');
@@ -130,60 +130,60 @@ class external_test extends externallib_advanced_testcase {
 
         self::setUser($this->student);
 
-        $returndescription = mod_feedback_external::get_feedbacks_by_courses_returns();
+        $returndescription = mod_peerassess_external::get_peerassesss_by_courses_returns();
 
         // Create what we expect to be returned when querying the two courses.
         // First for the student user.
         $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'anonymous',
             'multiple_submit', 'autonumbering', 'page_after_submitformat', 'publish_stats', 'completionsubmit');
 
-        $properties = feedback_summary_exporter::read_properties_definition();
+        $properties = peerassess_summary_exporter::read_properties_definition();
 
         // Add expected coursemodule and data.
-        $feedback1 = $this->feedback;
-        $feedback1->coursemodule = $feedback1->cmid;
-        $feedback1->introformat = 1;
-        $feedback1->introfiles = [];
+        $peerassess1 = $this->peerassess;
+        $peerassess1->coursemodule = $peerassess1->cmid;
+        $peerassess1->introformat = 1;
+        $peerassess1->introfiles = [];
 
-        $feedback2->coursemodule = $feedback2->cmid;
-        $feedback2->introformat = 1;
-        $feedback2->introfiles = [];
+        $peerassess2->coursemodule = $peerassess2->cmid;
+        $peerassess2->introformat = 1;
+        $peerassess2->introfiles = [];
 
         foreach ($expectedfields as $field) {
             if (!empty($properties[$field]) && $properties[$field]['type'] == PARAM_BOOL) {
-                $feedback1->{$field} = (bool) $feedback1->{$field};
-                $feedback2->{$field} = (bool) $feedback2->{$field};
+                $peerassess1->{$field} = (bool) $peerassess1->{$field};
+                $peerassess2->{$field} = (bool) $peerassess2->{$field};
             }
-            $expected1[$field] = $feedback1->{$field};
-            $expected2[$field] = $feedback2->{$field};
+            $expected1[$field] = $peerassess1->{$field};
+            $expected2[$field] = $peerassess2->{$field};
         }
 
-        $expectedfeedbacks = array($expected2, $expected1);
+        $expectedpeerassesss = array($expected2, $expected1);
 
         // Call the external function passing course ids.
-        $result = mod_feedback_external::get_feedbacks_by_courses(array($course2->id, $this->course->id));
+        $result = mod_peerassess_external::get_peerassesss_by_courses(array($course2->id, $this->course->id));
         $result = \external_api::clean_returnvalue($returndescription, $result);
 
-        $this->assertEquals($expectedfeedbacks, $result['feedbacks']);
+        $this->assertEquals($expectedpeerassesss, $result['peerassesss']);
         $this->assertCount(0, $result['warnings']);
 
         // Call the external function without passing course id.
-        $result = mod_feedback_external::get_feedbacks_by_courses();
+        $result = mod_peerassess_external::get_peerassesss_by_courses();
         $result = \external_api::clean_returnvalue($returndescription, $result);
-        $this->assertEquals($expectedfeedbacks, $result['feedbacks']);
+        $this->assertEquals($expectedpeerassesss, $result['peerassesss']);
         $this->assertCount(0, $result['warnings']);
 
-        // Unenrol user from second course and alter expected feedbacks.
+        // Unenrol user from second course and alter expected peerassesss.
         $enrol->unenrol_user($instance2, $this->student->id);
-        array_shift($expectedfeedbacks);
+        array_shift($expectedpeerassesss);
 
         // Call the external function without passing course id.
-        $result = mod_feedback_external::get_feedbacks_by_courses();
+        $result = mod_peerassess_external::get_peerassesss_by_courses();
         $result = \external_api::clean_returnvalue($returndescription, $result);
-        $this->assertEquals($expectedfeedbacks, $result['feedbacks']);
+        $this->assertEquals($expectedpeerassesss, $result['peerassesss']);
 
         // Call for the second course we unenrolled the user from, expected warning.
-        $result = mod_feedback_external::get_feedbacks_by_courses(array($course2->id));
+        $result = mod_peerassess_external::get_peerassesss_by_courses(array($course2->id));
         $this->assertCount(1, $result['warnings']);
         $this->assertEquals('1', $result['warnings'][0]['warningcode']);
         $this->assertEquals($course2->id, $result['warnings'][0]['itemid']);
@@ -194,36 +194,36 @@ class external_test extends externallib_advanced_testcase {
         $additionalfields = array('email_notification', 'site_after_submit', 'page_after_submit', 'timeopen', 'timeclose',
             'timemodified', 'pageaftersubmitfiles');
 
-        $feedback1->pageaftersubmitfiles = [];
+        $peerassess1->pageaftersubmitfiles = [];
 
         foreach ($additionalfields as $field) {
             if (!empty($properties[$field]) && $properties[$field]['type'] == PARAM_BOOL) {
-                $feedback1->{$field} = (bool) $feedback1->{$field};
+                $peerassess1->{$field} = (bool) $peerassess1->{$field};
             }
-            $expectedfeedbacks[0][$field] = $feedback1->{$field};
+            $expectedpeerassesss[0][$field] = $peerassess1->{$field};
         }
-        $expectedfeedbacks[0]['page_after_submitformat'] = 1;
+        $expectedpeerassesss[0]['page_after_submitformat'] = 1;
 
-        $result = mod_feedback_external::get_feedbacks_by_courses();
+        $result = mod_peerassess_external::get_peerassesss_by_courses();
         $result = \external_api::clean_returnvalue($returndescription, $result);
-        $this->assertEquals($expectedfeedbacks, $result['feedbacks']);
+        $this->assertEquals($expectedpeerassesss, $result['peerassesss']);
 
         // Admin also should get all the information.
         self::setAdminUser();
 
-        $result = mod_feedback_external::get_feedbacks_by_courses(array($this->course->id));
+        $result = mod_peerassess_external::get_peerassesss_by_courses(array($this->course->id));
         $result = \external_api::clean_returnvalue($returndescription, $result);
-        $this->assertEquals($expectedfeedbacks, $result['feedbacks']);
+        $this->assertEquals($expectedpeerassesss, $result['peerassesss']);
     }
 
     /**
-     * Test get_feedback_access_information function with basic defaults for student.
+     * Test get_peerassess_access_information function with basic defaults for student.
      */
-    public function test_get_feedback_access_information_student() {
+    public function test_get_peerassess_access_information_student() {
 
         self::setUser($this->student);
-        $result = mod_feedback_external::get_feedback_access_information($this->feedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_feedback_access_information_returns(), $result);
+        $result = mod_peerassess_external::get_peerassess_access_information($this->peerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_peerassess_access_information_returns(), $result);
 
         $this->assertFalse($result['canviewanalysis']);
         $this->assertFalse($result['candeletesubmissions']);
@@ -238,13 +238,13 @@ class external_test extends externallib_advanced_testcase {
     }
 
     /**
-     * Test get_feedback_access_information function with basic defaults for teacher.
+     * Test get_peerassess_access_information function with basic defaults for teacher.
      */
-    public function test_get_feedback_access_information_teacher() {
+    public function test_get_peerassess_access_information_teacher() {
 
         self::setUser($this->teacher);
-        $result = mod_feedback_external::get_feedback_access_information($this->feedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_feedback_access_information_returns(), $result);
+        $result = mod_peerassess_external::get_peerassess_access_information($this->peerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_peerassess_access_information_returns(), $result);
 
         $this->assertTrue($result['canviewanalysis']);
         $this->assertTrue($result['canviewreports']);
@@ -257,58 +257,58 @@ class external_test extends externallib_advanced_testcase {
         $this->assertTrue($result['isanonymous']);
         $this->assertFalse($result['isalreadysubmitted']);
 
-        // Add some items to the feedback and check is not empty any more.
-        self::populate_feedback($this->feedback);
-        $result = mod_feedback_external::get_feedback_access_information($this->feedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_feedback_access_information_returns(), $result);
+        // Add some items to the peerassess and check is not empty any more.
+        self::populate_peerassess($this->peerassess);
+        $result = mod_peerassess_external::get_peerassess_access_information($this->peerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_peerassess_access_information_returns(), $result);
         $this->assertFalse($result['isempty']);
     }
 
     /**
-     * Test view_feedback invalid id.
+     * Test view_peerassess invalid id.
      */
-    public function test_view_feedback_invalid_id() {
+    public function test_view_peerassess_invalid_id() {
         // Test invalid instance id.
         $this->expectException('\moodle_exception');
-        mod_feedback_external::view_feedback(0);
+        mod_peerassess_external::view_peerassess(0);
     }
     /**
-     * Test view_feedback not enrolled user.
+     * Test view_peerassess not enrolled user.
      */
-    public function test_view_feedback_not_enrolled_user() {
+    public function test_view_peerassess_not_enrolled_user() {
         $usernotenrolled = self::getDataGenerator()->create_user();
         $this->setUser($usernotenrolled);
         $this->expectException('\moodle_exception');
-        mod_feedback_external::view_feedback(0);
+        mod_peerassess_external::view_peerassess(0);
     }
     /**
-     * Test view_feedback no capabilities.
+     * Test view_peerassess no capabilities.
      */
-    public function test_view_feedback_no_capabilities() {
+    public function test_view_peerassess_no_capabilities() {
         // Test user with no capabilities.
         // We need a explicit prohibit since this capability is allowed for students by default.
-        assign_capability('mod/feedback:view', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
+        assign_capability('mod/peerassess:view', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
         accesslib_clear_all_caches_for_unit_testing();
         $this->expectException('\moodle_exception');
-        mod_feedback_external::view_feedback(0);
+        mod_peerassess_external::view_peerassess(0);
     }
     /**
-     * Test view_feedback.
+     * Test view_peerassess.
      */
-    public function test_view_feedback() {
+    public function test_view_peerassess() {
         // Test user with full capabilities.
         $this->setUser($this->student);
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $result = mod_feedback_external::view_feedback($this->feedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::view_feedback_returns(), $result);
+        $result = mod_peerassess_external::view_peerassess($this->peerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::view_peerassess_returns(), $result);
         $events = $sink->get_events();
         $this->assertCount(1, $events);
         $event = array_shift($events);
         // Checking that the event contains the expected values.
-        $this->assertInstanceOf('\mod_feedback\event\course_module_viewed', $event);
+        $this->assertInstanceOf('\mod_peerassess\event\course_module_viewed', $event);
         $this->assertEquals($this->context, $event->get_context());
-        $moodledata = new \moodle_url('/mod/feedback/view.php', array('id' => $this->cm->id));
+        $moodledata = new \moodle_url('/mod/peerassess/view.php', array('id' => $this->cm->id));
         $this->assertEquals($moodledata, $event->get_url());
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
@@ -321,10 +321,10 @@ class external_test extends externallib_advanced_testcase {
         global $DB;
 
         // Force non anonymous.
-        $DB->set_field('feedback', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->feedback->id));
+        $DB->set_field('peerassess', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->peerassess->id));
         // Add a completed_tmp record.
         $record = [
-            'feedback' => $this->feedback->id,
+            'peerassess' => $this->peerassess->id,
             'userid' => $this->student->id,
             'guestid' => '',
             'timemodified' => time() - DAYSECS,
@@ -332,14 +332,14 @@ class external_test extends externallib_advanced_testcase {
             'anonymous_response' => FEEDBACK_ANONYMOUS_NO,
             'courseid' => $this->course->id,
         ];
-        $record['id'] = $DB->insert_record('feedback_completedtmp', (object) $record);
+        $record['id'] = $DB->insert_record('peerassess_completedtmp', (object) $record);
 
         // Test user with full capabilities.
         $this->setUser($this->student);
 
-        $result = mod_feedback_external::get_current_completed_tmp($this->feedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_current_completed_tmp_returns(), $result);
-        $this->assertEquals($record['id'], $result['feedback']['id']);
+        $result = mod_peerassess_external::get_current_completed_tmp($this->peerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_current_completed_tmp_returns(), $result);
+        $this->assertEquals($record['id'], $result['peerassess']['id']);
     }
 
     /**
@@ -349,11 +349,11 @@ class external_test extends externallib_advanced_testcase {
         // Test user with full capabilities.
         $this->setUser($this->student);
 
-        // Add questions to the feedback, we are adding 2 pages of questions.
-        $itemscreated = self::populate_feedback($this->feedback, 2);
+        // Add questions to the peerassess, we are adding 2 pages of questions.
+        $itemscreated = self::populate_peerassess($this->peerassess, 2);
 
-        $result = mod_feedback_external::get_items($this->feedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_items_returns(), $result);
+        $result = mod_peerassess_external::get_items($this->peerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_items_returns(), $result);
         $this->assertCount(count($itemscreated), $result['items']);
         $index = 1;
         foreach ($result['items'] as $key => $item) {
@@ -374,28 +374,28 @@ class external_test extends externallib_advanced_testcase {
     }
 
     /**
-     * Test launch_feedback.
+     * Test launch_peerassess.
      */
-    public function test_launch_feedback() {
+    public function test_launch_peerassess() {
         global $DB;
 
         // Test user with full capabilities.
         $this->setUser($this->student);
 
-        // Add questions to the feedback, we are adding 2 pages of questions.
-        $itemscreated = self::populate_feedback($this->feedback, 2);
+        // Add questions to the peerassess, we are adding 2 pages of questions.
+        $itemscreated = self::populate_peerassess($this->peerassess, 2);
 
-        // First try a feedback we didn't attempt.
-        $result = mod_feedback_external::launch_feedback($this->feedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::launch_feedback_returns(), $result);
+        // First try a peerassess we didn't attempt.
+        $result = mod_peerassess_external::launch_peerassess($this->peerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::launch_peerassess_returns(), $result);
         $this->assertEquals(0, $result['gopage']);
 
-        // Now, try a feedback that we attempted.
+        // Now, try a peerassess that we attempted.
         // Force non anonymous.
-        $DB->set_field('feedback', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->feedback->id));
+        $DB->set_field('peerassess', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->peerassess->id));
         // Add a completed_tmp record.
         $record = [
-            'feedback' => $this->feedback->id,
+            'peerassess' => $this->peerassess->id,
             'userid' => $this->student->id,
             'guestid' => '',
             'timemodified' => time() - DAYSECS,
@@ -403,9 +403,9 @@ class external_test extends externallib_advanced_testcase {
             'anonymous_response' => FEEDBACK_ANONYMOUS_NO,
             'courseid' => $this->course->id,
         ];
-        $record['id'] = $DB->insert_record('feedback_completedtmp', (object) $record);
+        $record['id'] = $DB->insert_record('peerassess_completedtmp', (object) $record);
 
-        // Add a response to the feedback for each question type with possible values.
+        // Add a response to the peerassess for each question type with possible values.
         $response = [
             'course_id' => $this->course->id,
             'item' => $itemscreated[1]->id, // First item is the info question.
@@ -413,7 +413,7 @@ class external_test extends externallib_advanced_testcase {
             'tmp_completed' => $record['id'],
             'value' => 'A',
         ];
-        $DB->insert_record('feedback_valuetmp', (object) $response);
+        $DB->insert_record('peerassess_valuetmp', (object) $response);
         $response = [
             'course_id' => $this->course->id,
             'item' => $itemscreated[2]->id, // Second item is the numeric question.
@@ -421,10 +421,10 @@ class external_test extends externallib_advanced_testcase {
             'tmp_completed' => $record['id'],
             'value' => 5,
         ];
-        $DB->insert_record('feedback_valuetmp', (object) $response);
+        $DB->insert_record('peerassess_valuetmp', (object) $response);
 
-        $result = mod_feedback_external::launch_feedback($this->feedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::launch_feedback_returns(), $result);
+        $result = mod_peerassess_external::launch_peerassess($this->peerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::launch_peerassess_returns(), $result);
         $this->assertEquals(1, $result['gopage']);
     }
 
@@ -435,19 +435,19 @@ class external_test extends externallib_advanced_testcase {
         // Test user with full capabilities.
         $this->setUser($this->student);
 
-        // Add questions to the feedback, we are adding 2 pages of questions.
-        $itemscreated = self::populate_feedback($this->feedback, 2);
+        // Add questions to the peerassess, we are adding 2 pages of questions.
+        $itemscreated = self::populate_peerassess($this->peerassess, 2);
 
         // Retrieve first page.
-        $result = mod_feedback_external::get_page_items($this->feedback->id, 0);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_page_items_returns(), $result);
+        $result = mod_peerassess_external::get_page_items($this->peerassess->id, 0);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_page_items_returns(), $result);
         $this->assertCount(3, $result['items']);    // The first page has 3 items.
         $this->assertTrue($result['hasnextpage']);
         $this->assertFalse($result['hasprevpage']);
 
         // Retrieve second page.
-        $result = mod_feedback_external::get_page_items($this->feedback->id, 1);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_page_items_returns(), $result);
+        $result = mod_peerassess_external::get_page_items($this->peerassess->id, 1);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_page_items_returns(), $result);
         $this->assertCount(5, $result['items']);    // The second page has 5 items (page break doesn't count).
         $this->assertFalse($result['hasnextpage']);
         $this->assertTrue($result['hasprevpage']);
@@ -462,10 +462,10 @@ class external_test extends externallib_advanced_testcase {
         // Test user with full capabilities.
         $this->setUser($this->student);
         $pagecontents = 'You finished it!';
-        $DB->set_field('feedback', 'page_after_submit', $pagecontents, array('id' => $this->feedback->id));
+        $DB->set_field('peerassess', 'page_after_submit', $pagecontents, array('id' => $this->peerassess->id));
 
-        // Add questions to the feedback, we are adding 2 pages of questions.
-        $itemscreated = self::populate_feedback($this->feedback, 2);
+        // Add questions to the peerassess, we are adding 2 pages of questions.
+        $itemscreated = self::populate_peerassess($this->peerassess, 2);
 
         $data = [];
         foreach ($itemscreated as $item) {
@@ -499,44 +499,44 @@ class external_test extends externallib_advanced_testcase {
 
         // Process first page.
         $firstpagedata = [$data[0], $data[1]];
-        $result = mod_feedback_external::process_page($this->feedback->id, 0, $firstpagedata);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $result = mod_peerassess_external::process_page($this->peerassess->id, 0, $firstpagedata);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::process_page_returns(), $result);
         $this->assertEquals(1, $result['jumpto']);
         $this->assertFalse($result['completed']);
 
         // Now, process the second page. But first we are going back to the first page.
         $secondpagedata = [$data[2], $data[3], $data[4], $data[5], $data[6]];
-        $result = mod_feedback_external::process_page($this->feedback->id, 1, $secondpagedata, true);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $result = mod_peerassess_external::process_page($this->peerassess->id, 1, $secondpagedata, true);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::process_page_returns(), $result);
         $this->assertFalse($result['completed']);
         $this->assertEquals(0, $result['jumpto']);  // We jumped to the first page.
         // Check the values were correctly saved.
-        $tmpitems = $DB->get_records('feedback_valuetmp');
+        $tmpitems = $DB->get_records('peerassess_valuetmp');
         $this->assertCount(7, $tmpitems);   // 2 from the first page + 5 from the second page.
 
         // Go forward again (sending the same data).
-        $result = mod_feedback_external::process_page($this->feedback->id, 0, $firstpagedata);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $result = mod_peerassess_external::process_page($this->peerassess->id, 0, $firstpagedata);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::process_page_returns(), $result);
         $this->assertEquals(1, $result['jumpto']);
         $this->assertFalse($result['completed']);
-        $tmpitems = $DB->get_records('feedback_valuetmp');
+        $tmpitems = $DB->get_records('peerassess_valuetmp');
         $this->assertCount(7, $tmpitems);   // 2 from the first page + 5 from the second page.
 
         // And finally, save everything! We are going to modify one previous recorded value.
         $messagessink = $this->redirectMessages();
         $data[2]['value'] = 2; // 2 is value of the option 'b'.
         $secondpagedata = [$data[2], $data[3], $data[4], $data[5], $data[6]];
-        $result = mod_feedback_external::process_page($this->feedback->id, 1, $secondpagedata);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $result = mod_peerassess_external::process_page($this->peerassess->id, 1, $secondpagedata);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::process_page_returns(), $result);
         $this->assertTrue($result['completed']);
         $this->assertTrue(strpos($result['completionpagecontents'], $pagecontents) !== false);
         // Check all the items were saved.
-        $items = $DB->get_records('feedback_value');
+        $items = $DB->get_records('peerassess_value');
         $this->assertCount(7, $items);
         // Check if the one we modified was correctly saved.
         $itemid = $itemscreated[4]->id;
-        $itemsaved = $DB->get_field('feedback_value', 'value', array('item' => $itemid));
-        $mcitem = new feedback_item_multichoice();
+        $itemsaved = $DB->get_field('peerassess_value', 'value', array('item' => $itemid));
+        $mcitem = new peerassess_item_multichoice();
         $itemval = $mcitem->get_printval($itemscreated[4], (object) ['value' => $itemsaved]);
         $this->assertEquals('b', $itemval);
 
@@ -544,7 +544,7 @@ class external_test extends externallib_advanced_testcase {
         foreach ($items as $item) {
             $this->assertEquals(0, $item->course_id);
         }
-        $completed = $DB->get_record('feedback_completed', []);
+        $completed = $DB->get_record('peerassess_completed', []);
         $this->assertEquals(0, $completed->courseid);
 
         // Test notifications sent.
@@ -552,25 +552,25 @@ class external_test extends externallib_advanced_testcase {
         $messagessink->close();
         // Test customdata.
         $customdata = json_decode($messages[0]->customdata);
-        $this->assertEquals($this->feedback->id, $customdata->instance);
-        $this->assertEquals($this->feedback->cmid, $customdata->cmid);
+        $this->assertEquals($this->peerassess->id, $customdata->instance);
+        $this->assertEquals($this->peerassess->cmid, $customdata->cmid);
         $this->assertObjectHasAttribute('notificationiconurl', $customdata);
     }
 
     /**
-     * Test process_page for a site feedback.
+     * Test process_page for a site peerassess.
      */
-    public function test_process_page_site_feedback() {
+    public function test_process_page_site_peerassess() {
         global $DB;
         $pagecontents = 'You finished it!';
-        $this->feedback = $this->getDataGenerator()->create_module('feedback',
+        $this->peerassess = $this->getDataGenerator()->create_module('peerassess',
             array('course' => SITEID, 'page_after_submit' => $pagecontents));
 
         // Test user with full capabilities.
         $this->setUser($this->student);
 
-        // Add questions to the feedback, we are adding 2 pages of questions.
-        $itemscreated = self::populate_feedback($this->feedback, 2);
+        // Add questions to the peerassess, we are adding 2 pages of questions.
+        $itemscreated = self::populate_peerassess($this->peerassess, 2);
 
         $data = [];
         foreach ($itemscreated as $item) {
@@ -604,25 +604,25 @@ class external_test extends externallib_advanced_testcase {
 
         // Process first page.
         $firstpagedata = [$data[0], $data[1]];
-        $result = mod_feedback_external::process_page($this->feedback->id, 0, $firstpagedata, false, $this->course->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $result = mod_peerassess_external::process_page($this->peerassess->id, 0, $firstpagedata, false, $this->course->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::process_page_returns(), $result);
         $this->assertEquals(1, $result['jumpto']);
         $this->assertFalse($result['completed']);
 
         // Process second page.
         $data[2]['value'] = 2; // 2 is value of the option 'b';
         $secondpagedata = [$data[2], $data[3], $data[4], $data[5], $data[6]];
-        $result = mod_feedback_external::process_page($this->feedback->id, 1, $secondpagedata, false, $this->course->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $result = mod_peerassess_external::process_page($this->peerassess->id, 1, $secondpagedata, false, $this->course->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::process_page_returns(), $result);
         $this->assertTrue($result['completed']);
         $this->assertTrue(strpos($result['completionpagecontents'], $pagecontents) !== false);
         // Check all the items were saved.
-        $items = $DB->get_records('feedback_value');
+        $items = $DB->get_records('peerassess_value');
         $this->assertCount(7, $items);
         // Check if the one we modified was correctly saved.
         $itemid = $itemscreated[4]->id;
-        $itemsaved = $DB->get_field('feedback_value', 'value', array('item' => $itemid));
-        $mcitem = new feedback_item_multichoice();
+        $itemsaved = $DB->get_field('peerassess_value', 'value', array('item' => $itemid));
+        $mcitem = new peerassess_item_multichoice();
         $itemval = $mcitem->get_printval($itemscreated[4], (object) ['value' => $itemsaved]);
         $this->assertEquals('b', $itemval);
 
@@ -630,7 +630,7 @@ class external_test extends externallib_advanced_testcase {
         foreach ($items as $item) {
             $this->assertEquals($this->course->id, $item->course_id);
         }
-        $completed = $DB->get_record('feedback_completed', []);
+        $completed = $DB->get_record('peerassess_completed', []);
         $this->assertEquals($this->course->id, $completed->courseid);
     }
 
@@ -641,26 +641,26 @@ class external_test extends externallib_advanced_testcase {
         // Test user with full capabilities.
         $this->setUser($this->student);
 
-        // Create a very simple feedback.
-        $feedbackgenerator = $this->getDataGenerator()->get_plugin_generator('mod_feedback');
-        $numericitem = $feedbackgenerator->create_item_numeric($this->feedback);
-        $textfielditem = $feedbackgenerator->create_item_textfield($this->feedback);
+        // Create a very simple peerassess.
+        $peerassessgenerator = $this->getDataGenerator()->get_plugin_generator('mod_peerassess');
+        $numericitem = $peerassessgenerator->create_item_numeric($this->peerassess);
+        $textfielditem = $peerassessgenerator->create_item_textfield($this->peerassess);
 
         $pagedata = [
             ['name' => $numericitem->typ .'_'. $numericitem->id, 'value' => 5],
             ['name' => $textfielditem->typ .'_'. $textfielditem->id, 'value' => 'abc'],
         ];
-        // Process the feedback, there is only one page so the feedback will be completed.
-        $result = mod_feedback_external::process_page($this->feedback->id, 0, $pagedata);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        // Process the peerassess, there is only one page so the peerassess will be completed.
+        $result = mod_peerassess_external::process_page($this->peerassess->id, 0, $pagedata);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::process_page_returns(), $result);
         $this->assertTrue($result['completed']);
 
         // Retrieve analysis.
         $this->setUser($this->teacher);
-        $result = mod_feedback_external::get_analysis($this->feedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_analysis_returns(), $result);
-        $this->assertEquals(1, $result['completedcount']);  // 1 feedback completed.
-        $this->assertEquals(2, $result['itemscount']);  // 2 items in the feedback.
+        $result = mod_peerassess_external::get_analysis($this->peerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_analysis_returns(), $result);
+        $this->assertEquals(1, $result['completedcount']);  // 1 peerassess completed.
+        $this->assertEquals(2, $result['itemscount']);  // 2 items in the peerassess.
         $this->assertCount(2, $result['itemsdata']);
         $this->assertCount(1, $result['itemsdata'][0]['data']); // There are 1 response per item.
         $this->assertCount(1, $result['itemsdata'][1]['data']);
@@ -678,16 +678,16 @@ class external_test extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($anotherstudent->id, $this->course->id, $this->studentrole->id, 'manual');
         $this->setUser($anotherstudent);
 
-        // Process the feedback, there is only one page so the feedback will be completed.
-        $result = mod_feedback_external::process_page($this->feedback->id, 0, $pagedata);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        // Process the peerassess, there is only one page so the peerassess will be completed.
+        $result = mod_peerassess_external::process_page($this->peerassess->id, 0, $pagedata);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::process_page_returns(), $result);
         $this->assertTrue($result['completed']);
 
         // Retrieve analysis.
         $this->setUser($this->teacher);
-        $result = mod_feedback_external::get_analysis($this->feedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_analysis_returns(), $result);
-        $this->assertEquals(2, $result['completedcount']);  // 2 feedback completed.
+        $result = mod_peerassess_external::get_analysis($this->peerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_analysis_returns(), $result);
+        $this->assertEquals(2, $result['completedcount']);  // 2 peerassess completed.
         $this->assertEquals(2, $result['itemscount']);
         $this->assertCount(2, $result['itemsdata'][0]['data']); // There are 2 responses per item.
         $this->assertCount(2, $result['itemsdata'][1]['data']);
@@ -700,26 +700,26 @@ class external_test extends externallib_advanced_testcase {
         // Test user with full capabilities.
         $this->setUser($this->student);
 
-        // Create a very simple feedback.
-        $feedbackgenerator = $this->getDataGenerator()->get_plugin_generator('mod_feedback');
-        $numericitem = $feedbackgenerator->create_item_numeric($this->feedback);
-        $textfielditem = $feedbackgenerator->create_item_textfield($this->feedback);
-        $feedbackgenerator->create_item_pagebreak($this->feedback);
-        $labelitem = $feedbackgenerator->create_item_label($this->feedback);
-        $numericitem2 = $feedbackgenerator->create_item_numeric($this->feedback);
+        // Create a very simple peerassess.
+        $peerassessgenerator = $this->getDataGenerator()->get_plugin_generator('mod_peerassess');
+        $numericitem = $peerassessgenerator->create_item_numeric($this->peerassess);
+        $textfielditem = $peerassessgenerator->create_item_textfield($this->peerassess);
+        $peerassessgenerator->create_item_pagebreak($this->peerassess);
+        $labelitem = $peerassessgenerator->create_item_label($this->peerassess);
+        $numericitem2 = $peerassessgenerator->create_item_numeric($this->peerassess);
 
         $pagedata = [
             ['name' => $numericitem->typ .'_'. $numericitem->id, 'value' => 5],
             ['name' => $textfielditem->typ .'_'. $textfielditem->id, 'value' => 'abc'],
         ];
-        // Process the feedback, there are two pages so the feedback will be unfinished yet.
-        $result = mod_feedback_external::process_page($this->feedback->id, 0, $pagedata);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        // Process the peerassess, there are two pages so the peerassess will be unfinished yet.
+        $result = mod_peerassess_external::process_page($this->peerassess->id, 0, $pagedata);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::process_page_returns(), $result);
         $this->assertFalse($result['completed']);
 
         // Retrieve the unfinished responses.
-        $result = mod_feedback_external::get_unfinished_responses($this->feedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_unfinished_responses_returns(), $result);
+        $result = mod_peerassess_external::get_unfinished_responses($this->peerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_unfinished_responses_returns(), $result);
         // Check that ids and responses match.
         foreach ($result['responses'] as $r) {
             if ($r['item'] == $numericitem->id) {
@@ -738,24 +738,24 @@ class external_test extends externallib_advanced_testcase {
         // Test user with full capabilities.
         $this->setUser($this->student);
 
-        // Create a very simple feedback.
-        $feedbackgenerator = $this->getDataGenerator()->get_plugin_generator('mod_feedback');
-        $numericitem = $feedbackgenerator->create_item_numeric($this->feedback);
-        $textfielditem = $feedbackgenerator->create_item_textfield($this->feedback);
+        // Create a very simple peerassess.
+        $peerassessgenerator = $this->getDataGenerator()->get_plugin_generator('mod_peerassess');
+        $numericitem = $peerassessgenerator->create_item_numeric($this->peerassess);
+        $textfielditem = $peerassessgenerator->create_item_textfield($this->peerassess);
 
         $pagedata = [
             ['name' => $numericitem->typ .'_'. $numericitem->id, 'value' => 5],
             ['name' => $textfielditem->typ .'_'. $textfielditem->id, 'value' => 'abc'],
         ];
 
-        // Process the feedback, there is only one page so the feedback will be completed.
-        $result = mod_feedback_external::process_page($this->feedback->id, 0, $pagedata);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        // Process the peerassess, there is only one page so the peerassess will be completed.
+        $result = mod_peerassess_external::process_page($this->peerassess->id, 0, $pagedata);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::process_page_returns(), $result);
         $this->assertTrue($result['completed']);
 
         // Retrieve the responses.
-        $result = mod_feedback_external::get_finished_responses($this->feedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_finished_responses_returns(), $result);
+        $result = mod_peerassess_external::get_finished_responses($this->peerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_finished_responses_returns(), $result);
         // Check that ids and responses match.
         foreach ($result['responses'] as $r) {
             if ($r['item'] == $numericitem->id) {
@@ -773,17 +773,17 @@ class external_test extends externallib_advanced_testcase {
     public function test_get_non_respondents_no_permissions() {
         $this->setUser($this->student);
         $this->expectException('\moodle_exception');
-        mod_feedback_external::get_non_respondents($this->feedback->id);
+        mod_peerassess_external::get_non_respondents($this->peerassess->id);
     }
 
     /**
-     * Test get_non_respondents from an anonymous feedback.
+     * Test get_non_respondents from an anonymous peerassess.
      */
-    public function test_get_non_respondents_from_anonymous_feedback() {
+    public function test_get_non_respondents_from_anonymous_peerassess() {
         $this->setUser($this->student);
         $this->expectException('\moodle_exception');
-        $this->expectExceptionMessage(get_string('anonymous', 'feedback'));
-        mod_feedback_external::get_non_respondents($this->feedback->id);
+        $this->expectExceptionMessage(get_string('anonymous', 'peerassess'));
+        mod_peerassess_external::get_non_respondents($this->peerassess->id);
     }
 
     /**
@@ -793,7 +793,7 @@ class external_test extends externallib_advanced_testcase {
         global $DB;
 
         // Force non anonymous.
-        $DB->set_field('feedback', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->feedback->id));
+        $DB->set_field('peerassess', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->peerassess->id));
 
         // Create another student.
         $anotherstudent = self::getDataGenerator()->create_user();
@@ -803,23 +803,23 @@ class external_test extends externallib_advanced_testcase {
         // Test user with full capabilities.
         $this->setUser($this->student);
 
-        // Create a very simple feedback.
-        $feedbackgenerator = $this->getDataGenerator()->get_plugin_generator('mod_feedback');
-        $numericitem = $feedbackgenerator->create_item_numeric($this->feedback);
+        // Create a very simple peerassess.
+        $peerassessgenerator = $this->getDataGenerator()->get_plugin_generator('mod_peerassess');
+        $numericitem = $peerassessgenerator->create_item_numeric($this->peerassess);
 
         $pagedata = [
             ['name' => $numericitem->typ .'_'. $numericitem->id, 'value' => 5],
         ];
 
-        // Process the feedback, there is only one page so the feedback will be completed.
-        $result = mod_feedback_external::process_page($this->feedback->id, 0, $pagedata);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        // Process the peerassess, there is only one page so the peerassess will be completed.
+        $result = mod_peerassess_external::process_page($this->peerassess->id, 0, $pagedata);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::process_page_returns(), $result);
         $this->assertTrue($result['completed']);
 
         // Retrieve the non-respondent users.
         $this->setUser($this->teacher);
-        $result = mod_feedback_external::get_non_respondents($this->feedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_non_respondents_returns(), $result);
+        $result = mod_peerassess_external::get_non_respondents($this->peerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_non_respondents_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['users']);
         $this->assertEquals($anotherstudent->id, $result['users'][0]['userid']);
@@ -829,22 +829,22 @@ class external_test extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($anotherstudent2->id, $this->course->id, $this->studentrole->id, 'manual');
         $this->setUser($anotherstudent2);
         $this->setUser($this->teacher);
-        $result = mod_feedback_external::get_non_respondents($this->feedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_non_respondents_returns(), $result);
+        $result = mod_peerassess_external::get_non_respondents($this->peerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_non_respondents_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(2, $result['users']);
 
         // Test pagination.
-        $result = mod_feedback_external::get_non_respondents($this->feedback->id, 0, 'lastaccess', 0, 1);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_non_respondents_returns(), $result);
+        $result = mod_peerassess_external::get_non_respondents($this->peerassess->id, 0, 'lastaccess', 0, 1);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_non_respondents_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(1, $result['users']);
     }
 
     /**
-     * Helper function that completes the feedback for two students.
+     * Helper function that completes the peerassess for two students.
      */
-    protected function complete_basic_feedback() {
+    protected function complete_basic_peerassess() {
         global $DB;
 
         $generator = $this->getDataGenerator();
@@ -871,19 +871,19 @@ class external_test extends externallib_advanced_testcase {
         // Test user with full capabilities.
         $this->setUser($this->student);
 
-        // Create a very simple feedback.
-        $feedbackgenerator = $generator->get_plugin_generator('mod_feedback');
-        $numericitem = $feedbackgenerator->create_item_numeric($this->feedback);
-        $textfielditem = $feedbackgenerator->create_item_textfield($this->feedback);
+        // Create a very simple peerassess.
+        $peerassessgenerator = $generator->get_plugin_generator('mod_peerassess');
+        $numericitem = $peerassessgenerator->create_item_numeric($this->peerassess);
+        $textfielditem = $peerassessgenerator->create_item_textfield($this->peerassess);
 
         $pagedata = [
             ['name' => $numericitem->typ .'_'. $numericitem->id, 'value' => 5],
             ['name' => $textfielditem->typ .'_'. $textfielditem->id, 'value' => 'abc'],
         ];
 
-        // Process the feedback, there is only one page so the feedback will be completed.
-        $result = mod_feedback_external::process_page($this->feedback->id, 0, $pagedata);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        // Process the peerassess, there is only one page so the peerassess will be completed.
+        $result = mod_peerassess_external::process_page($this->peerassess->id, 0, $pagedata);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::process_page_returns(), $result);
         $this->assertTrue($result['completed']);
 
         $this->setUser($anotherstudent1);
@@ -893,8 +893,8 @@ class external_test extends externallib_advanced_testcase {
             ['name' => $textfielditem->typ .'_'. $textfielditem->id, 'value' => 'def'],
         ];
 
-        $result = mod_feedback_external::process_page($this->feedback->id, 0, $pagedata);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $result = mod_peerassess_external::process_page($this->peerassess->id, 0, $pagedata);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::process_page_returns(), $result);
         $this->assertTrue($result['completed']);
 
         $this->setUser($anotherstudent2);
@@ -904,21 +904,21 @@ class external_test extends externallib_advanced_testcase {
             ['name' => $textfielditem->typ .'_'. $textfielditem->id, 'value' => 'def'],
         ];
 
-        $result = mod_feedback_external::process_page($this->feedback->id, 0, $pagedata);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $result = mod_peerassess_external::process_page($this->peerassess->id, 0, $pagedata);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::process_page_returns(), $result);
         $this->assertTrue($result['completed']);
     }
 
     /**
-     * Test get_responses_analysis for anonymous feedback.
+     * Test get_responses_analysis for anonymous peerassess.
      */
     public function test_get_responses_analysis_anonymous() {
-        self::complete_basic_feedback();
+        self::complete_basic_peerassess();
 
         // Retrieve the responses analysis.
         $this->setUser($this->teacher);
-        $result = mod_feedback_external::get_responses_analysis($this->feedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_responses_analysis_returns(), $result);
+        $result = mod_peerassess_external::get_responses_analysis($this->peerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_responses_analysis_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals(0, $result['totalattempts']);
         $this->assertEquals(2, $result['totalanonattempts']);   // Only see my groups.
@@ -929,19 +929,19 @@ class external_test extends externallib_advanced_testcase {
     }
 
     /**
-     * Test get_responses_analysis for non-anonymous feedback.
+     * Test get_responses_analysis for non-anonymous peerassess.
      */
     public function test_get_responses_analysis_non_anonymous() {
         global $DB;
 
         // Force non anonymous.
-        $DB->set_field('feedback', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->feedback->id));
+        $DB->set_field('peerassess', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->peerassess->id));
 
-        self::complete_basic_feedback();
+        self::complete_basic_peerassess();
         // Retrieve the responses analysis.
         $this->setUser($this->teacher);
-        $result = mod_feedback_external::get_responses_analysis($this->feedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_responses_analysis_returns(), $result);
+        $result = mod_peerassess_external::get_responses_analysis($this->peerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_responses_analysis_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals(2, $result['totalattempts']);
         $this->assertEquals(0, $result['totalanonattempts']);   // Only see my groups.
@@ -952,140 +952,140 @@ class external_test extends externallib_advanced_testcase {
     }
 
     /**
-     * Test get_last_completed for feedback anonymous not completed.
+     * Test get_last_completed for peerassess anonymous not completed.
      */
     public function test_get_last_completed_anonymous_not_completed() {
         global $DB;
 
         // Force anonymous.
-        $DB->set_field('feedback', 'anonymous', FEEDBACK_ANONYMOUS_YES, array('id' => $this->feedback->id));
+        $DB->set_field('peerassess', 'anonymous', FEEDBACK_ANONYMOUS_YES, array('id' => $this->peerassess->id));
 
-        // Test user with full capabilities that didn't complete the feedback.
+        // Test user with full capabilities that didn't complete the peerassess.
         $this->setUser($this->student);
 
-        $this->expectExceptionMessage(get_string('anonymous', 'feedback'));
+        $this->expectExceptionMessage(get_string('anonymous', 'peerassess'));
         $this->expectException('\moodle_exception');
-        mod_feedback_external::get_last_completed($this->feedback->id);
+        mod_peerassess_external::get_last_completed($this->peerassess->id);
     }
 
     /**
-     * Test get_last_completed for feedback anonymous and completed.
+     * Test get_last_completed for peerassess anonymous and completed.
      */
     public function test_get_last_completed_anonymous_completed() {
         global $DB;
 
         // Force anonymous.
-        $DB->set_field('feedback', 'anonymous', FEEDBACK_ANONYMOUS_YES, array('id' => $this->feedback->id));
+        $DB->set_field('peerassess', 'anonymous', FEEDBACK_ANONYMOUS_YES, array('id' => $this->peerassess->id));
         // Add one completion record..
         $record = [
-            'feedback' => $this->feedback->id,
+            'peerassess' => $this->peerassess->id,
             'userid' => $this->student->id,
             'timemodified' => time() - DAYSECS,
             'random_response' => 0,
             'anonymous_response' => FEEDBACK_ANONYMOUS_YES,
             'courseid' => $this->course->id,
         ];
-        $record['id'] = $DB->insert_record('feedback_completed', (object) $record);
+        $record['id'] = $DB->insert_record('peerassess_completed', (object) $record);
 
         // Test user with full capabilities.
         $this->setUser($this->student);
 
-        $this->expectExceptionMessage(get_string('anonymous', 'feedback'));
+        $this->expectExceptionMessage(get_string('anonymous', 'peerassess'));
         $this->expectException('\moodle_exception');
-        mod_feedback_external::get_last_completed($this->feedback->id);
+        mod_peerassess_external::get_last_completed($this->peerassess->id);
     }
 
     /**
-     * Test get_last_completed for feedback not anonymous and completed.
+     * Test get_last_completed for peerassess not anonymous and completed.
      */
     public function test_get_last_completed_not_anonymous_completed() {
         global $DB;
 
         // Force non anonymous.
-        $DB->set_field('feedback', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->feedback->id));
+        $DB->set_field('peerassess', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->peerassess->id));
         // Add one completion record..
         $record = [
-            'feedback' => $this->feedback->id,
+            'peerassess' => $this->peerassess->id,
             'userid' => $this->student->id,
             'timemodified' => time() - DAYSECS,
             'random_response' => 0,
             'anonymous_response' => FEEDBACK_ANONYMOUS_NO,
             'courseid' => $this->course->id,
         ];
-        $record['id'] = $DB->insert_record('feedback_completed', (object) $record);
+        $record['id'] = $DB->insert_record('peerassess_completed', (object) $record);
 
         // Test user with full capabilities.
         $this->setUser($this->student);
-        $result = mod_feedback_external::get_last_completed($this->feedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_last_completed_returns(), $result);
+        $result = mod_peerassess_external::get_last_completed($this->peerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_last_completed_returns(), $result);
         $this->assertEquals($record, $result['completed']);
     }
 
     /**
-     * Test get_last_completed for feedback not anonymous and not completed.
+     * Test get_last_completed for peerassess not anonymous and not completed.
      */
     public function test_get_last_completed_not_anonymous_not_completed() {
         global $DB;
 
         // Force anonymous.
-        $DB->set_field('feedback', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->feedback->id));
+        $DB->set_field('peerassess', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->peerassess->id));
 
-        // Test user with full capabilities that didn't complete the feedback.
+        // Test user with full capabilities that didn't complete the peerassess.
         $this->setUser($this->student);
 
-        $this->expectExceptionMessage(get_string('not_completed_yet', 'feedback'));
+        $this->expectExceptionMessage(get_string('not_completed_yet', 'peerassess'));
         $this->expectException('\moodle_exception');
-        mod_feedback_external::get_last_completed($this->feedback->id);
+        mod_peerassess_external::get_last_completed($this->peerassess->id);
     }
 
     /**
-     * Test get_feedback_access_information for site feedback.
+     * Test get_peerassess_access_information for site peerassess.
      */
-    public function test_get_feedback_access_information_for_site_feedback() {
+    public function test_get_peerassess_access_information_for_site_peerassess() {
 
-        $sitefeedback = $this->getDataGenerator()->create_module('feedback', array('course' => SITEID));
+        $sitepeerassess = $this->getDataGenerator()->create_module('peerassess', array('course' => SITEID));
         $this->setUser($this->student);
-        // Access the site feedback via the site activity.
-        $result = mod_feedback_external::get_feedback_access_information($sitefeedback->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_feedback_access_information_returns(), $result);
+        // Access the site peerassess via the site activity.
+        $result = mod_peerassess_external::get_peerassess_access_information($sitepeerassess->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_peerassess_access_information_returns(), $result);
         $this->assertTrue($result['cancomplete']);
         $this->assertTrue($result['cansubmit']);
 
-        // Access the site feedback via course where I'm enrolled.
-        $result = mod_feedback_external::get_feedback_access_information($sitefeedback->id, $this->course->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_feedback_access_information_returns(), $result);
+        // Access the site peerassess via course where I'm enrolled.
+        $result = mod_peerassess_external::get_peerassess_access_information($sitepeerassess->id, $this->course->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_peerassess_access_information_returns(), $result);
         $this->assertTrue($result['cancomplete']);
         $this->assertTrue($result['cansubmit']);
 
-        // Access the site feedback via course where I'm not enrolled.
+        // Access the site peerassess via course where I'm not enrolled.
         $othercourse = $this->getDataGenerator()->create_course();
 
         $this->expectException('\moodle_exception');
-        mod_feedback_external::get_feedback_access_information($sitefeedback->id, $othercourse->id);
+        mod_peerassess_external::get_peerassess_access_information($sitepeerassess->id, $othercourse->id);
     }
 
     /**
-     * Test get_feedback_access_information for site feedback mapped.
+     * Test get_peerassess_access_information for site peerassess mapped.
      */
-    public function test_get_feedback_access_information_for_site_feedback_mapped() {
+    public function test_get_peerassess_access_information_for_site_peerassess_mapped() {
         global $DB;
 
-        $sitefeedback = $this->getDataGenerator()->create_module('feedback', array('course' => SITEID));
+        $sitepeerassess = $this->getDataGenerator()->create_module('peerassess', array('course' => SITEID));
         $this->setUser($this->student);
-        $DB->insert_record('feedback_sitecourse_map', array('feedbackid' => $sitefeedback->id, 'courseid' => $this->course->id));
+        $DB->insert_record('peerassess_sitecourse_map', array('peerassessid' => $sitepeerassess->id, 'courseid' => $this->course->id));
 
-        // Access the site feedback via course where I'm enrolled and mapped.
-        $result = mod_feedback_external::get_feedback_access_information($sitefeedback->id, $this->course->id);
-        $result = \external_api::clean_returnvalue(mod_feedback_external::get_feedback_access_information_returns(), $result);
+        // Access the site peerassess via course where I'm enrolled and mapped.
+        $result = mod_peerassess_external::get_peerassess_access_information($sitepeerassess->id, $this->course->id);
+        $result = \external_api::clean_returnvalue(mod_peerassess_external::get_peerassess_access_information_returns(), $result);
         $this->assertTrue($result['cancomplete']);
         $this->assertTrue($result['cansubmit']);
 
-        // Access the site feedback via course where I'm enrolled but not mapped.
+        // Access the site peerassess via course where I'm enrolled but not mapped.
         $othercourse = $this->getDataGenerator()->create_course();
         $this->getDataGenerator()->enrol_user($this->student->id, $othercourse->id, $this->studentrole->id, 'manual');
 
         $this->expectException('\moodle_exception');
-        $this->expectExceptionMessage(get_string('cannotaccess', 'mod_feedback'));
-        mod_feedback_external::get_feedback_access_information($sitefeedback->id, $othercourse->id);
+        $this->expectExceptionMessage(get_string('cannotaccess', 'mod_peerassess'));
+        mod_peerassess_external::get_peerassess_access_information($sitepeerassess->id, $othercourse->id);
     }
 }

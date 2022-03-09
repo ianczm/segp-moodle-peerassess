@@ -15,21 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains the class for fetching the important dates in mod_feedback for a given module instance and a user.
+ * Contains the class for fetching the important dates in mod_peerassess for a given module instance and a user.
  *
- * @package   mod_feedback
+ * @package   mod_peerassess
  * @copyright 2021 Shamim Rezaie <shamim@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 declare(strict_types=1);
 
-namespace mod_feedback;
+namespace mod_peerassess;
 
 use core\activity_dates;
 
 /**
- * Class for fetching the important dates in mod_feedback for a given module instance and a user.
+ * Class for fetching the important dates in mod_peerassess for a given module instance and a user.
  *
  * @copyright 2021 Shamim Rezaie <shamim@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -37,7 +37,7 @@ use core\activity_dates;
 class dates extends activity_dates {
 
     /**
-     * Returns a list of important dates in mod_feedback
+     * Returns a list of important dates in mod_peerassess
      *
      * @return array
      */

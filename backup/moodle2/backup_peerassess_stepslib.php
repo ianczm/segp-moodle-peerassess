@@ -15,20 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @subpackage backup-moodle2
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * Define all the backup steps that will be used by the backup_feedback_activity_task
+ * Define all the backup steps that will be used by the backup_peerassess_activity_task
  */
 
 /**
- * Define the complete feedback structure for backup, with file and id annotations
+ * Define the complete peerassess structure for backup, with file and id annotations
  */
-class backup_feedback_activity_structure_step extends backup_activity_structure_step {
+class backup_peerassess_activity_structure_step extends backup_activity_structure_step {
 
     protected function define_structure() {
 
@@ -36,7 +36,7 @@ class backup_feedback_activity_structure_step extends backup_activity_structure_
         $userinfo = $this->get_setting_value('userinfo');
 
         // Define each element separated
-        $feedback = new backup_nested_element('feedback', array('id'), array(
+        $peerassess = new backup_nested_element('peerassess', array('id'), array(
                                                 'name',
                                                 'intro',
                                                 'introformat',
@@ -87,29 +87,29 @@ class backup_feedback_activity_structure_step extends backup_activity_structure_
                                                 'course_id'));
 
         // Build the tree
-        $feedback->add_child($items);
+        $peerassess->add_child($items);
         $items->add_child($item);
 
-        $feedback->add_child($completeds);
+        $peerassess->add_child($completeds);
         $completeds->add_child($completed);
 
         $completed->add_child($values);
         $values->add_child($value);
 
         // Define sources
-        $feedback->set_source_table('feedback', array('id' => backup::VAR_ACTIVITYID));
+        $peerassess->set_source_table('peerassess', array('id' => backup::VAR_ACTIVITYID));
 
-        $item->set_source_table('feedback_item', array('feedback' => backup::VAR_PARENTID));
+        $item->set_source_table('peerassess_item', array('peerassess' => backup::VAR_PARENTID));
 
         // All these source definitions only happen if we are including user info
         if ($userinfo) {
             $completed->set_source_sql('
                 SELECT *
-                  FROM {feedback_completed}
-                 WHERE feedback = ?',
+                  FROM {peerassess_completed}
+                 WHERE peerassess = ?',
                 array(backup::VAR_PARENTID));
 
-            $value->set_source_table('feedback_value', array('completed' => backup::VAR_PARENTID));
+            $value->set_source_table('peerassess_value', array('completed' => backup::VAR_PARENTID));
         }
 
         // Define id annotations
@@ -118,13 +118,13 @@ class backup_feedback_activity_structure_step extends backup_activity_structure_
 
         // Define file annotations
 
-        $feedback->annotate_files('mod_feedback', 'intro', null); // This file area hasn't itemid
-        $feedback->annotate_files('mod_feedback', 'page_after_submit', null); // This file area hasn't itemid
+        $peerassess->annotate_files('mod_peerassess', 'intro', null); // This file area hasn't itemid
+        $peerassess->annotate_files('mod_peerassess', 'page_after_submit', null); // This file area hasn't itemid
 
-        $item->annotate_files('mod_feedback', 'item', 'id');
+        $item->annotate_files('mod_peerassess', 'item', 'id');
 
-        // Return the root element (feedback), wrapped into standard activity structure
-        return $this->prepare_activity_structure($feedback);
+        // Return the root element (peerassess), wrapped into standard activity structure
+        return $this->prepare_activity_structure($peerassess);
     }
 
 }

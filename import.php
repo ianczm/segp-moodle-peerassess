@@ -19,7 +19,7 @@
  *
  * @author Andreas Grabs
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod_feedback
+ * @package mod_peerassess
  */
 
 require_once("../../config.php");
@@ -31,7 +31,7 @@ $id = required_param('id', PARAM_INT);
 $choosefile = optional_param('choosefile', false, PARAM_PATH);
 $action = optional_param('action', false, PARAM_ALPHA);
 
-$url = new moodle_url('/mod/feedback/import.php', array('id'=>$id));
+$url = new moodle_url('/mod/peerassess/import.php', array('id'=>$id));
 if ($choosefile !== false) {
     $url->param('choosefile', $choosefile);
 }
@@ -40,7 +40,7 @@ if ($action !== false) {
 }
 $PAGE->set_url($url);
 
-if (! $cm = get_coursemodule_from_id('feedback', $id)) {
+if (! $cm = get_coursemodule_from_id('peerassess', $id)) {
     print_error('invalidcoursemodule');
 }
 
@@ -48,7 +48,7 @@ if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
     print_error('coursemisconf');
 }
 
-if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
+if (! $peerassess = $DB->get_record("peerassess", array("id"=>$cm->instance))) {
     print_error('invalidcoursemodule');
 }
 
@@ -56,9 +56,9 @@ $context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
 
-require_capability('mod/feedback:edititems', $context);
+require_capability('mod/peerassess:edititems', $context);
 
-$mform = new feedback_import_form();
+$mform = new peerassess_import_form();
 $newformdata = array('id'=>$id,
                     'deleteolditems'=>'1',
                     'action'=>'choosefile',
@@ -75,27 +75,27 @@ if ($mform->is_cancelled()) {
 if ($choosefile) {
     $xmlcontent = $mform->get_file_content('choosefile');
 
-    if (!$xmldata = feedback_load_xml_data($xmlcontent)) {
-        print_error('cannotloadxml', 'feedback', 'edit.php?id='.$id);
+    if (!$xmldata = peerassess_load_xml_data($xmlcontent)) {
+        print_error('cannotloadxml', 'peerassess', 'edit.php?id='.$id);
     }
 
-    $importerror = feedback_import_loaded_data($xmldata, $feedback->id);
+    $importerror = peerassess_import_loaded_data($xmldata, $peerassess->id);
     if ($importerror->stat == true) {
         $url = 'edit.php?id='.$id.'&do_show=templates';
-        redirect($url, get_string('import_successfully', 'feedback'), 3);
+        redirect($url, get_string('import_successfully', 'peerassess'), 3);
         exit;
     }
 }
 
 
 /// Print the page header
-$strfeedbacks = get_string("modulenameplural", "feedback");
-$strfeedback  = get_string("modulename", "feedback");
+$strpeerassesss = get_string("modulenameplural", "peerassess");
+$strpeerassess  = get_string("modulename", "peerassess");
 
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title($feedback->name);
+$PAGE->set_title($peerassess->name);
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($feedback->name));
+echo $OUTPUT->heading(format_string($peerassess->name));
 /// print the tabs
 $current_tab = 'templates';
 require('tabs.php');
@@ -104,7 +104,7 @@ require('tabs.php');
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-echo $OUTPUT->heading(get_string('import_questions', 'feedback'), 3);
+echo $OUTPUT->heading(get_string('import_questions', 'peerassess'), 3);
 
 if (isset($importerror->msg) AND is_array($importerror->msg)) {
     echo $OUTPUT->box_start('generalbox errorboxcontent boxaligncenter');
@@ -118,11 +118,11 @@ $mform->display();
 
 echo $OUTPUT->footer();
 
-function feedback_load_xml_data($xmlcontent) {
+function peerassess_load_xml_data($xmlcontent) {
     global $CFG;
     require_once($CFG->dirroot.'/lib/xmlize.php');
 
-    if (!$xmlcontent = feedback_check_xml_utf8($xmlcontent)) {
+    if (!$xmlcontent = peerassess_check_xml_utf8($xmlcontent)) {
         return false;
     }
 
@@ -135,10 +135,10 @@ function feedback_load_xml_data($xmlcontent) {
     return $data;
 }
 
-function feedback_import_loaded_data(&$data, $feedbackid) {
+function peerassess_import_loaded_data(&$data, $peerassessid) {
     global $CFG, $DB;
 
-    feedback_load_feedback_items();
+    peerassess_load_peerassess_items();
 
     $deleteolditems = optional_param('deleteolditems', 0, PARAM_INT);
 
@@ -147,17 +147,17 @@ function feedback_import_loaded_data(&$data, $feedbackid) {
     $error->msg = array();
 
     if (!is_array($data)) {
-        $error->msg[] = get_string('data_is_not_an_array', 'feedback');
+        $error->msg[] = get_string('data_is_not_an_array', 'peerassess');
         $error->stat = false;
         return $error;
     }
 
     if ($deleteolditems) {
-        feedback_delete_all_items($feedbackid);
+        peerassess_delete_all_items($peerassessid);
         $position = 0;
     } else {
         //items will be add to the end of the existing items
-        $position = $DB->count_records('feedback_item', array('feedback'=>$feedbackid));
+        $position = $DB->count_records('peerassess_item', array('peerassess'=>$peerassessid));
     }
 
     //depend items we are storing temporary in an mapping list array(new id => dependitem)
@@ -195,7 +195,7 @@ function feedback_import_loaded_data(&$data, $feedbackid) {
                 $oldtyp = $typ;
         }
 
-        $itemclass = 'feedback_item_'.$typ;
+        $itemclass = 'peerassess_item_'.$typ;
         if ($typ != 'pagebreak' AND !class_exists($itemclass)) {
             $error->stat = false;
             $error->msg[] = 'type ('.$typ.') not found';
@@ -204,7 +204,7 @@ function feedback_import_loaded_data(&$data, $feedbackid) {
         $itemobj = new $itemclass();
 
         $newitem = new stdClass();
-        $newitem->feedback = $feedbackid;
+        $newitem->peerassess = $peerassessid;
         $newitem->template = 0;
         $newitem->typ = $typ;
         $newitem->name = trim($item['#']['ITEMTEXT'][0]['#']);
@@ -253,7 +253,7 @@ function feedback_import_loaded_data(&$data, $feedbackid) {
         }
         $newitem->required = intval($item['@']['REQUIRED']);
         $newitem->position = $position;
-        $newid = $DB->insert_record('feedback_item', $newitem);
+        $newid = $DB->insert_record('peerassess_item', $newitem);
 
         $itembackup[$olditemid] = $newid;
         if ($newitem->dependitem) {
@@ -263,15 +263,15 @@ function feedback_import_loaded_data(&$data, $feedbackid) {
     }
     //remapping the dependency
     foreach ($dependitemsmap as $key => $dependitem) {
-        $newitem = $DB->get_record('feedback_item', array('id'=>$key));
+        $newitem = $DB->get_record('peerassess_item', array('id'=>$key));
         $newitem->dependitem = $itembackup[$newitem->dependitem];
-        $DB->update_record('feedback_item', $newitem);
+        $DB->update_record('peerassess_item', $newitem);
     }
 
     return $error;
 }
 
-function feedback_check_xml_utf8($text) {
+function peerassess_check_xml_utf8($text) {
     //find the encoding
     $searchpattern = '/^\<\?xml.+(encoding=\"([a-z0-9-]*)\").+\?\>/is';
 

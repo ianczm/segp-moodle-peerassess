@@ -19,13 +19,13 @@
  *
  * @author Andreas Grabs
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod_feedback
+ * @package mod_peerassess
  */
 
 require_once("../../config.php");
 require_once("lib.php");
 
-feedback_init_feedback_session();
+peerassess_init_peerassess_session();
 
 $itemid = optional_param('id', false, PARAM_INT);
 if (!$itemid) {
@@ -34,45 +34,45 @@ if (!$itemid) {
 }
 
 if ($itemid) {
-    $item = $DB->get_record('feedback_item', array('id' => $itemid), '*', MUST_EXIST);
-    list($course, $cm) = get_course_and_cm_from_instance($item->feedback, 'feedback');
-    $url = new moodle_url('/mod/feedback/edit_item.php', array('id' => $itemid));
+    $item = $DB->get_record('peerassess_item', array('id' => $itemid), '*', MUST_EXIST);
+    list($course, $cm) = get_course_and_cm_from_instance($item->peerassess, 'peerassess');
+    $url = new moodle_url('/mod/peerassess/edit_item.php', array('id' => $itemid));
     $typ = $item->typ;
 } else {
     $item = null;
-    list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'feedback');
-    $url = new moodle_url('/mod/feedback/edit_item.php', array('cmid' => $cm->id, 'typ' => $typ));
+    list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'peerassess');
+    $url = new moodle_url('/mod/peerassess/edit_item.php', array('cmid' => $cm->id, 'typ' => $typ));
     $item = (object)['id' => null, 'position' => -1, 'typ' => $typ, 'options' => ''];
 }
 
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
-require_capability('mod/feedback:edititems', $context);
-$feedback = $PAGE->activityrecord;
+require_capability('mod/peerassess:edititems', $context);
+$peerassess = $PAGE->activityrecord;
 
-$editurl = new moodle_url('/mod/feedback/edit.php', array('id' => $cm->id));
+$editurl = new moodle_url('/mod/peerassess/edit.php', array('id' => $cm->id));
 
 $PAGE->set_url($url);
 
 // If the typ is pagebreak so the item will be saved directly.
 if (!$item->id && $typ === 'pagebreak') {
     require_sesskey();
-    feedback_create_pagebreak($feedback->id);
+    peerassess_create_pagebreak($peerassess->id);
     redirect($editurl->out(false));
     exit;
 }
 
 //get the existing item or create it
 // $formdata->itemid = isset($formdata->itemid) ? $formdata->itemid : NULL;
-if (!$typ || !file_exists($CFG->dirroot.'/mod/feedback/item/'.$typ.'/lib.php')) {
-    print_error('typemissing', 'feedback', $editurl->out(false));
+if (!$typ || !file_exists($CFG->dirroot.'/mod/peerassess/item/'.$typ.'/lib.php')) {
+    print_error('typemissing', 'peerassess', $editurl->out(false));
 }
 
-require_once($CFG->dirroot.'/mod/feedback/item/'.$typ.'/lib.php');
+require_once($CFG->dirroot.'/mod/peerassess/item/'.$typ.'/lib.php');
 
-$itemobj = feedback_get_item_class($typ);
+$itemobj = peerassess_get_item_class($typ);
 
-$itemobj->build_editform($item, $feedback, $cm);
+$itemobj->build_editform($item, $peerassess, $cm);
 
 if ($itemobj->is_cancelled()) {
     redirect($editurl);
@@ -80,29 +80,29 @@ if ($itemobj->is_cancelled()) {
 }
 if ($itemobj->get_data()) {
     if ($item = $itemobj->save_item()) {
-        feedback_move_item($item, $item->position);
+        peerassess_move_item($item, $item->position);
         redirect($editurl);
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
 /// Print the page header
-$strfeedbacks = get_string("modulenameplural", "feedback");
-$strfeedback  = get_string("modulename", "feedback");
+$strpeerassesss = get_string("modulenameplural", "peerassess");
+$strpeerassess  = get_string("modulename", "peerassess");
 
-navigation_node::override_active_url(new moodle_url('/mod/feedback/edit.php',
+navigation_node::override_active_url(new moodle_url('/mod/peerassess/edit.php',
         array('id' => $cm->id, 'do_show' => 'edit')));
 if ($item->id) {
-    $PAGE->navbar->add(get_string('edit_item', 'feedback'));
+    $PAGE->navbar->add(get_string('edit_item', 'peerassess'));
 } else {
-    $PAGE->navbar->add(get_string('add_item', 'feedback'));
+    $PAGE->navbar->add(get_string('add_item', 'peerassess'));
 }
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title($feedback->name);
+$PAGE->set_title($peerassess->name);
 echo $OUTPUT->header();
 
 // Print the main part of the page.
-echo $OUTPUT->heading(format_string($feedback->name));
+echo $OUTPUT->heading(format_string($peerassess->name));
 
 /// print the tabs
 $current_tab = 'edit';

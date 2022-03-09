@@ -15,17 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * prints the form so an anonymous user can fill out the feedback on the mainsite
+ * prints the form so an anonymous user can fill out the peerassess on the mainsite
  *
  * @author Andreas Grabs
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod_feedback
+ * @package mod_peerassess
  */
 
 require_once("../../config.php");
 
 // This file is no longer used, however it will remain here to redirect existing links to complete.php.
-$url = new moodle_url('/mod/feedback/complete.php');
+$url = new moodle_url('/mod/peerassess/complete.php');
 foreach ($_GET as $key => $value) {
     $url->param($key, $value);
 }

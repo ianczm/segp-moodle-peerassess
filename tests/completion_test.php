@@ -14,29 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Unit tests for (some of) mod/feedback/classes/lib.php.
+ * Unit tests for (some of) mod/peerassess/classes/lib.php.
  *
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @copyright  2019 Tobias Reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
-require_once($CFG->dirroot . '/mod/feedback/classes/completion.php');
+require_once($CFG->dirroot . '/mod/peerassess/classes/completion.php');
 
 /**
- * Unit tests for (some of) mod/feedback/classes/completion.php.
+ * Unit tests for (some of) mod/peerassess/classes/completion.php.
  *
  * @copyright  2019 Tobias Reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_feedback_completion_testcase extends advanced_testcase {
+class mod_peerassess_completion_testcase extends advanced_testcase {
     /**
-     * Returns the number of pages with visible elements for the current state of the feedback completion.
-     * @param mod_feedback_completion $completion
+     * Returns the number of pages with visible elements for the current state of the peerassess completion.
+     * @param mod_peerassess_completion $completion
      * @return int number of pages with at least one visible item.
      */
-    private function get_number_of_visible_pages(mod_feedback_completion $completion) {
+    private function get_number_of_visible_pages(mod_peerassess_completion $completion) {
         $pages = $completion->get_pages();
         $result = 0;
         foreach ($pages as $items) {
@@ -57,30 +57,30 @@ class mod_feedback_completion_testcase extends advanced_testcase {
 
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
-        $feedback = $this->getDataGenerator()->create_module('feedback',
+        $peerassess = $this->getDataGenerator()->create_module('peerassess',
             array('course' => $course->id));
-        $cm = get_coursemodule_from_instance('feedback', $feedback->id);
+        $cm = get_coursemodule_from_instance('peerassess', $peerassess->id);
 
-        $feedbackgenerator = $this->getDataGenerator()->get_plugin_generator('mod_feedback');
+        $peerassessgenerator = $this->getDataGenerator()->get_plugin_generator('mod_peerassess');
         $itemscreated = [];
 
         // Create at least one page.
-        $itemscreated[] = $feedbackgenerator->create_item_multichoice($feedback,
+        $itemscreated[] = $peerassessgenerator->create_item_multichoice($peerassess,
             $record = ['values' => "y\nn"]);
-        $itemscreated[] = $feedbackgenerator->create_item_pagebreak($feedback);
-        $itemscreated[] = $feedbackgenerator->create_item_multichoice($feedback,
+        $itemscreated[] = $peerassessgenerator->create_item_pagebreak($peerassess);
+        $itemscreated[] = $peerassessgenerator->create_item_multichoice($peerassess,
             $record = ['values' => "y\nn", 'dependitem' => $itemscreated[0]->id, 'dependvalue' => 'n']);
-        $itemscreated[] = $feedbackgenerator->create_item_pagebreak($feedback);
-        $itemscreated[] = $feedbackgenerator->create_item_multichoice($feedback,
+        $itemscreated[] = $peerassessgenerator->create_item_pagebreak($peerassess);
+        $itemscreated[] = $peerassessgenerator->create_item_multichoice($peerassess,
             $record = ['values' => "y\nn", 'dependitem' => $itemscreated[0]->id, 'dependvalue' => 'y']);
-        $itemscreated[] = $feedbackgenerator->create_item_pagebreak($feedback);
-        $itemscreated[] = $feedbackgenerator->create_item_multichoice($feedback,
+        $itemscreated[] = $peerassessgenerator->create_item_pagebreak($peerassess);
+        $itemscreated[] = $peerassessgenerator->create_item_multichoice($peerassess,
             $record = ['values' => "y\nn", 'dependitem' => $itemscreated[2]->id, 'dependvalue' => 'y']);
 
         // Test hiding item since transitive dependency is not met.
         // Answering the first multichoice with 'y', should hide the second and therefor also the fourth.
         $user1 = $this->getDataGenerator()->create_and_enrol($course);
-        $completion = new mod_feedback_completion($feedback, $cm, $course,
+        $completion = new mod_peerassess_completion($peerassess, $cm, $course,
             false, null, $user1->id);
 
         // Initially, all pages should be visible.
@@ -103,7 +103,7 @@ class mod_feedback_completion_testcase extends advanced_testcase {
         // Test showing item since transitive dependency is met.
         // Answering the first multichoice with 'n' should hide the third multichoice.
         $user2 = $this->getDataGenerator()->create_and_enrol($course);
-        $completion2 = new mod_feedback_completion($feedback, $cm, $course,
+        $completion2 = new mod_peerassess_completion($peerassess, $cm, $course,
             false, null, $user2->id);
 
         // Initially, all pages should be visible.

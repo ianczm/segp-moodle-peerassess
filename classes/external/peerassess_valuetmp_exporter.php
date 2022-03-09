@@ -15,24 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for exporting a feedback tmp response.
+ * Class for exporting a peerassess tmp response.
  *
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @copyright  2017 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_feedback\external;
+namespace mod_peerassess\external;
 defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
 
 /**
- * Class for exporting a feedback tmp response.
+ * Class for exporting a peerassess tmp response.
  *
  * @copyright  2017 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class feedback_valuetmp_exporter extends exporter {
+class peerassess_valuetmp_exporter extends exporter {
 
     /**
      * Return the list of properties.
@@ -55,7 +55,7 @@ class feedback_valuetmp_exporter extends exporter {
             ),
             'completed' => array(
                 'type' => PARAM_INT,
-                'description' => 'Reference to the feedback_completedtmp table.',
+                'description' => 'Reference to the peerassess_completedtmp table.',
             ),
             'tmp_completed' => array(
                 'type' => PARAM_INT,

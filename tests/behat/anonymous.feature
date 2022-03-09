@@ -1,8 +1,8 @@
-@mod @mod_feedback
-Feature: Anonymous feedback
-  In order to collect feedbacks
+@mod @mod_peerassess
+Feature: Anonymous peerassess
+  In order to collect peerassesss
   As an admin
-  I need to be able to allow anonymous feedbacks
+  I need to be able to allow anonymous peerassesss
 
   Background:
     Given the following "users" exist:
@@ -24,13 +24,13 @@ Feature: Anonymous feedback
       | manager | Acceptance test site | manager |
     And the following "activities" exist:
       | activity   | name            | course               | idnumber  | anonymous | publish_stats | section |
-      | feedback   | Site feedback   | Acceptance test site | feedback0 | 1         | 1             | 1       |
-      | feedback   | Course feedback | C1                   | feedback1 | 1         | 1             | 0       |
+      | peerassess   | Site peerassess   | Acceptance test site | peerassess0 | 1         | 1             | 1       |
+      | peerassess   | Course peerassess | C1                   | peerassess1 | 1         | 1             | 0       |
     When I log in as "manager"
     And I am on site homepage
-    And I follow "Site feedback"
+    And I follow "Site peerassess"
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
-    And I add a "Multiple choice" question to the feedback with:
+    And I add a "Multiple choice" question to the peerassess with:
       | Question                       | Do you like our site?              |
       | Label                          | multichoice2                       |
       | Multiple choice type           | Multiple choice - single answer    |
@@ -38,17 +38,17 @@ Feature: Anonymous feedback
       | Multiple choice values         | Yes\nNo\nI don't know              |
     And I log out
 
-  Scenario: Guests can see anonymous feedback on front page but can not complete
-    When I follow "Site feedback"
+  Scenario: Guests can see anonymous peerassess on front page but can not complete
+    When I follow "Site peerassess"
     Then I should not see "Answer the questions"
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
 
-  Scenario: Complete anonymous feedback on the front page as an authenticated user
+  Scenario: Complete anonymous peerassess on the front page as an authenticated user
     And I log in as "user1"
     And I am on site homepage
-    When I follow "Site feedback"
+    When I follow "Site peerassess"
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
@@ -61,15 +61,15 @@ Feature: Anonymous feedback
     And I press "Continue"
 
   @javascript
-  Scenario: Complete anonymous feedback and view analysis on the front page as an authenticated user
+  Scenario: Complete anonymous peerassess and view analysis on the front page as an authenticated user
     And I log in as "admin"
     And I set the following system permissions of "Authenticated user on frontpage" role:
       | capability                   | permission |
-      | mod/feedback:viewanalysepage | Allow      |
+      | mod/peerassess:viewanalysepage | Allow      |
     And I log out
     And I log in as "user1"
     And I am on site homepage
-    When I follow "Site feedback"
+    When I follow "Site peerassess"
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
@@ -81,7 +81,7 @@ Feature: Anonymous feedback
     And I log out
     And I log in as "user2"
     And I am on site homepage
-    And I follow "Site feedback"
+    And I follow "Site peerassess"
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
@@ -92,15 +92,15 @@ Feature: Anonymous feedback
     And I follow "Submitted answers"
     And I should see "Submitted answers: 2"
     And I should see "Questions: 1"
-    # And I should not see "multichoice2" # TODO MDL-29303 do not show labels to users who can not edit feedback
-    And I show chart data for the "multichoice2" feedback
+    # And I should not see "multichoice2" # TODO MDL-29303 do not show labels to users who can not edit peerassess
+    And I show chart data for the "multichoice2" peerassess
     And I should see "Do you like our site?"
     And I should see "1 (50.00 %)" in the "Yes" "table_row"
     And I should see "1 (50.00 %)" in the "No" "table_row"
     And I log out
     And I log in as "manager"
     And I am on site homepage
-    And I follow "Site feedback"
+    And I follow "Site peerassess"
     And I navigate to "Show responses" in current page administration
     And I should not see "Username"
     And I should see "Anonymous entries (2)"
@@ -109,10 +109,10 @@ Feature: Anonymous feedback
     And I should see "Response number: 1 (Anonymous)"
     And I log out
 
-  Scenario: Complete fully anonymous feedback on the front page as a guest
+  Scenario: Complete fully anonymous peerassess on the front page as a guest
     Given the following config values are set as admin:
-      | feedback_allowfullanonymous | 1 |
-    When I follow "Site feedback"
+      | peerassess_allowfullanonymous | 1 |
+    When I follow "Site peerassess"
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
@@ -125,15 +125,15 @@ Feature: Anonymous feedback
     And I press "Continue"
 
   @javascript
-  Scenario: Complete fully anonymous feedback and view analyze on the front page as a guest
+  Scenario: Complete fully anonymous peerassess and view analyze on the front page as a guest
     Given the following config values are set as admin:
-      | feedback_allowfullanonymous | 1 |
+      | peerassess_allowfullanonymous | 1 |
     And I log in as "admin"
     And I set the following system permissions of "Guest" role:
       | capability                   | permission |
-      | mod/feedback:viewanalysepage | Allow      |
+      | mod/peerassess:viewanalysepage | Allow      |
     And I log out
-    When I follow "Site feedback"
+    When I follow "Site peerassess"
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
@@ -143,8 +143,8 @@ Feature: Anonymous feedback
       | Yes | 1 |
     And I press "Submit your answers"
     And I press "Continue"
-    # Starting new feedback
-    When I follow "Site feedback"
+    # Starting new peerassess
+    When I follow "Site peerassess"
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
@@ -157,13 +157,13 @@ Feature: Anonymous feedback
     And I should see "Submitted answers: 2"
     And I should see "Questions: 1"
     # And I should not see "multichoice2" # TODO MDL-29303
-    And I show chart data for the "multichoice2" feedback
+    And I show chart data for the "multichoice2" peerassess
     And I should see "Do you like our site?"
     And I should see "1 (50.00 %)" in the "Yes" "table_row"
     And I should see "1 (50.00 %)" in the "No" "table_row"
     And I log in as "manager"
     And I am on site homepage
-    And I follow "Site feedback"
+    And I follow "Site peerassess"
     And I navigate to "Show responses" in current page administration
     And I should see "Anonymous entries (2)"
     And I follow "Response number: 1"
@@ -171,11 +171,11 @@ Feature: Anonymous feedback
     And I log out
 
   @javascript
-  Scenario: Anonymous feedback in a course
+  Scenario: Anonymous peerassess in a course
     # Teacher can not
-    When I am on the "Course feedback" "feedback activity" page logged in as teacher
+    When I am on the "Course peerassess" "peerassess activity" page logged in as teacher
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
-    And I add a "Multiple choice" question to the feedback with:
+    And I add a "Multiple choice" question to the peerassess with:
       | Question                       | Do you like this course?           |
       | Label                          | multichoice1                       |
       | Multiple choice type           | Multiple choice - single answer    |
@@ -183,7 +183,7 @@ Feature: Anonymous feedback
       | Multiple choice values         | Yes\nNo\nI don't know              |
     And I log out
 
-    And I am on the "Course feedback" "feedback activity" page logged in as user1
+    And I am on the "Course peerassess" "peerassess activity" page logged in as user1
     And I follow "Preview"
     Then I should see "Do you like this course?"
     And I press "Continue"
@@ -193,7 +193,7 @@ Feature: Anonymous feedback
       | Yes | 1 |
     And I press "Submit your answers"
     And I log out
-    And I am on the "Course feedback" "feedback activity" page logged in as user2
+    And I am on the "Course peerassess" "peerassess activity" page logged in as user2
     And I follow "Preview"
     And I should see "Do you like this course?"
     And I press "Continue"
@@ -206,12 +206,12 @@ Feature: Anonymous feedback
     And I should see "Submitted answers: 2"
     And I should see "Questions: 1"
     # And I should not see "multichoice2" # TODO MDL-29303
-    And I show chart data for the "multichoice1" feedback
+    And I show chart data for the "multichoice1" peerassess
     And I should see "Do you like this course?"
     And I should see "1 (50.00 %)" in the "Yes" "table_row"
     And I should see "1 (50.00 %)" in the "No" "table_row"
     And I log out
-    And I am on the "Course feedback" "feedback activity" page logged in as teacher
+    And I am on the "Course peerassess" "peerassess activity" page logged in as teacher
     And I follow "Preview"
     And I should see "Do you like this course?"
     And I press "Continue"
@@ -235,39 +235,39 @@ Feature: Anonymous feedback
     And I should not see "Response number: 1"
     And I should see "Response number: 2"
 
-  Scenario: Collecting new non-anonymous feedback from a previously anonymous feedback activity
-    When I am on the "Course feedback" "feedback activity" page logged in as teacher
+  Scenario: Collecting new non-anonymous peerassess from a previously anonymous peerassess activity
+    When I am on the "Course peerassess" "peerassess activity" page logged in as teacher
     And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Allow multiple submissions | Yes |
     And I press "Save and display"
     And I follow "Edit questions"
-    And I add a "Short text answer" question to the feedback with:
+    And I add a "Short text answer" question to the peerassess with:
       | Question               | this is a short text answer |
       | Label                  | shorttext                   |
       | Maximum characters accepted | 200                    |
     And I log out
-    When I am on the "Course feedback" "feedback activity" page logged in as user1
+    When I am on the "Course peerassess" "peerassess activity" page logged in as user1
     And I follow "Answer the questions"
     And I set the following fields to these values:
       | this is a short text answer  | anontext |
     And I press "Submit your answers"
     And I log out
     # Switch to non-anon responses.
-    And I am on the "Course feedback" "feedback activity editing" page logged in as teacher
+    And I am on the "Course peerassess" "peerassess activity editing" page logged in as teacher
     And I set the following fields to these values:
         | Record user names | User's name will be logged and shown with answers |
     And I press "Save and display"
     And I log out
-    # Now leave a non-anon feedback as user1
-    And I am on the "Course feedback" "feedback activity" page logged in as user1
+    # Now leave a non-anon peerassess as user1
+    And I am on the "Course peerassess" "peerassess activity" page logged in as user1
     And I follow "Answer the questions"
     And I set the following fields to these values:
       | this is a short text answer  | usertext |
     And I press "Submit your answers"
     And I log out
     # Now check the responses are correct.
-    And I am on the "Course feedback" "feedback activity" page logged in as teacher
+    And I am on the "Course peerassess" "peerassess activity" page logged in as teacher
     And I follow "Show responses"
     And I should see "Anonymous entries (1)"
     And I should see "Non anonymous entries (1)"

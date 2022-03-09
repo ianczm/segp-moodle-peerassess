@@ -15,51 +15,51 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * print a printview of feedback-items
+ * print a printview of peerassess-items
  *
  * @author Andreas Grabs
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod_feedback
+ * @package mod_peerassess
  */
 
 require_once("../../config.php");
 require_once("lib.php");
 
 $id = required_param('id', PARAM_INT);
-$courseid = optional_param('courseid', false, PARAM_INT); // Course where this feedback is mapped to - used for return link.
+$courseid = optional_param('courseid', false, PARAM_INT); // Course where this peerassess is mapped to - used for return link.
 
-$PAGE->set_url('/mod/feedback/print.php', array('id'=>$id));
+$PAGE->set_url('/mod/peerassess/print.php', array('id'=>$id));
 
-list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
+list($course, $cm) = get_course_and_cm_from_cmid($id, 'peerassess');
 require_course_login($course, true, $cm);
 
-$feedback = $PAGE->activityrecord;
-$feedbackstructure = new mod_feedback_structure($feedback, $cm, $courseid);
+$peerassess = $PAGE->activityrecord;
+$peerassessstructure = new mod_peerassess_structure($peerassess, $cm, $courseid);
 
 $PAGE->set_pagelayout('popup');
 
 // Print the page header.
-$strfeedbacks = get_string("modulenameplural", "feedback");
-$strfeedback  = get_string("modulename", "feedback");
+$strpeerassesss = get_string("modulenameplural", "peerassess");
+$strpeerassess  = get_string("modulename", "peerassess");
 
-$feedback_url = new moodle_url('/mod/feedback/index.php', array('id'=>$course->id));
-$PAGE->navbar->add($strfeedbacks, $feedback_url);
-$PAGE->navbar->add(format_string($feedback->name));
+$peerassess_url = new moodle_url('/mod/peerassess/index.php', array('id'=>$course->id));
+$PAGE->navbar->add($strpeerassesss, $peerassess_url);
+$PAGE->navbar->add(format_string($peerassess->name));
 
-$PAGE->set_title($feedback->name);
+$PAGE->set_title($peerassess->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 // Print the main part of the page.
-echo $OUTPUT->heading(format_string($feedback->name));
+echo $OUTPUT->heading(format_string($peerassess->name));
 
-$continueurl = new moodle_url('/mod/feedback/view.php', array('id' => $id));
+$continueurl = new moodle_url('/mod/peerassess/view.php', array('id' => $id));
 if ($courseid) {
     $continueurl->param('courseid', $courseid);
 }
 
-$form = new mod_feedback_complete_form(mod_feedback_complete_form::MODE_PRINT,
-        $feedbackstructure, 'feedback_print_form');
+$form = new mod_peerassess_complete_form(mod_peerassess_complete_form::MODE_PRINT,
+        $peerassessstructure, 'peerassess_print_form');
 echo $OUTPUT->continue_button($continueurl);
 $form->display();
 echo $OUTPUT->continue_button($continueurl);

@@ -17,7 +17,7 @@
 /**
  * Provides support for the conversion of moodle1 backup to the moodle2 format
  *
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @copyright  2011 Rossiani Wijaya <rwijaya@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Feedback module conversion handler
  */
-class moodle1_mod_feedback_handler extends moodle1_mod_handler {
+class moodle1_mod_peerassess_handler extends moodle1_mod_handler {
 
     /** @var moodle1_file_manager */
     protected $fileman = null;
@@ -51,7 +51,7 @@ class moodle1_mod_feedback_handler extends moodle1_mod_handler {
     public function get_paths() {
         return array(
             new convert_path(
-                'feedback', '/MOODLE_BACKUP/COURSE/MODULES/MOD/FEEDBACK',
+                'peerassess', '/MOODLE_BACKUP/COURSE/MODULES/MOD/FEEDBACK',
                 array(
                     'renamefields' => array(
                         'summary' => 'intro',
@@ -67,7 +67,7 @@ class moodle1_mod_feedback_handler extends moodle1_mod_handler {
                 )
             ),
             new convert_path(
-                'feedback_item', '/MOODLE_BACKUP/COURSE/MODULES/MOD/FEEDBACK/ITEMS/ITEM',
+                'peerassess_item', '/MOODLE_BACKUP/COURSE/MODULES/MOD/FEEDBACK/ITEMS/ITEM',
                 array (
                     'newfields' => array(
                         'label' => '',
@@ -84,7 +84,7 @@ class moodle1_mod_feedback_handler extends moodle1_mod_handler {
      * This is executed every time we have one /MOODLE_BACKUP/COURSE/MODULES/MOD/FEEDBACK
      * data available
      */
-    public function process_feedback($data) {
+    public function process_peerassess($data) {
         global $CFG;
 
         // get the course module id and context id
@@ -96,7 +96,7 @@ class moodle1_mod_feedback_handler extends moodle1_mod_handler {
 
 
         // get a fresh new file manager for this instance
-        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_feedback');
+        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_peerassess');
 
         // convert course files embedded into the intro
         $this->fileman->filearea = 'intro';
@@ -109,11 +109,11 @@ class moodle1_mod_feedback_handler extends moodle1_mod_handler {
             $data['introformat'] = FORMAT_HTML;
         }
 
-        // start writing feedback.xml
-        $this->open_xml_writer("activities/feedback_{$this->moduleid}/feedback.xml");
+        // start writing peerassess.xml
+        $this->open_xml_writer("activities/peerassess_{$this->moduleid}/peerassess.xml");
         $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $this->moduleid,
-            'modulename' => 'feedback', 'contextid' => $contextid));
-        $this->xmlwriter->begin_tag('feedback', array('id' => $instanceid));
+            'modulename' => 'peerassess', 'contextid' => $contextid));
+        $this->xmlwriter->begin_tag('peerassess', array('id' => $instanceid));
 
         foreach ($data as $field => $value) {
             if ($field <> 'id') {
@@ -130,22 +130,22 @@ class moodle1_mod_feedback_handler extends moodle1_mod_handler {
      * This is executed every time we have one /MOODLE_BACKUP/COURSE/MODULES/MOD/FEEDBACK/ITEMS/ITEM
      * data available
      */
-    public function process_feedback_item($data) {
+    public function process_peerassess_item($data) {
         $this->write_xml('item', $data, array('/item/id'));
     }
 
     /**
-     * This is executed when we reach the closing </MOD> tag of our 'feedback' path
+     * This is executed when we reach the closing </MOD> tag of our 'peerassess' path
      */
-    public function on_feedback_end() {
-        // finish writing feedback.xml
+    public function on_peerassess_end() {
+        // finish writing peerassess.xml
         $this->xmlwriter->end_tag('items');
-        $this->xmlwriter->end_tag('feedback');
+        $this->xmlwriter->end_tag('peerassess');
         $this->xmlwriter->end_tag('activity');
         $this->close_xml_writer();
 
         // write inforef.xml
-        $this->open_xml_writer("activities/feedback_{$this->moduleid}/inforef.xml");
+        $this->open_xml_writer("activities/peerassess_{$this->moduleid}/inforef.xml");
         $this->xmlwriter->begin_tag('inforef');
         $this->xmlwriter->begin_tag('fileref');
         foreach ($this->fileman->get_fileids() as $fileid) {

@@ -18,7 +18,7 @@ require_once($CFG->libdir.'/formslib.php');
 
 define('FEEDBACK_ITEM_NAME_TEXTBOX_SIZE', 80);
 define('FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE', 20);
-abstract class feedback_item_form extends moodleform {
+abstract class peerassess_item_form extends moodleform {
     public function definition() {
         $item = $this->_customdata['item']; //the item object
 
@@ -26,8 +26,8 @@ abstract class feedback_item_form extends moodleform {
         //    array('cmid'=>$cm->id,
         //         'id'=>isset($item->id) ? $item->id : NULL,
         //         'typ'=>$item->typ,
-        //         'items'=>$feedbackitems,
-        //         'feedback'=>$feedback->id);
+        //         'items'=>$peerassessitems,
+        //         'peerassess'=>$peerassess->id);
         $common = $this->_customdata['common'];
 
         //positionlist is an array with possible positions for the item location
@@ -41,13 +41,13 @@ abstract class feedback_item_form extends moodleform {
         if (array_filter(array_keys($common['items']))) {
             $mform->addElement('select',
                                 'dependitem',
-                                get_string('dependitem', 'feedback').'&nbsp;',
+                                get_string('dependitem', 'peerassess').'&nbsp;',
                                 $common['items']
                                 );
-            $mform->addHelpButton('dependitem', 'depending', 'feedback');
+            $mform->addHelpButton('dependitem', 'depending', 'peerassess');
             $mform->addElement('text',
                                 'dependvalue',
-                                get_string('dependvalue', 'feedback'),
+                                get_string('dependvalue', 'peerassess'),
                                 array('size'=>FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength'=>255));
             $mform->hideIf('dependvalue', 'dependitem', 'eq', '0');
         } else {
@@ -60,7 +60,7 @@ abstract class feedback_item_form extends moodleform {
 
         $position_select = $mform->addElement('select',
                                             'position',
-                                            get_string('position', 'feedback').'&nbsp;',
+                                            get_string('position', 'peerassess').'&nbsp;',
                                             $positionlist);
         $position_select->setValue($position);
 
@@ -70,8 +70,8 @@ abstract class feedback_item_form extends moodleform {
         $mform->addElement('hidden', 'id', $common['id']);
         $mform->setType('id', PARAM_INT);
 
-        $mform->addElement('hidden', 'feedback', $common['feedback']);
-        $mform->setType('feedback', PARAM_INT);
+        $mform->addElement('hidden', 'peerassess', $common['peerassess']);
+        $mform->setType('peerassess', PARAM_INT);
 
         $mform->addElement('hidden', 'template', 0);
         $mform->setType('template', PARAM_INT);
@@ -92,17 +92,17 @@ abstract class feedback_item_form extends moodleform {
         if (!empty($item->id)) {
             $buttonarray[] = &$mform->createElement('submit',
                                                     'update_item',
-                                                    get_string('update_item', 'feedback'));
+                                                    get_string('update_item', 'peerassess'));
 
             $buttonarray[] = &$mform->createElement('submit',
                                                     'clone_item',
-                                                    get_string('save_as_new_item', 'feedback'));
+                                                    get_string('save_as_new_item', 'peerassess'));
         } else {
             $mform->addElement('hidden', 'clone_item', 0);
             $mform->setType('clone_item', PARAM_INT);
             $buttonarray[] = &$mform->createElement('submit',
                                                     'save_item',
-                                                    get_string('save_item', 'feedback'));
+                                                    get_string('save_item', 'peerassess'));
         }
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '&nbsp;', array(' '), false);

@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * shows an analysed view of a feedback on the mainsite
+ * shows an analysed view of a peerassess on the mainsite
  *
  * @author Andreas Grabs
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod_feedback
+ * @package mod_peerassess
  */
 
 require_once("../../config.php");
@@ -32,7 +32,7 @@ $courseitemfilter = optional_param('courseitemfilter', '0', PARAM_INT);
 $courseitemfiltertyp = optional_param('courseitemfiltertyp', '0', PARAM_ALPHANUM);
 $courseid = optional_param('courseid', false, PARAM_INT);
 
-$url = new moodle_url('/mod/feedback/analysis_course.php', array('id'=>$id));
+$url = new moodle_url('/mod/peerassess/analysis_course.php', array('id'=>$id));
 navigation_node::override_active_url($url);
 if ($courseid !== false) {
     $url->param('courseid', $courseid);
@@ -45,33 +45,33 @@ if ($courseitemfiltertyp !== '0') {
 }
 $PAGE->set_url($url);
 
-list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
+list($course, $cm) = get_course_and_cm_from_cmid($id, 'peerassess');
 $context = context_module::instance($cm->id);
 
 require_course_login($course, true, $cm);
 
-$feedback = $PAGE->activityrecord;
+$peerassess = $PAGE->activityrecord;
 
-if (!($feedback->publish_stats OR has_capability('mod/feedback:viewreports', $context))) {
+if (!($peerassess->publish_stats OR has_capability('mod/peerassess:viewreports', $context))) {
     print_error('error');
 }
 
-$feedbackstructure = new mod_feedback_structure($feedback, $PAGE->cm, $courseid);
+$peerassessstructure = new mod_peerassess_structure($peerassess, $PAGE->cm, $courseid);
 
 // Process course select form.
-$courseselectform = new mod_feedback_course_select_form($url, $feedbackstructure);
+$courseselectform = new mod_peerassess_course_select_form($url, $peerassessstructure);
 if ($data = $courseselectform->get_data()) {
     redirect(new moodle_url($url, ['courseid' => $data->courseid]));
 }
 
 /// Print the page header
-$strfeedbacks = get_string("modulenameplural", "feedback");
-$strfeedback  = get_string("modulename", "feedback");
+$strpeerassesss = get_string("modulenameplural", "peerassess");
+$strpeerassess  = get_string("modulename", "peerassess");
 
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title($feedback->name);
+$PAGE->set_title($peerassess->name);
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($feedback->name));
+echo $OUTPUT->heading(format_string($peerassess->name));
 
 /// print the tabs
 require('tabs.php');
@@ -83,31 +83,31 @@ $mygroupid = false;
 $courseselectform->display();
 
 // Button "Export to excel".
-if (has_capability('mod/feedback:viewreports', $context) && $feedbackstructure->get_items()) {
+if (has_capability('mod/peerassess:viewreports', $context) && $peerassessstructure->get_items()) {
     echo $OUTPUT->container_start('form-buttons');
-    $aurl = new moodle_url('/mod/feedback/analysis_to_excel.php',
+    $aurl = new moodle_url('/mod/peerassess/analysis_to_excel.php',
         ['sesskey' => sesskey(), 'id' => $id, 'courseid' => (int)$courseid]);
-    echo $OUTPUT->single_button($aurl, get_string('export_to_excel', 'feedback'));
+    echo $OUTPUT->single_button($aurl, get_string('export_to_excel', 'peerassess'));
     echo $OUTPUT->container_end();
 }
 
 // Show the summary.
-$summary = new mod_feedback\output\summary($feedbackstructure);
-echo $OUTPUT->render_from_template('mod_feedback/summary', $summary->export_for_template($OUTPUT));
+$summary = new mod_peerassess\output\summary($peerassessstructure);
+echo $OUTPUT->render_from_template('mod_peerassess/summary', $summary->export_for_template($OUTPUT));
 
-// Get the items of the feedback.
-$items = $feedbackstructure->get_items(true);
+// Get the items of the peerassess.
+$items = $peerassessstructure->get_items(true);
 
 if ($courseitemfilter > 0) {
     $sumvalue = 'SUM(' . $DB->sql_cast_char2real('value', true) . ')';
     $sql = "SELECT fv.course_id, c.shortname, $sumvalue AS sumvalue, COUNT(value) as countvalue
-            FROM {feedback_value} fv, {course} c, {feedback_item} fi
+            FROM {peerassess_value} fv, {course} c, {peerassess_item} fi
             WHERE fv.course_id = c.id AND fi.id = fv.item AND fi.typ = ? AND fv.item = ?
             GROUP BY course_id, shortname
             ORDER BY sumvalue desc";
 
     if ($courses = $DB->get_records_sql($sql, array($courseitemfiltertyp, $courseitemfilter))) {
-        $item = $DB->get_record('feedback_item', array('id'=>$courseitemfilter));
+        $item = $DB->get_record('peerassess_item', array('id'=>$courseitemfilter));
         echo '<h4>'.$item->name.'</h4>';
         echo '<div class="clearfix">';
         echo '<table>';
@@ -136,13 +136,13 @@ if ($courseitemfilter > 0) {
     // Print the items in an analysed form.
     foreach ($items as $item) {
         echo '<table class="analysis">';
-        $itemobj = feedback_get_item_class($item->typ);
-        $printnr = ($feedback->autonumbering && $item->itemnr) ? ($item->itemnr . '.') : '';
-        $itemobj->print_analysed($item, $printnr, $mygroupid, $feedbackstructure->get_courseid());
+        $itemobj = peerassess_get_item_class($item->typ);
+        $printnr = ($peerassess->autonumbering && $item->itemnr) ? ($item->itemnr . '.') : '';
+        $itemobj->print_analysed($item, $printnr, $mygroupid, $peerassessstructure->get_courseid());
         if (preg_match('/rated$/i', $item->typ)) {
-            $url = new moodle_url('/mod/feedback/analysis_course.php', array('id' => $id,
+            $url = new moodle_url('/mod/peerassess/analysis_course.php', array('id' => $id,
                 'courseitemfilter' => $item->id, 'courseitemfiltertyp' => $item->typ));
-            $anker = html_writer::link($url, get_string('sort_by_course', 'feedback'));
+            $anker = html_writer::link($url, get_string('sort_by_course', 'peerassess'));
 
             echo '<tr><td colspan="2">'.$anker.'</td></tr>';
         }

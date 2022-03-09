@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * prints the overview of all feedbacks included into the current course
+ * prints the overview of all peerassesss included into the current course
  *
  * @author Andreas Grabs
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod_feedback
+ * @package mod_peerassess
  */
 
 require_once("../../config.php");
@@ -27,7 +27,7 @@ require_once("lib.php");
 
 $id = required_param('id', PARAM_INT);
 
-$url = new moodle_url('/mod/feedback/index.php', array('id'=>$id));
+$url = new moodle_url('/mod/peerassess/index.php', array('id'=>$id));
 
 $PAGE->set_url($url);
 
@@ -41,25 +41,25 @@ require_login($course);
 $PAGE->set_pagelayout('incourse');
 
 // Trigger instances list viewed event.
-$event = \mod_feedback\event\course_module_instance_list_viewed::create(array('context' => $context));
+$event = \mod_peerassess\event\course_module_instance_list_viewed::create(array('context' => $context));
 $event->add_record_snapshot('course', $course);
 $event->trigger();
 
 /// Print the page header
-$strfeedbacks = get_string("modulenameplural", "feedback");
-$strfeedback  = get_string("modulename", "feedback");
+$strpeerassesss = get_string("modulenameplural", "peerassess");
+$strpeerassess  = get_string("modulename", "peerassess");
 
-$PAGE->navbar->add($strfeedbacks);
+$PAGE->navbar->add($strpeerassesss);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title(get_string('modulename', 'feedback').' '.get_string('activities'));
+$PAGE->set_title(get_string('modulename', 'peerassess').' '.get_string('activities'));
 echo $OUTPUT->header();
-echo $OUTPUT->heading($strfeedbacks);
+echo $OUTPUT->heading($strpeerassesss);
 
 /// Get all the appropriate data
 
-if (! $feedbacks = get_all_instances_in_course("feedback", $course)) {
+if (! $peerassesss = get_all_instances_in_course("peerassess", $course)) {
     $url = new moodle_url('/course/view.php', array('id'=>$course->id));
-    notice(get_string('thereareno', 'moodle', $strfeedbacks), $url);
+    notice(get_string('thereareno', 'moodle', $strpeerassesss), $url);
     die;
 }
 
@@ -69,13 +69,13 @@ $usesections = course_format_uses_sections($course->format);
 
 $timenow = time();
 $strname  = get_string("name");
-$strresponses = get_string('responses', 'feedback');
+$strresponses = get_string('responses', 'peerassess');
 
 $table = new html_table();
 
 if ($usesections) {
     $strsectionname = get_string('sectionname', 'format_'.$course->format);
-    if (has_capability('mod/feedback:viewreports', $context)) {
+    if (has_capability('mod/peerassess:viewreports', $context)) {
         $table->head  = array ($strsectionname, $strname, $strresponses);
         $table->align = array ("center", "left", 'center');
     } else {
@@ -83,7 +83,7 @@ if ($usesections) {
         $table->align = array ("center", "left");
     }
 } else {
-    if (has_capability('mod/feedback:viewreports', $context)) {
+    if (has_capability('mod/peerassess:viewreports', $context)) {
         $table->head  = array ($strname, $strresponses);
         $table->align = array ("left", "center");
     } else {
@@ -93,24 +93,24 @@ if ($usesections) {
 }
 
 
-foreach ($feedbacks as $feedback) {
-    //get the responses of each feedback
-    $viewurl = new moodle_url('/mod/feedback/view.php', array('id'=>$feedback->coursemodule));
+foreach ($peerassesss as $peerassess) {
+    //get the responses of each peerassess
+    $viewurl = new moodle_url('/mod/peerassess/view.php', array('id'=>$peerassess->coursemodule));
 
-    if (has_capability('mod/feedback:viewreports', $context)) {
-        $completed_feedback_count = intval(feedback_get_completeds_group_count($feedback));
+    if (has_capability('mod/peerassess:viewreports', $context)) {
+        $completed_peerassess_count = intval(peerassess_get_completeds_group_count($peerassess));
     }
 
-    $dimmedclass = $feedback->visible ? '' : 'class="dimmed"';
-    $link = '<a '.$dimmedclass.' href="'.$viewurl->out().'">'.$feedback->name.'</a>';
+    $dimmedclass = $peerassess->visible ? '' : 'class="dimmed"';
+    $link = '<a '.$dimmedclass.' href="'.$viewurl->out().'">'.$peerassess->name.'</a>';
 
     if ($usesections) {
-        $tabledata = array (get_section_name($course, $feedback->section), $link);
+        $tabledata = array (get_section_name($course, $peerassess->section), $link);
     } else {
         $tabledata = array ($link);
     }
-    if (has_capability('mod/feedback:viewreports', $context)) {
-        $tabledata[] = $completed_feedback_count;
+    if (has_capability('mod/peerassess:viewreports', $context)) {
+        $tabledata[] = $completed_peerassess_count;
     }
 
     $table->data[] = $tabledata;

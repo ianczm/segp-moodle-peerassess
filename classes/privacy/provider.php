@@ -17,13 +17,13 @@
 /**
  * Data provider.
  *
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @copyright  2018 Frédéric Massart
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_feedback\privacy;
+namespace mod_peerassess\privacy;
 defined('MOODLE_INTERNAL') || die();
 
 use context;
@@ -38,12 +38,12 @@ use core_privacy\local\request\transform;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
-require_once($CFG->dirroot . '/mod/feedback/lib.php');
+require_once($CFG->dirroot . '/mod/peerassess/lib.php');
 
 /**
  * Data provider class.
  *
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @copyright  2018 Frédéric Massart
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -66,15 +66,15 @@ class provider implements
             'anonymous_response' => 'privacy:metadata:completed:anonymousresponse',
         ];
 
-        $collection->add_database_table('feedback_completed', $completedfields, 'privacy:metadata:completed');
-        $collection->add_database_table('feedback_completedtmp', $completedfields, 'privacy:metadata:completedtmp');
+        $collection->add_database_table('peerassess_completed', $completedfields, 'privacy:metadata:completed');
+        $collection->add_database_table('peerassess_completedtmp', $completedfields, 'privacy:metadata:completedtmp');
 
         $valuefields = [
             'value' => 'privacy:metadata:value:value'
         ];
 
-        $collection->add_database_table('feedback_value', $valuefields, 'privacy:metadata:value');
-        $collection->add_database_table('feedback_valuetmp', $valuefields, 'privacy:metadata:valuetmp');
+        $collection->add_database_table('peerassess_value', $valuefields, 'privacy:metadata:value');
+        $collection->add_database_table('peerassess_valuetmp', $valuefields, 'privacy:metadata:valuetmp');
 
         return $collection;
     }
@@ -90,18 +90,18 @@ class provider implements
             SELECT DISTINCT ctx.id
               FROM {%s} fc
               JOIN {modules} m
-                ON m.name = :feedback
+                ON m.name = :peerassess
               JOIN {course_modules} cm
-                ON cm.instance = fc.feedback
+                ON cm.instance = fc.peerassess
                AND cm.module = m.id
               JOIN {context} ctx
                 ON ctx.instanceid = cm.id
                AND ctx.contextlevel = :modlevel
              WHERE fc.userid = :userid";
-        $params = ['feedback' => 'feedback', 'modlevel' => CONTEXT_MODULE, 'userid' => $userid];
+        $params = ['peerassess' => 'peerassess', 'modlevel' => CONTEXT_MODULE, 'userid' => $userid];
         $contextlist = new contextlist();
-        $contextlist->add_from_sql(sprintf($sql, 'feedback_completed'), $params);
-        $contextlist->add_from_sql(sprintf($sql, 'feedback_completedtmp'), $params);
+        $contextlist->add_from_sql(sprintf($sql, 'peerassess_completed'), $params);
+        $contextlist->add_from_sql(sprintf($sql, 'peerassess_completedtmp'), $params);
         return $contextlist;
     }
 
@@ -118,23 +118,23 @@ class provider implements
             return;
         }
 
-        // Find users with feedback entries.
+        // Find users with peerassess entries.
         $sql = "
             SELECT fc.userid
               FROM {%s} fc
               JOIN {modules} m
-                ON m.name = :feedback
+                ON m.name = :peerassess
               JOIN {course_modules} cm
-                ON cm.instance = fc.feedback
+                ON cm.instance = fc.peerassess
                AND cm.module = m.id
               JOIN {context} ctx
                 ON ctx.instanceid = cm.id
                AND ctx.contextlevel = :modlevel
              WHERE ctx.id = :contextid";
-        $params = ['feedback' => 'feedback', 'modlevel' => CONTEXT_MODULE, 'contextid' => $context->id];
+        $params = ['peerassess' => 'peerassess', 'modlevel' => CONTEXT_MODULE, 'contextid' => $context->id];
 
-        $userlist->add_from_sql('userid', sprintf($sql, 'feedback_completed'), $params);
-        $userlist->add_from_sql('userid', sprintf($sql, 'feedback_completedtmp'), $params);
+        $userlist->add_from_sql('userid', sprintf($sql, 'peerassess_completed'), $params);
+        $userlist->add_from_sql('userid', sprintf($sql, 'peerassess_completedtmp'), $params);
     }
 
     /**
@@ -197,7 +197,7 @@ class provider implements
             }
             $item = static::extract_item_record_from_record($record);
             $value = static::extract_value_record_from_record($record);
-            $itemobj = feedback_get_item_class($record->itemtyp);
+            $itemobj = peerassess_get_item_class($record->itemtyp);
             $data->submissions[$id]['answers'][] = [
                 'question' => format_text($record->itemname, FORMAT_HTML, [
                     'context' => context::instance_by_id($record->contextid),
@@ -236,27 +236,27 @@ class provider implements
             SELECT fc.id
               FROM {%s} fc
               JOIN {modules} m
-                ON m.name = :feedback
+                ON m.name = :peerassess
               JOIN {course_modules} cm
-                ON cm.instance = fc.feedback
+                ON cm.instance = fc.peerassess
                AND cm.module = m.id
              WHERE cm.id = :cmid";
-        $completedparams = ['cmid' => $context->instanceid, 'feedback' => 'feedback'];
+        $completedparams = ['cmid' => $context->instanceid, 'peerassess' => 'peerassess'];
 
         // Delete temp answers and submissions.
-        $completedtmpids = $DB->get_fieldset_sql(sprintf($completedsql, 'feedback_completedtmp'), $completedparams);
+        $completedtmpids = $DB->get_fieldset_sql(sprintf($completedsql, 'peerassess_completedtmp'), $completedparams);
         if (!empty($completedtmpids)) {
             list($insql, $inparams) = $DB->get_in_or_equal($completedtmpids, SQL_PARAMS_NAMED);
-            $DB->delete_records_select('feedback_valuetmp', "completed $insql", $inparams);
-            $DB->delete_records_select('feedback_completedtmp', "id $insql", $inparams);
+            $DB->delete_records_select('peerassess_valuetmp', "completed $insql", $inparams);
+            $DB->delete_records_select('peerassess_completedtmp', "id $insql", $inparams);
         }
 
         // Delete answers and submissions.
-        $completedids = $DB->get_fieldset_sql(sprintf($completedsql, 'feedback_completed'), $completedparams);
+        $completedids = $DB->get_fieldset_sql(sprintf($completedsql, 'peerassess_completed'), $completedparams);
         if (!empty($completedids)) {
             list($insql, $inparams) = $DB->get_in_or_equal($completedids, SQL_PARAMS_NAMED);
-            $DB->delete_records_select('feedback_value', "completed $insql", $inparams);
-            $DB->delete_records_select('feedback_completed', "id $insql", $inparams);
+            $DB->delete_records_select('peerassess_value', "completed $insql", $inparams);
+            $DB->delete_records_select('peerassess_completed', "id $insql", $inparams);
         }
     }
 
@@ -282,28 +282,28 @@ class provider implements
             SELECT fc.id
               FROM {%s} fc
               JOIN {modules} m
-                ON m.name = :feedback
+                ON m.name = :peerassess
               JOIN {course_modules} cm
-                ON cm.instance = fc.feedback
+                ON cm.instance = fc.peerassess
                AND cm.module = m.id
              WHERE fc.userid = :userid
                AND cm.id $insql";
-        $completedparams = array_merge($inparams, ['userid' => $userid, 'feedback' => 'feedback']);
+        $completedparams = array_merge($inparams, ['userid' => $userid, 'peerassess' => 'peerassess']);
 
         // Delete all submissions in progress.
-        $completedtmpids = $DB->get_fieldset_sql(sprintf($completedsql, 'feedback_completedtmp'), $completedparams);
+        $completedtmpids = $DB->get_fieldset_sql(sprintf($completedsql, 'peerassess_completedtmp'), $completedparams);
         if (!empty($completedtmpids)) {
             list($insql, $inparams) = $DB->get_in_or_equal($completedtmpids, SQL_PARAMS_NAMED);
-            $DB->delete_records_select('feedback_valuetmp', "completed $insql", $inparams);
-            $DB->delete_records_select('feedback_completedtmp', "id $insql", $inparams);
+            $DB->delete_records_select('peerassess_valuetmp', "completed $insql", $inparams);
+            $DB->delete_records_select('peerassess_completedtmp', "id $insql", $inparams);
         }
 
         // Delete all final submissions.
-        $completedids = $DB->get_fieldset_sql(sprintf($completedsql, 'feedback_completed'), $completedparams);
+        $completedids = $DB->get_fieldset_sql(sprintf($completedsql, 'peerassess_completed'), $completedparams);
         if (!empty($completedids)) {
             list($insql, $inparams) = $DB->get_in_or_equal($completedids, SQL_PARAMS_NAMED);
-            $DB->delete_records_select('feedback_value', "completed $insql", $inparams);
-            $DB->delete_records_select('feedback_completed', "id $insql", $inparams);
+            $DB->delete_records_select('peerassess_value', "completed $insql", $inparams);
+            $DB->delete_records_select('peerassess_completed', "id $insql", $inparams);
         }
     }
 
@@ -324,28 +324,28 @@ class provider implements
             SELECT fc.id
               FROM {%s} fc
               JOIN {modules} m
-                ON m.name = :feedback
+                ON m.name = :peerassess
               JOIN {course_modules} cm
-                ON cm.instance = fc.feedback
+                ON cm.instance = fc.peerassess
                AND cm.module = m.id
              WHERE cm.id = :instanceid
                AND fc.userid $insql";
-        $completedparams = array_merge($inparams, ['instanceid' => $context->instanceid, 'feedback' => 'feedback']);
+        $completedparams = array_merge($inparams, ['instanceid' => $context->instanceid, 'peerassess' => 'peerassess']);
 
         // Delete all submissions in progress.
-        $completedtmpids = $DB->get_fieldset_sql(sprintf($completedsql, 'feedback_completedtmp'), $completedparams);
+        $completedtmpids = $DB->get_fieldset_sql(sprintf($completedsql, 'peerassess_completedtmp'), $completedparams);
         if (!empty($completedtmpids)) {
             list($insql, $inparams) = $DB->get_in_or_equal($completedtmpids, SQL_PARAMS_NAMED);
-            $DB->delete_records_select('feedback_valuetmp', "completed $insql", $inparams);
-            $DB->delete_records_select('feedback_completedtmp', "id $insql", $inparams);
+            $DB->delete_records_select('peerassess_valuetmp', "completed $insql", $inparams);
+            $DB->delete_records_select('peerassess_completedtmp', "id $insql", $inparams);
         }
 
         // Delete all final submissions.
-        $completedids = $DB->get_fieldset_sql(sprintf($completedsql, 'feedback_completed'), $completedparams);
+        $completedids = $DB->get_fieldset_sql(sprintf($completedsql, 'peerassess_completed'), $completedparams);
         if (!empty($completedids)) {
             list($insql, $inparams) = $DB->get_in_or_equal($completedids, SQL_PARAMS_NAMED);
-            $DB->delete_records_select('feedback_value', "completed $insql", $inparams);
-            $DB->delete_records_select('feedback_completed', "id $insql", $inparams);
+            $DB->delete_records_select('peerassess_value', "completed $insql", $inparams);
+            $DB->delete_records_select('peerassess_completed', "id $insql", $inparams);
         }
     }
 
@@ -413,7 +413,7 @@ class provider implements
 
             $sql = "
                 SELECT $uniqid AS uniqid,
-                       f.id AS feedbackid,
+                       f.id AS peerassessid,
                        ctx.id AS contextid,
 
                        $istmpsqlval AS istmp,
@@ -431,10 +431,10 @@ class provider implements
                   FROM {context} ctx
                   JOIN {course_modules} cm
                     ON cm.id = ctx.instanceid
-                  JOIN {feedback} f
+                  JOIN {peerassess} f
                     ON f.id = cm.instance
                   JOIN {%s} fc
-                    ON fc.feedback = f.id
+                    ON fc.peerassess = f.id
                   JOIN {%s} fv
                     ON fv.completed = fc.id
                  WHERE ctx.id $insql
@@ -444,8 +444,8 @@ class provider implements
                 'userid' . $i => $userid,
             ]);
 
-            $completedtbl = $istmp ? 'feedback_completedtmp' : 'feedback_completed';
-            $valuetbl = $istmp ? 'feedback_valuetmp' : 'feedback_value';
+            $completedtbl = $istmp ? 'peerassess_completedtmp' : 'peerassess_completed';
+            $valuetbl = $istmp ? 'peerassess_valuetmp' : 'peerassess_value';
             return [sprintf($sql, $completedtbl, $valuetbl), $params];
         };
 
@@ -460,7 +460,7 @@ class provider implements
                    COALESCE(fv.value, fvt.value) AS valuevalue,
 
                    fi.id AS itemid,
-                   fi.feedback AS itemfeedback,
+                   fi.peerassess AS itempeerassess,
                    fi.template AS itemtemplate,
                    fi.name AS itemname,
                    fi.label AS itemlabel,
@@ -474,11 +474,11 @@ class provider implements
                    fi.options AS itemoptions
 
               FROM ($nontmpsql UNION $tmpsql) q
-         LEFT JOIN {feedback_value} fv
+         LEFT JOIN {peerassess_value} fv
                 ON fv.id = q.valueid AND q.istmp = 0
-         LEFT JOIN {feedback_valuetmp} fvt
+         LEFT JOIN {peerassess_valuetmp} fvt
                 ON fvt.id = q.valueid AND q.istmp = 1
-              JOIN {feedback_item} fi
+              JOIN {peerassess_item} fi
                 ON (fi.id = fv.item OR fi.id = fvt.item)
           ORDER BY q.contextid, q.istmp, q.submissionid, q.valueid";
         $params = array_merge($nontmpparams, $tmpparams);

@@ -1,8 +1,8 @@
-@mod @mod_feedback
-Feature: Saving, using and deleting feedback templates
-  In order to quickly create feedbacks
+@mod @mod_peerassess
+Feature: Saving, using and deleting peerassess templates
+  In order to quickly create peerassesss
   As a manager
-  I need to be able to create feedback templates
+  I need to be able to create peerassess templates
 
   Background:
     Given the following "users" exist:
@@ -22,12 +22,12 @@ Feature: Saving, using and deleting feedback templates
       | manager | Acceptance test site | manager |
     And the following "activities" exist:
       | activity   | name                         | course | idnumber    |
-      | feedback   | Learning experience course 1 | C1     | feedback1   |
-      | feedback   | Another feedback in course 1 | C1     | feedback2   |
-      | feedback   | Learning experience course 2 | C2     | feedback3   |
-    And I am on the "Learning experience course 1" "feedback activity" page logged in as teacher
+      | peerassess   | Learning experience course 1 | C1     | peerassess1   |
+      | peerassess   | Another peerassess in course 1 | C1     | peerassess2   |
+      | peerassess   | Learning experience course 2 | C2     | peerassess3   |
+    And I am on the "Learning experience course 1" "peerassess activity" page logged in as teacher
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
-    And I add a "Multiple choice" question to the feedback with:
+    And I add a "Multiple choice" question to the peerassess with:
       | Question         | this is a multiple choice 1 |
       | Label            | multichoice1                |
       | Multiple choice type | Multiple choice - single answer |
@@ -35,8 +35,8 @@ Feature: Saving, using and deleting feedback templates
     And I log out
 
   Scenario: Teacher can save template and re-use it in the same course only
-    # Go to feedback templates and make sure none exist yet
-    When I am on the "Learning experience course 1" "feedback activity" page logged in as teacher
+    # Go to peerassess templates and make sure none exist yet
+    When I am on the "Learning experience course 1" "peerassess activity" page logged in as teacher
     And I follow "Templates"
     Then I should see "No templates available yet"
     And "Use a template" "field" should not exist
@@ -50,8 +50,8 @@ Feature: Saving, using and deleting feedback templates
     And I press "Save as new template"
     And I should see "Template saved"
     And the "Use a template" select box should contain "My first template"
-    # Create a feedback from this template in the same course
-    And I am on the "Another feedback in course 1" "feedback activity" page
+    # Create a peerassess from this template in the same course
+    And I am on the "Another peerassess in course 1" "peerassess activity" page
     And I follow "Templates"
     And I set the field "Use a template" to "My first template"
     And I press "Use this template"
@@ -60,21 +60,21 @@ Feature: Saving, using and deleting feedback templates
     And I follow "Edit questions"
     And I should see "this is a multiple choice 1"
     # Make sure this template is not available in another course
-    And I am on the "Learning experience course 2" "feedback activity" page
+    And I am on the "Learning experience course 2" "peerassess activity" page
     And I follow "Templates"
     And "Use a template" "field" should not exist
     And I should see "No templates available yet"
 
   Scenario: Teacher can append template to existing questions or remove them
-    # Save feedback as a course template
-    When I am on the "Learning experience course 1" "feedback activity" page logged in as teacher
+    # Save peerassess as a course template
+    When I am on the "Learning experience course 1" "peerassess activity" page logged in as teacher
     And I follow "Templates"
     And I set the field "Name" to "My first template"
     And I press "Save as new template"
-    # Add questions to another feedback
-    And I am on the "Another feedback in course 1" "feedback activity" page
+    # Add questions to another peerassess
+    And I am on the "Another peerassess in course 1" "peerassess activity" page
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
-    And I add a "Multiple choice" question to the feedback with:
+    And I add a "Multiple choice" question to the peerassess with:
       | Question         | What is your favourite subject |
       | Label            | subjectchoice                  |
       | Multiple choice type | Multiple choice - single answer   |
@@ -98,13 +98,13 @@ Feature: Saving, using and deleting feedback templates
     And I should see "this is a multiple choice 1"
 
   Scenario: Manager can save template as public and it will be available in any course
-    When I am on the "Learning experience course 1" "feedback activity" page logged in as manager
+    When I am on the "Learning experience course 1" "peerassess activity" page logged in as manager
     And I follow "Templates"
     And I set the field "Name" to "My first template"
     And I set the field "Public" to "1"
     And I press "Save as new template"
     And I log out
-    And I am on the "Learning experience course 2" "feedback activity" page logged in as teacher
+    And I am on the "Learning experience course 2" "peerassess activity" page logged in as teacher
     And I follow "Templates"
     And I set the field "Use a template" to "My first template"
     And I press "Use this template"
@@ -114,8 +114,8 @@ Feature: Saving, using and deleting feedback templates
     And I should see "this is a multiple choice 1"
 
   Scenario: Teacher can delete course templates but can not delete public templates
-    # Save feedback as both public and course template
-    When I am on the "Learning experience course 1" "feedback activity" page logged in as manager
+    # Save peerassess as both public and course template
+    When I am on the "Learning experience course 1" "peerassess activity" page logged in as manager
     And I follow "Templates"
     And I set the field "Name" to "My public template"
     And I set the field "Public" to "1"
@@ -124,7 +124,7 @@ Feature: Saving, using and deleting feedback templates
     And I press "Save as new template"
     And I log out
     # Login as teacher and try to delete templates
-    And I am on the "Another feedback in course 1" "feedback activity" page logged in as teacher
+    And I am on the "Another peerassess in course 1" "peerassess activity" page logged in as teacher
     And I follow "Templates"
     And I follow "Delete template..."
     Then I should not see "My public template"
@@ -140,8 +140,8 @@ Feature: Saving, using and deleting feedback templates
 
   @javascript
   Scenario: Manager can delete both course and public templates
-    # Save feedback as both public and course template
-    When I am on the "Learning experience course 1" "feedback activity" page logged in as manager
+    # Save peerassess as both public and course template
+    When I am on the "Learning experience course 1" "peerassess activity" page logged in as manager
     And I click on "Templates" "link" in the "[role=main]" "css_element"
     And I set the field "Name" to "My public template"
     And I set the field "Public" to "1"

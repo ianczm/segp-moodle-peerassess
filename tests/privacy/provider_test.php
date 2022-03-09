@@ -17,13 +17,13 @@
 /**
  * Data provider tests.
  *
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @category   test
  * @copyright  2018 Frédéric Massart
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_feedback\privacy;
+namespace mod_peerassess\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -33,14 +33,14 @@ use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
-use mod_feedback\privacy\provider;
+use mod_peerassess\privacy\provider;
 
-require_once($CFG->dirroot . '/mod/feedback/lib.php');
+require_once($CFG->dirroot . '/mod/peerassess/lib.php');
 
 /**
  * Data provider testcase class.
  *
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @category   test
  * @copyright  2018 Frédéric Massart
  * @author     Frédéric Massart <fred@branchup.tech>
@@ -58,45 +58,45 @@ class provider_test extends provider_testcase {
     public function test_get_contexts_for_userid() {
         global $DB;
         $dg = $this->getDataGenerator();
-        $fg = $dg->get_plugin_generator('mod_feedback');
+        $fg = $dg->get_plugin_generator('mod_peerassess');
 
         $c1 = $dg->create_course();
         $c2 = $dg->create_course();
-        $cm0a = $dg->create_module('feedback', ['course' => SITEID]);
-        $cm1a = $dg->create_module('feedback', ['course' => $c1, 'anonymous' => FEEDBACK_ANONYMOUS_NO]);
-        $cm1b = $dg->create_module('feedback', ['course' => $c1]);
-        $cm2a = $dg->create_module('feedback', ['course' => $c2]);
-        $cm2b = $dg->create_module('feedback', ['course' => $c2]);
-        $cm2c = $dg->create_module('feedback', ['course' => $c2]);
+        $cm0a = $dg->create_module('peerassess', ['course' => SITEID]);
+        $cm1a = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => FEEDBACK_ANONYMOUS_NO]);
+        $cm1b = $dg->create_module('peerassess', ['course' => $c1]);
+        $cm2a = $dg->create_module('peerassess', ['course' => $c2]);
+        $cm2b = $dg->create_module('peerassess', ['course' => $c2]);
+        $cm2c = $dg->create_module('peerassess', ['course' => $c2]);
 
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
 
-        foreach ([$cm0a, $cm1a, $cm1b, $cm2a] as $feedback) {
-            $i1 = $fg->create_item_numeric($feedback);
-            $i2 = $fg->create_item_multichoice($feedback);
+        foreach ([$cm0a, $cm1a, $cm1b, $cm2a] as $peerassess) {
+            $i1 = $fg->create_item_numeric($peerassess);
+            $i2 = $fg->create_item_multichoice($peerassess);
             $answers = ['numeric_' . $i1->id => '1', 'multichoice_' . $i2->id => [1]];
 
-            if ($feedback == $cm1b) {
-                $this->create_submission_with_answers($feedback, $u2, $answers);
+            if ($peerassess == $cm1b) {
+                $this->create_submission_with_answers($peerassess, $u2, $answers);
             } else {
-                $this->create_submission_with_answers($feedback, $u1, $answers);
+                $this->create_submission_with_answers($peerassess, $u1, $answers);
             }
         }
 
         // Unsaved submission for u1 in cm2b.
-        $feedback = $cm2b;
-        $i1 = $fg->create_item_numeric($feedback);
-        $i2 = $fg->create_item_multichoice($feedback);
+        $peerassess = $cm2b;
+        $i1 = $fg->create_item_numeric($peerassess);
+        $i2 = $fg->create_item_multichoice($peerassess);
         $answers = ['numeric_' . $i1->id => '1', 'multichoice_' . $i2->id => [1]];
-        $this->create_tmp_submission_with_answers($feedback, $u1, $answers);
+        $this->create_tmp_submission_with_answers($peerassess, $u1, $answers);
 
         // Unsaved submission for u2 in cm2c.
-        $feedback = $cm2c;
-        $i1 = $fg->create_item_numeric($feedback);
-        $i2 = $fg->create_item_multichoice($feedback);
+        $peerassess = $cm2c;
+        $i1 = $fg->create_item_numeric($peerassess);
+        $i2 = $fg->create_item_multichoice($peerassess);
         $answers = ['numeric_' . $i1->id => '1', 'multichoice_' . $i2->id => [1]];
-        $this->create_tmp_submission_with_answers($feedback, $u2, $answers);
+        $this->create_tmp_submission_with_answers($peerassess, $u2, $answers);
 
         $contextids = provider::get_contexts_for_userid($u1->id)->get_contextids();
         $this->assertCount(4, $contextids);
@@ -123,37 +123,37 @@ class provider_test extends provider_testcase {
     public function test_get_users_in_context() {
         global $DB;
         $dg = $this->getDataGenerator();
-        $fg = $dg->get_plugin_generator('mod_feedback');
-        $component = 'mod_feedback';
+        $fg = $dg->get_plugin_generator('mod_peerassess');
+        $component = 'mod_peerassess';
 
         $c1 = $dg->create_course();
         $c2 = $dg->create_course();
-        $cm0 = $dg->create_module('feedback', ['course' => SITEID]);
-        $cm1a = $dg->create_module('feedback', ['course' => $c1, 'anonymous' => FEEDBACK_ANONYMOUS_NO]);
-        $cm1b = $dg->create_module('feedback', ['course' => $c1]);
-        $cm2 = $dg->create_module('feedback', ['course' => $c2]);
+        $cm0 = $dg->create_module('peerassess', ['course' => SITEID]);
+        $cm1a = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => FEEDBACK_ANONYMOUS_NO]);
+        $cm1b = $dg->create_module('peerassess', ['course' => $c1]);
+        $cm2 = $dg->create_module('peerassess', ['course' => $c2]);
 
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
 
-        foreach ([$cm0, $cm1a, $cm1b, $cm2] as $feedback) {
-            $i1 = $fg->create_item_numeric($feedback);
-            $i2 = $fg->create_item_multichoice($feedback);
+        foreach ([$cm0, $cm1a, $cm1b, $cm2] as $peerassess) {
+            $i1 = $fg->create_item_numeric($peerassess);
+            $i2 = $fg->create_item_multichoice($peerassess);
             $answers = ['numeric_' . $i1->id => '1', 'multichoice_' . $i2->id => [1]];
 
-            if ($feedback == $cm1b) {
-                $this->create_submission_with_answers($feedback, $u2, $answers);
+            if ($peerassess == $cm1b) {
+                $this->create_submission_with_answers($peerassess, $u2, $answers);
             } else {
-                $this->create_submission_with_answers($feedback, $u1, $answers);
+                $this->create_submission_with_answers($peerassess, $u1, $answers);
             }
         }
 
         // Unsaved submission for u2 in cm1a.
-        $feedback = $cm1a;
-        $i1 = $fg->create_item_numeric($feedback);
-        $i2 = $fg->create_item_multichoice($feedback);
+        $peerassess = $cm1a;
+        $i1 = $fg->create_item_numeric($peerassess);
+        $i2 = $fg->create_item_multichoice($peerassess);
         $answers = ['numeric_' . $i1->id => '1', 'multichoice_' . $i2->id => [1]];
-        $this->create_tmp_submission_with_answers($feedback, $u2, $answers);
+        $this->create_tmp_submission_with_answers($peerassess, $u2, $answers);
 
         // Only u1 in cm0.
         $context = \context_module::instance($cm0->cmid);
@@ -200,51 +200,51 @@ class provider_test extends provider_testcase {
     public function test_delete_data_for_user() {
         global $DB;
         $dg = $this->getDataGenerator();
-        $fg = $dg->get_plugin_generator('mod_feedback');
+        $fg = $dg->get_plugin_generator('mod_peerassess');
 
         $c1 = $dg->create_course();
         $c2 = $dg->create_course();
-        $cm0a = $dg->create_module('feedback', ['course' => SITEID]);
-        $cm1a = $dg->create_module('feedback', ['course' => $c1, 'anonymous' => FEEDBACK_ANONYMOUS_NO]);
-        $cm2a = $dg->create_module('feedback', ['course' => $c2]);
+        $cm0a = $dg->create_module('peerassess', ['course' => SITEID]);
+        $cm1a = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => FEEDBACK_ANONYMOUS_NO]);
+        $cm2a = $dg->create_module('peerassess', ['course' => $c2]);
 
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
 
         // Create a bunch of data.
-        foreach ([$cm1a, $cm0a, $cm2a] as $feedback) {
-            $i1 = $fg->create_item_numeric($feedback);
-            $i2 = $fg->create_item_multichoice($feedback);
+        foreach ([$cm1a, $cm0a, $cm2a] as $peerassess) {
+            $i1 = $fg->create_item_numeric($peerassess);
+            $i2 = $fg->create_item_multichoice($peerassess);
             $answers = ['numeric_' . $i1->id => '1', 'multichoice_' . $i2->id => [1]];
 
             // Create u2 user data for this module.
-            if ($feedback == $cm1a) {
-                $this->create_submission_with_answers($feedback, $u2, $answers);
-                $this->create_tmp_submission_with_answers($feedback, $u2, $answers);
+            if ($peerassess == $cm1a) {
+                $this->create_submission_with_answers($peerassess, $u2, $answers);
+                $this->create_tmp_submission_with_answers($peerassess, $u2, $answers);
             }
 
-            $this->create_submission_with_answers($feedback, $u1, $answers);
-            $this->create_tmp_submission_with_answers($feedback, $u1, $answers);
+            $this->create_submission_with_answers($peerassess, $u1, $answers);
+            $this->create_tmp_submission_with_answers($peerassess, $u1, $answers);
         }
 
-        $appctx = new approved_contextlist($u1, 'mod_feedback', [
+        $appctx = new approved_contextlist($u1, 'mod_peerassess', [
             \context_module::instance($cm0a->cmid)->id,
             \context_module::instance($cm1a->cmid)->id
         ]);
         provider::delete_data_for_user($appctx);
 
         // Confirm all data is gone in those, except for u2.
-        foreach ([$cm0a, $cm1a] as $feedback) {
-            $this->assert_no_feedback_data_for_user($feedback, $u1);
-            if ($feedback == $cm1a) {
-                $this->assert_feedback_data_for_user($feedback, $u2);
-                $this->assert_feedback_tmp_data_for_user($feedback, $u2);
+        foreach ([$cm0a, $cm1a] as $peerassess) {
+            $this->assert_no_peerassess_data_for_user($peerassess, $u1);
+            if ($peerassess == $cm1a) {
+                $this->assert_peerassess_data_for_user($peerassess, $u2);
+                $this->assert_peerassess_tmp_data_for_user($peerassess, $u2);
             }
         }
 
         // Confirm cm2a wasn't affected.
-        $this->assert_feedback_data_for_user($cm2a, $u1);
-        $this->assert_feedback_tmp_data_for_user($cm2a, $u1);
+        $this->assert_peerassess_data_for_user($cm2a, $u1);
+        $this->assert_peerassess_tmp_data_for_user($cm2a, $u1);
 
     }
 
@@ -254,13 +254,13 @@ class provider_test extends provider_testcase {
     public function test_delete_data_for_users() {
         global $DB;
         $dg = $this->getDataGenerator();
-        $fg = $dg->get_plugin_generator('mod_feedback');
+        $fg = $dg->get_plugin_generator('mod_peerassess');
 
         $c1 = $dg->create_course();
         $c2 = $dg->create_course();
-        $cm0 = $dg->create_module('feedback', ['course' => SITEID]);
-        $cm1 = $dg->create_module('feedback', ['course' => $c1, 'anonymous' => FEEDBACK_ANONYMOUS_NO]);
-        $cm2 = $dg->create_module('feedback', ['course' => $c2]);
+        $cm0 = $dg->create_module('peerassess', ['course' => SITEID]);
+        $cm1 = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => FEEDBACK_ANONYMOUS_NO]);
+        $cm2 = $dg->create_module('peerassess', ['course' => $c2]);
         $context0 = \context_module::instance($cm0->cmid);
         $context1 = \context_module::instance($cm1->cmid);
 
@@ -268,44 +268,44 @@ class provider_test extends provider_testcase {
         $u2 = $dg->create_user();
 
         // Create a bunch of data.
-        foreach ([$cm0, $cm1, $cm2] as $feedback) {
-            $i1 = $fg->create_item_numeric($feedback);
-            $i2 = $fg->create_item_multichoice($feedback);
+        foreach ([$cm0, $cm1, $cm2] as $peerassess) {
+            $i1 = $fg->create_item_numeric($peerassess);
+            $i2 = $fg->create_item_multichoice($peerassess);
             $answers = ['numeric_' . $i1->id => '1', 'multichoice_' . $i2->id => [1]];
 
-            $this->create_submission_with_answers($feedback, $u1, $answers);
-            $this->create_tmp_submission_with_answers($feedback, $u1, $answers);
+            $this->create_submission_with_answers($peerassess, $u1, $answers);
+            $this->create_tmp_submission_with_answers($peerassess, $u1, $answers);
 
-            $this->create_submission_with_answers($feedback, $u2, $answers);
-            $this->create_tmp_submission_with_answers($feedback, $u2, $answers);
+            $this->create_submission_with_answers($peerassess, $u2, $answers);
+            $this->create_tmp_submission_with_answers($peerassess, $u2, $answers);
         }
 
         // Delete u1 from cm0, ensure u2 data is retained.
-        $approveduserlist = new approved_userlist($context0, 'mod_feedback', [$u1->id]);
+        $approveduserlist = new approved_userlist($context0, 'mod_peerassess', [$u1->id]);
         provider::delete_data_for_users($approveduserlist);
 
-        $this->assert_no_feedback_data_for_user($cm0, $u1);
-        $this->assert_feedback_data_for_user($cm0, $u2);
-        $this->assert_feedback_tmp_data_for_user($cm0, $u2);
+        $this->assert_no_peerassess_data_for_user($cm0, $u1);
+        $this->assert_peerassess_data_for_user($cm0, $u2);
+        $this->assert_peerassess_tmp_data_for_user($cm0, $u2);
 
         // Ensure cm1 unaffected by cm1 deletes.
-        $this->assert_feedback_data_for_user($cm1, $u1);
-        $this->assert_feedback_tmp_data_for_user($cm1, $u1);
-        $this->assert_feedback_data_for_user($cm1, $u2);
-        $this->assert_feedback_tmp_data_for_user($cm1, $u2);
+        $this->assert_peerassess_data_for_user($cm1, $u1);
+        $this->assert_peerassess_tmp_data_for_user($cm1, $u1);
+        $this->assert_peerassess_data_for_user($cm1, $u2);
+        $this->assert_peerassess_tmp_data_for_user($cm1, $u2);
 
         // Delete u1 and u2 from cm1, ensure no data is retained.
-        $approveduserlist = new approved_userlist($context1, 'mod_feedback', [$u1->id, $u2->id]);
+        $approveduserlist = new approved_userlist($context1, 'mod_peerassess', [$u1->id, $u2->id]);
         provider::delete_data_for_users($approveduserlist);
 
-        $this->assert_no_feedback_data_for_user($cm1, $u1);
-        $this->assert_no_feedback_data_for_user($cm1, $u2);
+        $this->assert_no_peerassess_data_for_user($cm1, $u1);
+        $this->assert_no_peerassess_data_for_user($cm1, $u2);
 
         // Ensure cm2 is unaffected by any of the deletes.
-        $this->assert_feedback_data_for_user($cm2, $u1);
-        $this->assert_feedback_tmp_data_for_user($cm2, $u1);
-        $this->assert_feedback_data_for_user($cm2, $u2);
-        $this->assert_feedback_tmp_data_for_user($cm2, $u2);
+        $this->assert_peerassess_data_for_user($cm2, $u1);
+        $this->assert_peerassess_tmp_data_for_user($cm2, $u1);
+        $this->assert_peerassess_data_for_user($cm2, $u2);
+        $this->assert_peerassess_tmp_data_for_user($cm2, $u2);
     }
 
     /**
@@ -314,37 +314,37 @@ class provider_test extends provider_testcase {
     public function test_delete_data_for_all_users_in_context() {
         global $DB;
         $dg = $this->getDataGenerator();
-        $fg = $dg->get_plugin_generator('mod_feedback');
+        $fg = $dg->get_plugin_generator('mod_peerassess');
 
         $c1 = $dg->create_course();
         $c2 = $dg->create_course();
-        $cm0a = $dg->create_module('feedback', ['course' => SITEID]);
-        $cm1a = $dg->create_module('feedback', ['course' => $c1, 'anonymous' => FEEDBACK_ANONYMOUS_NO]);
+        $cm0a = $dg->create_module('peerassess', ['course' => SITEID]);
+        $cm1a = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => FEEDBACK_ANONYMOUS_NO]);
 
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
 
         // Create a bunch of data.
-        foreach ([$cm1a, $cm0a] as $feedback) {
-            $i1 = $fg->create_item_numeric($feedback);
-            $i2 = $fg->create_item_multichoice($feedback);
+        foreach ([$cm1a, $cm0a] as $peerassess) {
+            $i1 = $fg->create_item_numeric($peerassess);
+            $i2 = $fg->create_item_multichoice($peerassess);
             $answers = ['numeric_' . $i1->id => '1', 'multichoice_' . $i2->id => [1]];
 
-            $this->create_submission_with_answers($feedback, $u1, $answers);
-            $this->create_tmp_submission_with_answers($feedback, $u1, $answers);
+            $this->create_submission_with_answers($peerassess, $u1, $answers);
+            $this->create_tmp_submission_with_answers($peerassess, $u1, $answers);
 
-            $this->create_submission_with_answers($feedback, $u2, $answers);
-            $this->create_tmp_submission_with_answers($feedback, $u2, $answers);
+            $this->create_submission_with_answers($peerassess, $u2, $answers);
+            $this->create_tmp_submission_with_answers($peerassess, $u2, $answers);
         }
 
         provider::delete_data_for_all_users_in_context(\context_module::instance($cm1a->cmid));
 
-        $this->assert_no_feedback_data_for_user($cm1a, $u1);
-        $this->assert_no_feedback_data_for_user($cm1a, $u2);
-        $this->assert_feedback_data_for_user($cm0a, $u1);
-        $this->assert_feedback_data_for_user($cm0a, $u2);
-        $this->assert_feedback_tmp_data_for_user($cm0a, $u1);
-        $this->assert_feedback_tmp_data_for_user($cm0a, $u2);
+        $this->assert_no_peerassess_data_for_user($cm1a, $u1);
+        $this->assert_no_peerassess_data_for_user($cm1a, $u2);
+        $this->assert_peerassess_data_for_user($cm0a, $u1);
+        $this->assert_peerassess_data_for_user($cm0a, $u2);
+        $this->assert_peerassess_tmp_data_for_user($cm0a, $u1);
+        $this->assert_peerassess_tmp_data_for_user($cm0a, $u2);
     }
 
     /**
@@ -353,44 +353,44 @@ class provider_test extends provider_testcase {
     public function test_export_user_data() {
         global $DB;
         $dg = $this->getDataGenerator();
-        $fg = $dg->get_plugin_generator('mod_feedback');
+        $fg = $dg->get_plugin_generator('mod_peerassess');
 
         $c1 = $dg->create_course();
         $c2 = $dg->create_course();
-        $cm0a = $dg->create_module('feedback', ['course' => SITEID]);
-        $cm1a = $dg->create_module('feedback', ['course' => $c1, 'anonymous' => FEEDBACK_ANONYMOUS_NO]);
-        $cm2a = $dg->create_module('feedback', ['course' => $c2, 'anonymous' => FEEDBACK_ANONYMOUS_YES, 'multiple_submit' => 1]);
-        $cm2b = $dg->create_module('feedback', ['course' => $c2]);
-        $cm2c = $dg->create_module('feedback', ['course' => $c2]);
+        $cm0a = $dg->create_module('peerassess', ['course' => SITEID]);
+        $cm1a = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => FEEDBACK_ANONYMOUS_NO]);
+        $cm2a = $dg->create_module('peerassess', ['course' => $c2, 'anonymous' => FEEDBACK_ANONYMOUS_YES, 'multiple_submit' => 1]);
+        $cm2b = $dg->create_module('peerassess', ['course' => $c2]);
+        $cm2c = $dg->create_module('peerassess', ['course' => $c2]);
 
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
 
         // Create a bunch of data.
-        foreach ([$cm0a, $cm1a, $cm2a, $cm2b] as $feedback) {
-            $i1 = $fg->create_item_numeric($feedback, ['name' => 'Q1', 'label' => 'L1']);
-            $i2 = $fg->create_item_multichoice($feedback, ['name' => 'Q2', 'label' => 'L2']);
+        foreach ([$cm0a, $cm1a, $cm2a, $cm2b] as $peerassess) {
+            $i1 = $fg->create_item_numeric($peerassess, ['name' => 'Q1', 'label' => 'L1']);
+            $i2 = $fg->create_item_multichoice($peerassess, ['name' => 'Q2', 'label' => 'L2']);
             $answersu1 = ['numeric_' . $i1->id => '1', 'multichoice_' . $i2->id => [1]];
             $answersu2 = ['numeric_' . $i1->id => '2', 'multichoice_' . $i2->id => [2]];
 
-            if ($cm0a == $feedback) {
-                $this->create_submission_with_answers($feedback, $u1, $answersu1);
-                $this->create_tmp_submission_with_answers($feedback, $u1, $answersu1);
-            } else if ($cm1a == $feedback) {
-                $this->create_tmp_submission_with_answers($feedback, $u1, $answersu1);
-            } else if ($cm2a == $feedback) {
-                $this->create_submission_with_answers($feedback, $u1, $answersu1);
-                $this->create_submission_with_answers($feedback, $u1, ['numeric_' . $i1->id => '1337'], 2);
-            } else if ($cm2c == $feedback) {
-                $this->create_submission_with_answers($feedback, $u1, $answersu1);
-                $this->create_tmp_submission_with_answers($feedback, $u1, $answersu1);
+            if ($cm0a == $peerassess) {
+                $this->create_submission_with_answers($peerassess, $u1, $answersu1);
+                $this->create_tmp_submission_with_answers($peerassess, $u1, $answersu1);
+            } else if ($cm1a == $peerassess) {
+                $this->create_tmp_submission_with_answers($peerassess, $u1, $answersu1);
+            } else if ($cm2a == $peerassess) {
+                $this->create_submission_with_answers($peerassess, $u1, $answersu1);
+                $this->create_submission_with_answers($peerassess, $u1, ['numeric_' . $i1->id => '1337'], 2);
+            } else if ($cm2c == $peerassess) {
+                $this->create_submission_with_answers($peerassess, $u1, $answersu1);
+                $this->create_tmp_submission_with_answers($peerassess, $u1, $answersu1);
             }
 
-            $this->create_submission_with_answers($feedback, $u2, $answersu2);
-            $this->create_tmp_submission_with_answers($feedback, $u2, $answersu2);
+            $this->create_submission_with_answers($peerassess, $u2, $answersu2);
+            $this->create_tmp_submission_with_answers($peerassess, $u2, $answersu2);
         }
 
-        $appctx = new approved_contextlist($u1, 'mod_feedback', [
+        $appctx = new approved_contextlist($u1, 'mod_peerassess', [
             \context_module::instance($cm0a->cmid)->id,
             \context_module::instance($cm1a->cmid)->id,
             \context_module::instance($cm2a->cmid)->id,
@@ -458,16 +458,16 @@ class provider_test extends provider_testcase {
     }
 
     /**
-     * Assert there is no feedback data for a user.
+     * Assert there is no peerassess data for a user.
      *
-     * @param object $feedback The feedback.
+     * @param object $peerassess The peerassess.
      * @param object $user The user.
      * @return void
      */
-    protected function assert_no_feedback_data_for_user($feedback, $user) {
+    protected function assert_no_peerassess_data_for_user($peerassess, $user) {
         global $DB;
-        $this->assertFalse($DB->record_exists('feedback_completed', ['feedback' => $feedback->id, 'userid' => $user->id]));
-        $this->assertFalse($DB->record_exists('feedback_completedtmp', ['feedback' => $feedback->id, 'userid' => $user->id]));
+        $this->assertFalse($DB->record_exists('peerassess_completed', ['peerassess' => $peerassess->id, 'userid' => $user->id]));
+        $this->assertFalse($DB->record_exists('peerassess_completedtmp', ['peerassess' => $peerassess->id, 'userid' => $user->id]));
 
         // Check that there aren't orphan values because we can't check by userid.
         $sql = "
@@ -476,88 +476,88 @@ class provider_test extends provider_testcase {
          LEFT JOIN {%s} fc
                 ON fc.id = fv.completed
              WHERE fc.id IS NULL";
-        $this->assertFalse($DB->record_exists_sql(sprintf($sql, 'feedback_value', 'feedback_completed'), []));
-        $this->assertFalse($DB->record_exists_sql(sprintf($sql, 'feedback_valuetmp', 'feedback_completedtmp'), []));
+        $this->assertFalse($DB->record_exists_sql(sprintf($sql, 'peerassess_value', 'peerassess_completed'), []));
+        $this->assertFalse($DB->record_exists_sql(sprintf($sql, 'peerassess_valuetmp', 'peerassess_completedtmp'), []));
     }
 
     /**
      * Assert there are submissions and answers for user.
      *
-     * @param object $feedback The feedback.
+     * @param object $peerassess The peerassess.
      * @param object $user The user.
      * @param int $submissioncount The number of submissions.
      * @param int $valuecount The number of values per submission.
      * @return void
      */
-    protected function assert_feedback_data_for_user($feedback, $user, $submissioncount = 1, $valuecount = 2) {
+    protected function assert_peerassess_data_for_user($peerassess, $user, $submissioncount = 1, $valuecount = 2) {
         global $DB;
-        $completeds = $DB->get_records('feedback_completed', ['feedback' => $feedback->id, 'userid' => $user->id]);
+        $completeds = $DB->get_records('peerassess_completed', ['peerassess' => $peerassess->id, 'userid' => $user->id]);
         $this->assertCount($submissioncount, $completeds);
         foreach ($completeds as $record) {
-            $this->assertEquals($valuecount, $DB->count_records('feedback_value', ['completed' => $record->id]));
+            $this->assertEquals($valuecount, $DB->count_records('peerassess_value', ['completed' => $record->id]));
         }
     }
 
     /**
      * Assert there are temporary submissions and answers for user.
      *
-     * @param object $feedback The feedback.
+     * @param object $peerassess The peerassess.
      * @param object $user The user.
      * @param int $submissioncount The number of submissions.
      * @param int $valuecount The number of values per submission.
      * @return void
      */
-    protected function assert_feedback_tmp_data_for_user($feedback, $user, $submissioncount = 1, $valuecount = 2) {
+    protected function assert_peerassess_tmp_data_for_user($peerassess, $user, $submissioncount = 1, $valuecount = 2) {
         global $DB;
-        $completedtmps = $DB->get_records('feedback_completedtmp', ['feedback' => $feedback->id, 'userid' => $user->id]);
+        $completedtmps = $DB->get_records('peerassess_completedtmp', ['peerassess' => $peerassess->id, 'userid' => $user->id]);
         $this->assertCount($submissioncount, $completedtmps);
         foreach ($completedtmps as $record) {
-            $this->assertEquals($valuecount, $DB->count_records('feedback_valuetmp', ['completed' => $record->id]));
+            $this->assertEquals($valuecount, $DB->count_records('peerassess_valuetmp', ['completed' => $record->id]));
         }
     }
 
     /**
      * Create an submission with answers.
      *
-     * @param object $feedback The feedback.
+     * @param object $peerassess The peerassess.
      * @param object $user The user.
      * @param array $answers Answers.
      * @param int $submissioncount The number of submissions expected after this entry.
      * @return void
      */
-    protected function create_submission_with_answers($feedback, $user, $answers, $submissioncount = 1) {
+    protected function create_submission_with_answers($peerassess, $user, $answers, $submissioncount = 1) {
         global $DB;
 
-        $modinfo = get_fast_modinfo($feedback->course);
-        $cm = $modinfo->get_cm($feedback->cmid);
+        $modinfo = get_fast_modinfo($peerassess->course);
+        $cm = $modinfo->get_cm($peerassess->cmid);
 
-        $feedbackcompletion = new \mod_feedback_completion($feedback, $cm, $feedback->course, false, null, null, $user->id);
-        $feedbackcompletion->save_response_tmp((object) $answers);
-        $feedbackcompletion->save_response();
-        $this->assertEquals($submissioncount, $DB->count_records('feedback_completed', ['feedback' => $feedback->id,
+        $peerassesscompletion = new \mod_peerassess_completion($peerassess, $cm, $peerassess->course, false, null, null, $user->id);
+        $peerassesscompletion->save_response_tmp((object) $answers);
+        $peerassesscompletion->save_response();
+        $this->assertEquals($submissioncount, $DB->count_records('peerassess_completed', ['peerassess' => $peerassess->id,
             'userid' => $user->id]));
-        $this->assertEquals(count($answers), $DB->count_records('feedback_value', [
-            'completed' => $feedbackcompletion->get_completed()->id]));
+        $this->assertEquals(count($answers), $DB->count_records('peerassess_value', [
+            'completed' => $peerassesscompletion->get_completed()->id]));
     }
 
     /**
      * Create a temporary submission with answers.
      *
-     * @param object $feedback The feedback.
+     * @param object $peerassess The peerassess.
      * @param object $user The user.
      * @param array $answers Answers.
      * @return void
      */
-    protected function create_tmp_submission_with_answers($feedback, $user, $answers) {
+    protected function create_tmp_submission_with_answers($peerassess, $user, $answers) {
         global $DB;
 
-        $modinfo = get_fast_modinfo($feedback->course);
-        $cm = $modinfo->get_cm($feedback->cmid);
+        $modinfo = get_fast_modinfo($peerassess->course);
+        $cm = $modinfo->get_cm($peerassess->cmid);
 
-        $feedbackcompletion = new \mod_feedback_completion($feedback, $cm, $feedback->course, false, null, null, $user->id);
-        $feedbackcompletion->save_response_tmp((object) $answers);
-        $this->assertEquals(1, $DB->count_records('feedback_completedtmp', ['feedback' => $feedback->id, 'userid' => $user->id]));
-        $this->assertEquals(2, $DB->count_records('feedback_valuetmp', [
-            'completed' => $feedbackcompletion->get_current_completed_tmp()->id]));
+        $peerassesscompletion = new \mod_peerassess_completion($peerassess, $cm, $peerassess->course, false, null, null, $user->id);
+        $peerassesscompletion->save_response_tmp((object) $answers);
+        $this->assertEquals(1, $DB->count_records('peerassess_completedtmp', ['peerassess' => $peerassess->id, 'userid' => $user->id]));
+        $this->assertEquals(2, $DB->count_records('peerassess_valuetmp', [
+            'completed' => $peerassesscompletion->get_current_completed_tmp()->id]));
     }
 }

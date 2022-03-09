@@ -1,10 +1,10 @@
-YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
-    var DRAGDROPNAME = 'mod_feedback_dragdrop';
+YUI.add('moodle-mod_peerassess-dragdrop', function(Y) {
+    var DRAGDROPNAME = 'mod_peerassess_dragdrop';
     var CSS = {
-        DRAGAREA: '#feedback_dragarea',
-        DRAGITEMCLASS: 'feedback_itemlist',
-        DRAGITEM: 'div.feedback_itemlist',
-        DRAGLIST: '#feedback_dragarea form',
+        DRAGAREA: '#peerassess_dragarea',
+        DRAGITEMCLASS: 'peerassess_itemlist',
+        DRAGITEM: 'div.peerassess_itemlist',
+        DRAGLIST: '#peerassess_dragarea form',
         DRAGHANDLE: 'itemhandle'
     };
 
@@ -19,14 +19,14 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
             this.cmid = params.cmid;
             this.goingUp = false, lastY = 0;
 
-            var groups = ['feedbackitem'];
+            var groups = ['peerassessitem'];
 
-            var handletitle = M.util.get_string('move_item', 'feedback');
+            var handletitle = M.util.get_string('move_item', 'peerassess');
 
             //Get the list of li's in the lists and add the drag handle.
             basenode = Y.Node.one(CSS.DRAGLIST);
             listitems = basenode.all(CSS.DRAGITEM).each(function(v) {
-                var item_id = this.get_node_id(v.get('id')); //Get the id of the feedback item.
+                var item_id = this.get_node_id(v.get('id')); //Get the id of the peerassess item.
                 var mydraghandle = this.get_drag_handle(handletitle, CSS.DRAGHANDLE, 'icon');
                 v.append(mydraghandle); // Insert the new handle into the item box.
             }, this);
@@ -171,7 +171,7 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
                 var elementId;
                 var elements = [];
                 drop.all(CSS.DRAGITEM).each(function(v) {
-                    childElement = v.one('.felement').one('[id^="feedback_item_"]');
+                    childElement = v.one('.felement').one('[id^="peerassess_item_"]');
                     if (childElement) {
                         elementId = this.get_node_id(childElement.get('id'));
                         if (elements.indexOf(elementId) == -1) {
@@ -194,7 +194,7 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
          */
         save_item_order : function(cmid, itemorder, spinner) {
 
-            Y.io(M.cfg.wwwroot + '/mod/feedback/ajax.php', {
+            Y.io(M.cfg.wwwroot + '/mod/peerassess/ajax.php', {
                 //The needed paramaters
                 data: {action: 'saveitemorder',
                        id: cmid,
@@ -233,11 +233,11 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
         /**
          * Returns the numeric id from the dom id of an item.
          *
-         * @param id The dom id, f.g.: feedback_item_22
+         * @param id The dom id, f.g.: peerassess_item_22
          * @return int
          */
         get_node_id : function(id) {
-            return Number(id.replace(/^.*feedback_item_/i, ''));
+            return Number(id.replace(/^.*peerassess_item_/i, ''));
         }
 
     }, {
@@ -250,8 +250,8 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
 
     });
 
-    M.mod_feedback = M.mod_feedback || {};
-    M.mod_feedback.init_dragdrop = function(params) {
+    M.mod_peerassess = M.mod_peerassess || {};
+    M.mod_peerassess.init_dragdrop = function(params) {
         return new DRAGDROP(params);
     }
 

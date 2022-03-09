@@ -1,6 +1,6 @@
-@mod @mod_feedback
-Feature: Show users who have not responded to the feedback survey
-  In order to harass students about completing the feedback
+@mod @mod_peerassess
+Feature: Show users who have not responded to the peerassess survey
+  In order to harass students about completing the peerassess
   As a teacher
   I need to see which students haven't responded
 
@@ -36,7 +36,7 @@ Feature: Show users who have not responded to the feedback survey
 
   @javascript
   Scenario: See users who have not responded
-    # Set up a feedback.
+    # Set up a peerassess.
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Feedback" to section "1" and I fill the form with:
@@ -44,7 +44,7 @@ Feature: Show users who have not responded to the feedback survey
       | Description         | x                                                 |
       | Record user names   | User's name will be logged and shown with answers |
       | Access restrictions | Grouping: GX1                                     |
-    And I am on the Frogs "feedback activity" page
+    And I am on the Frogs "peerassess activity" page
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I set the field "Add question" to "Short text answer"
     And I set the following fields to these values:
@@ -52,15 +52,15 @@ Feature: Show users who have not responded to the feedback survey
     And I press "Save question"
     And I log out
 
-    # Go in as student 1 and do the feedback.
-    And I am on the Frogs "feedback activity" page logged in as student1
+    # Go in as student 1 and do the peerassess.
+    And I am on the Frogs "peerassess activity" page logged in as student1
     And I follow "Answer the questions"
     And I set the field "Y/N?" to "Y"
     And I press "Submit your answers"
     And I log out
 
     # Go in as teacher and check the users who haven't completed it.
-    And I am on the Frogs "feedback activity" page logged in as teacher1
+    And I am on the Frogs "peerassess activity" page logged in as teacher1
     And I navigate to "Show non-respondents" in current page administration
 
     # Should only show student 2; not student 1 (they did it) or 3 (not in grouping).

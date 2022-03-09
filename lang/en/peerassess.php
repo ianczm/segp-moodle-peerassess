@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'feedback', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'peerassess', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package mod_feedback
+ * @package mod_peerassess
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -40,18 +40,18 @@ $string['average'] = 'Average';
 $string['bold'] = 'Bold';
 $string['calendarend'] = '{$a} closes';
 $string['calendarstart'] = '{$a} opens';
-$string['cannotaccess'] = 'You can only access this feedback from a course';
+$string['cannotaccess'] = 'You can only access this peerassess from a course';
 $string['cannotsavetempl'] = 'Saving templates is not allowed';
 $string['captcha'] = 'Captcha';
 $string['captchanotset'] = 'Captcha hasn\'t been set.';
 $string['closebeforeopen'] = 'You have specified an end date before the start date.';
-$string['completed_feedbacks'] = 'Submitted answers';
+$string['completed_peerassesss'] = 'Submitted answers';
 $string['complete_the_form'] = 'Answer the questions';
 $string['completed'] = 'Completed';
 $string['completedon'] = 'Completed on {$a}';
-$string['completiondetail:submit'] = 'Submit feedback';
-$string['completionsubmit'] = 'View as completed if the feedback is submitted';
-$string['configallowfullanonymous'] = 'If set to \'yes\', users can complete a feedback activity on the front page without being required to log in.';
+$string['completiondetail:submit'] = 'Submit peerassess';
+$string['completionsubmit'] = 'View as completed if the peerassess is submitted';
+$string['configallowfullanonymous'] = 'If set to \'yes\', users can complete a peerassess activity on the front page without being required to log in.';
 $string['confirmdeleteentry'] = 'Are you sure you want to delete this entry?';
 $string['confirmdeleteitem'] = 'Are you sure you want to delete this element?';
 $string['confirmdeletetemplate'] = 'Are you sure you want to delete this template?';
@@ -92,50 +92,50 @@ $string['dropdown'] = 'Multiple choice - single answer allowed (drop-down menu)'
 $string['dropdownlist'] = 'Multiple choice - single answer (drop-down menu)';
 $string['dropdownrated'] = 'Drop-down menu (rated)';
 $string['dropdown_values'] = 'Answers';
-$string['drop_feedback'] = 'Remove from this course';
+$string['drop_peerassess'] = 'Remove from this course';
 $string['edit_item'] = 'Edit question';
 $string['edit_items'] = 'Edit questions';
 $string['email_notification'] = 'Enable notification of submissions';
-$string['email_notification_help'] = 'If enabled, teachers will receive notification of feedback submissions.';
-$string['emailteachermail'] = '{$a->username} has completed feedback activity : \'{$a->feedback}\'
+$string['email_notification_help'] = 'If enabled, teachers will receive notification of peerassess submissions.';
+$string['emailteachermail'] = '{$a->username} has completed peerassess activity : \'{$a->peerassess}\'
 
 You can view it here:
 
 {$a->url}';
-$string['emailteachermailhtml'] = '<p>{$a->username} has completed feedback activity : <i>\'{$a->feedback}\'</i>.</p>
+$string['emailteachermailhtml'] = '<p>{$a->username} has completed peerassess activity : <i>\'{$a->peerassess}\'</i>.</p>
 <p>It is <a href="{$a->url}">available on the site</a>.</p>';
 $string['entries_saved'] = 'Your answers have been saved. Thank you.';
 $string['export_questions'] = 'Export questions';
 $string['export_to_excel'] = 'Export to Excel';
 $string['eventresponsedeleted'] = 'Response deleted';
 $string['eventresponsesubmitted'] = 'Response submitted';
-$string['feedbackcompleted'] = '{$a->username} completed {$a->feedbackname}';
-$string['feedback:addinstance'] = 'Add a new feedback';
-$string['feedbackclose'] = 'Allow answers to';
-$string['feedback:complete'] = 'Complete a feedback';
-$string['feedback:createprivatetemplate'] = 'Create private template';
-$string['feedback:createpublictemplate'] = 'Create public template';
-$string['feedback:deletesubmissions'] = 'Delete completed submissions';
-$string['feedback:deletetemplate'] = 'Delete template';
-$string['feedback:edititems'] = 'Edit items';
-$string['feedback_is_not_for_anonymous'] = 'Feedback is not for anonymous';
-$string['feedback_is_not_open'] = 'The feedback is not open';
-$string['feedback:mapcourse'] = 'Map courses to global feedbacks';
-$string['feedbackopen'] = 'Allow answers from';
-$string['feedback:receivemail'] = 'Receive email notification';
-$string['feedback:view'] = 'View a feedback';
-$string['feedback:viewanalysepage'] = 'View the analysis page after submit';
-$string['feedback:viewreports'] = 'View reports';
+$string['peerassesscompleted'] = '{$a->username} completed {$a->peerassessname}';
+$string['peerassess:addinstance'] = 'Add a new peerassess';
+$string['peerassessclose'] = 'Allow answers to';
+$string['peerassess:complete'] = 'Complete a peerassess';
+$string['peerassess:createprivatetemplate'] = 'Create private template';
+$string['peerassess:createpublictemplate'] = 'Create public template';
+$string['peerassess:deletesubmissions'] = 'Delete completed submissions';
+$string['peerassess:deletetemplate'] = 'Delete template';
+$string['peerassess:edititems'] = 'Edit items';
+$string['peerassess_is_not_for_anonymous'] = 'Feedback is not for anonymous';
+$string['peerassess_is_not_open'] = 'The peerassess is not open';
+$string['peerassess:mapcourse'] = 'Map courses to global peerassesss';
+$string['peerassessopen'] = 'Allow answers from';
+$string['peerassess:receivemail'] = 'Receive email notification';
+$string['peerassess:view'] = 'View a peerassess';
+$string['peerassess:viewanalysepage'] = 'View the analysis page after submit';
+$string['peerassess:viewreports'] = 'View reports';
 $string['file'] = 'File';
 $string['filter_by_course'] = 'Filter by course';
-$string['handling_error'] = 'Error occurred in feedback module action handling';
+$string['handling_error'] = 'Error occurred in peerassess module action handling';
 $string['hide_no_select_option'] = 'Hide the "Not selected" option';
 $string['horizontal'] = 'Horizontal';
 $string['check'] = 'Multiple choice - multiple answers';
 $string['checkbox'] = 'Multiple choice - multiple answers allowed (check boxes)';
 $string['check_values'] = 'Possible responses';
 $string['choosefile'] = 'Choose a file';
-$string['chosen_feedback_response'] = 'Chosen feedback response';
+$string['chosen_peerassess_response'] = 'Chosen peerassess response';
 $string['downloadresponseas'] = 'Download all responses as:';
 $string['importfromthisfile'] = 'Import from this file';
 $string['import_questions'] = 'Import questions';
@@ -155,17 +155,17 @@ $string['info'] = 'Information';
 $string['infotype'] = 'Information type';
 $string['insufficient_responses_for_this_group'] = 'There are insufficient responses for this group';
 $string['insufficient_responses'] = 'insufficient responses';
-$string['insufficient_responses_help'] = 'For the feedback to be anonymous, there must be at least 2 responses.';
+$string['insufficient_responses_help'] = 'For the peerassess to be anonymous, there must be at least 2 responses.';
 $string['item_label'] = 'Label';
 $string['item_name'] = 'Question';
 $string['label'] = 'Label';
 $string['labelcontents'] = 'Contents';
-$string['mapcourseinfo'] = 'This is a site-wide feedback that is available to all courses using the feedback block. You can however limit the courses to which it will appear by mapping them. Search the course and map it to this feedback.';
+$string['mapcourseinfo'] = 'This is a site-wide peerassess that is available to all courses using the peerassess block. You can however limit the courses to which it will appear by mapping them. Search the course and map it to this peerassess.';
 $string['mapcoursenone'] = 'No courses mapped. Feedback available to all courses';
-$string['mapcourse'] = 'Map feedback to courses';
-$string['mapcourse_help'] = 'By default, feedback forms created on your homepage are available site-wide
-and will appear in all courses using the feedback block. You can force the feedback form to appear by making it a sticky block or limit the courses in which a feedback form will appear by mapping it to specific courses.';
-$string['mapcourses'] = 'Map feedback to courses';
+$string['mapcourse'] = 'Map peerassess to courses';
+$string['mapcourse_help'] = 'By default, peerassess forms created on your homepage are available site-wide
+and will appear in all courses using the peerassess block. You can force the peerassess form to appear by making it a sticky block or limit the courses in which a peerassess form will appear by mapping it to specific courses.';
+$string['mapcourses'] = 'Map peerassess to courses';
 $string['mappedcourses'] = 'Mapped courses';
 $string['mappingchanged'] = 'Course mapping has been changed';
 $string['minimal'] = 'Minimum';
@@ -174,9 +174,9 @@ $string['messageprovider:message'] = 'Feedback reminder';
 $string['messageprovider:submission'] = 'Feedback notifications';
 $string['mode'] = 'Mode';
 $string['modulename'] = 'Feedback';
-$string['modulename_help'] = 'The feedback activity enables a teacher to create a custom survey for collecting feedback from participants using a variety of question types including multiple choice, yes/no or text input.
+$string['modulename_help'] = 'The peerassess activity enables a teacher to create a custom survey for collecting peerassess from participants using a variety of question types including multiple choice, yes/no or text input.
 
-Feedback responses may be anonymous if desired, and results may be shown to all participants or restricted to teachers only. Any feedback activities on the site home may also be completed by non-logged-in users.
+Feedback responses may be anonymous if desired, and results may be shown to all participants or restricted to teachers only. Any peerassess activities on the site home may also be completed by non-logged-in users.
 
 Feedback activities may be used
 
@@ -184,7 +184,7 @@ Feedback activities may be used
 * To enable participants to sign up for course modules, events etc.
 * For guest surveys of course choices, school policies etc.
 * For anti-bullying surveys in which students can report incidents anonymously';
-$string['modulename_link'] = 'mod/feedback/view';
+$string['modulename_link'] = 'mod/peerassess/view';
 $string['modulenameplural'] = 'Feedback';
 $string['move_item'] = 'Move this question';
 $string['multichoice'] = 'Multiple choice';
@@ -193,7 +193,7 @@ $string['multichoicerated'] = 'Multiple choice (rated)';
 $string['multichoicetype'] = 'Multiple choice type';
 $string['multichoice_values'] = 'Multiple choice values';
 $string['multiplesubmit'] = 'Allow multiple submissions';
-$string['multiplesubmit_help'] = 'If enabled for anonymous surveys, users can submit feedback an unlimited number of times.';
+$string['multiplesubmit_help'] = 'If enabled for anonymous surveys, users can submit peerassess an unlimited number of times.';
 $string['name'] = 'Name';
 $string['name_required'] = 'Name required';
 $string['nameandlabelformat'] = '({$a->label}) {$a->name}';
@@ -216,21 +216,21 @@ $string['numeric_range_to'] = 'Range to';
 $string['of'] = 'of';
 $string['oldvaluespreserved'] = 'All old questions and the assigned values will be preserved';
 $string['oldvalueswillbedeleted'] = 'Current questions and all responses will be deleted.';
-$string['only_one_captcha_allowed'] = 'Only one captcha is allowed in a feedback';
+$string['only_one_captcha_allowed'] = 'Only one captcha is allowed in a peerassess';
 $string['openafterclose'] = 'You have specified an open date after the close date';
 $string['overview'] = 'Overview';
 $string['page'] = 'Page';
-$string['page-mod-feedback-x'] = 'Any feedback module page';
+$string['page-mod-peerassess-x'] = 'Any peerassess module page';
 $string['page_after_submit'] = 'Completion message';
 $string['pagebreak'] = 'Page break';
 $string['pluginadministration'] = 'Feedback administration';
 $string['pluginname'] = 'Feedback';
 $string['position'] = 'Position';
 $string['previous_page'] = 'Previous page';
-$string['privacy:metadata:completed'] = 'A record of the submissions to the feedback';
+$string['privacy:metadata:completed'] = 'A record of the submissions to the peerassess';
 $string['privacy:metadata:completed:anonymousresponse'] = 'Whether the submission is to be used anonymously.';
 $string['privacy:metadata:completed:timemodified'] = 'The time when the submission was last modified.';
-$string['privacy:metadata:completed:userid'] = 'The ID of the user who completed the feedback activity.';
+$string['privacy:metadata:completed:userid'] = 'The ID of the user who completed the peerassess activity.';
 $string['privacy:metadata:completedtmp'] = 'A record of the submissions which are still in progress.';
 $string['privacy:metadata:value'] = 'A record of the answer to a question.';
 $string['privacy:metadata:value:value'] = 'The chosen answer.';
@@ -242,10 +242,10 @@ $string['questions'] = 'Questions';
 $string['questionslimited'] = 'Showing only {$a} first questions, view individual answers or download table data to view all.';
 $string['radio'] = 'Multiple choice - single answer';
 $string['radio_values'] = 'Responses';
-$string['ready_feedbacks'] = 'Ready feedbacks';
+$string['ready_peerassesss'] = 'Ready peerassesss';
 $string['required'] = 'Required';
-$string['resetting_data'] = 'Reset feedback responses';
-$string['resetting_feedbacks'] = 'Resetting feedbacks';
+$string['resetting_data'] = 'Reset peerassess responses';
+$string['resetting_peerassesss'] = 'Resetting peerassesss';
 $string['response_nr'] = 'Response number';
 $string['responses'] = 'Responses';
 $string['responsetime'] = 'Responses time';
@@ -257,7 +257,7 @@ $string['saving_failed'] = 'Saving failed';
 $string['search:activity'] = 'Feedback - activity information';
 $string['search_course'] = 'Search course';
 $string['searchcourses'] = 'Search courses';
-$string['searchcourses_help'] = 'Search for the code or name of the course(s) that you wish to associate with this feedback.';
+$string['searchcourses_help'] = 'Search for the code or name of the course(s) that you wish to associate with this peerassess.';
 $string['selected_dump'] = 'Selected indexes of $SESSION variable are dumped below:';
 $string['send'] = 'Send';
 $string['send_message'] = 'Send notification';
@@ -284,11 +284,11 @@ $string['textfield'] = 'Short text answer';
 $string['textfield_maxlength'] = 'Maximum characters accepted';
 $string['textfield_size'] = 'Textfield width';
 $string['there_are_no_settings_for_recaptcha'] = 'There are no settings for captcha';
-$string['this_feedback_is_already_submitted'] = 'You\'ve already completed this activity.';
+$string['this_peerassess_is_already_submitted'] = 'You\'ve already completed this activity.';
 $string['typemissing'] = 'Missing value "type"';
 $string['update_item'] = 'Save changes to question';
 $string['url_for_continue'] = 'Link to next activity';
-$string['url_for_continue_help'] = 'After submitting the feedback, a continue button is displayed, which links to the course page. Alternatively, it may link to the next activity if the URL of the activity is entered here.';
+$string['url_for_continue_help'] = 'After submitting the peerassess, a continue button is displayed, which links to the course page. Alternatively, it may link to the next activity if the URL of the activity is entered here.';
 $string['use_one_line_for_each_value'] = 'Use one line for each answer!';
 $string['use_this_template'] = 'Use this template';
 $string['using_templates'] = 'Use a template';

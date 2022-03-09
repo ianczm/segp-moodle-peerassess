@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains class mod_feedback_completion
+ * Contains class mod_peerassess_completion
  *
- * @package   mod_feedback
+ * @package   mod_peerassess
  * @copyright 2016 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,13 +25,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Collects information and methods about feedback completion (either complete.php or show_entries.php)
+ * Collects information and methods about peerassess completion (either complete.php or show_entries.php)
  *
- * @package   mod_feedback
+ * @package   mod_peerassess
  * @copyright 2016 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_feedback_completion extends mod_feedback_structure {
+class mod_peerassess_completion extends mod_peerassess_structure {
     /** @var stdClass */
     protected $completed;
     /** @var stdClass */
@@ -42,9 +42,9 @@ class mod_feedback_completion extends mod_feedback_structure {
     protected $values = null;
     /** @var bool */
     protected $iscompleted = false;
-    /** @var mod_feedback_complete_form the form used for completing the feedback */
+    /** @var mod_peerassess_complete_form the form used for completing the peerassess */
     protected $form = null;
-    /** @var bool true when the feedback has been completed during the request */
+    /** @var bool true when the peerassess has been completed during the request */
     protected $justcompleted = false;
     /** @var int the next page the user should jump after processing the form */
     protected $jumpto = null;
@@ -53,51 +53,51 @@ class mod_feedback_completion extends mod_feedback_structure {
     /**
      * Constructor
      *
-     * @param stdClass $feedback feedback object
-     * @param cm_info $cm course module object corresponding to the $feedback
-     *     (at least one of $feedback or $cm is required)
-     * @param int $courseid current course (for site feedbacks only)
-     * @param bool $iscompleted has feedback been already completed? If yes either completedid or userid must be specified.
-     * @param int $completedid id in the table feedback_completed, may be omitted if userid is specified
-     *     but it is highly recommended because the same user may have multiple responses to the same feedback
+     * @param stdClass $peerassess peerassess object
+     * @param cm_info $cm course module object corresponding to the $peerassess
+     *     (at least one of $peerassess or $cm is required)
+     * @param int $courseid current course (for site peerassesss only)
+     * @param bool $iscompleted has peerassess been already completed? If yes either completedid or userid must be specified.
+     * @param int $completedid id in the table peerassess_completed, may be omitted if userid is specified
+     *     but it is highly recommended because the same user may have multiple responses to the same peerassess
      *     for different courses
      * @param int $nonanonymouseuserid - Return only anonymous results or specified user's results.
      *     If null only anonymous replies will be returned and the $completedid is mandatory.
      *     If specified only non-anonymous replies of $nonanonymouseuserid will be returned.
      * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
      */
-    public function __construct($feedback, $cm, $courseid, $iscompleted = false, $completedid = null,
+    public function __construct($peerassess, $cm, $courseid, $iscompleted = false, $completedid = null,
                                 $nonanonymouseuserid = null, $userid = 0) {
         global $DB;
 
-        parent::__construct($feedback, $cm, $courseid, 0, $userid);
-        // Make sure courseid is always set for site feedback.
-        if ($this->feedback->course == SITEID && !$this->courseid) {
+        parent::__construct($peerassess, $cm, $courseid, 0, $userid);
+        // Make sure courseid is always set for site peerassess.
+        if ($this->peerassess->course == SITEID && !$this->courseid) {
             $this->courseid = SITEID;
         }
         if ($iscompleted) {
             // Retrieve information about the completion.
             $this->iscompleted = true;
-            $params = array('feedback' => $this->feedback->id);
+            $params = array('peerassess' => $this->peerassess->id);
             if (!$nonanonymouseuserid && !$completedid) {
-                throw new coding_exception('Either $completedid or $nonanonymouseuserid must be specified for completed feedbacks');
+                throw new coding_exception('Either $completedid or $nonanonymouseuserid must be specified for completed peerassesss');
             }
             if ($completedid) {
                 $params['id'] = $completedid;
             }
             if ($nonanonymouseuserid) {
-                // We must respect the anonymousity of the reply that the user saw when they were completing the feedback,
+                // We must respect the anonymousity of the reply that the user saw when they were completing the peerassess,
                 // not the current state that may have been changed later by the teacher.
                 $params['anonymous_response'] = FEEDBACK_ANONYMOUS_NO;
                 $params['userid'] = $nonanonymouseuserid;
             }
-            $this->completed = $DB->get_record('feedback_completed', $params, '*', MUST_EXIST);
+            $this->completed = $DB->get_record('peerassess_completed', $params, '*', MUST_EXIST);
             $this->courseid = $this->completed->courseid;
         }
     }
 
     /**
-     * Returns a record from 'feedback_completed' table
+     * Returns a record from 'peerassess_completed' table
      * @return stdClass
      */
     public function get_completed() {
@@ -105,9 +105,9 @@ class mod_feedback_completion extends mod_feedback_structure {
     }
 
     /**
-     * Check if the feedback was just completed.
+     * Check if the peerassess was just completed.
      *
-     * @return bool true if the feedback was just completed.
+     * @return bool true if the peerassess was just completed.
      * @since  Moodle 3.3
      */
     public function just_completed() {
@@ -127,12 +127,12 @@ class mod_feedback_completion extends mod_feedback_structure {
     /**
      * Returns the temporary completion record for the current user or guest session
      *
-     * @return stdClass|false record from feedback_completedtmp or false if not found
+     * @return stdClass|false record from peerassess_completedtmp or false if not found
      */
     public function get_current_completed_tmp() {
         global $DB, $USER;
         if ($this->completedtmp === null) {
-            $params = array('feedback' => $this->get_feedback()->id);
+            $params = array('peerassess' => $this->get_peerassess()->id);
             if ($courseid = $this->get_courseid()) {
                 $params['courseid'] = $courseid;
             }
@@ -141,7 +141,7 @@ class mod_feedback_completion extends mod_feedback_structure {
             } else {
                 $params['guestid'] = sesskey();
             }
-            $this->completedtmp = $DB->get_record('feedback_completedtmp', $params);
+            $this->completedtmp = $DB->get_record('peerassess_completedtmp', $params);
         }
         return $this->completedtmp;
     }
@@ -165,7 +165,7 @@ class mod_feedback_completion extends mod_feedback_structure {
         }
         $allitems = $this->get_items();
         $ditem = $allitems[$item->dependitem];
-        $itemobj = feedback_get_item_class($ditem->typ);
+        $itemobj = peerassess_get_item_class($ditem->typ);
         if ($this->iscompleted) {
             $value = $this->get_values($ditem);
         } else {
@@ -204,7 +204,7 @@ class mod_feedback_completion extends mod_feedback_structure {
         $index1 = array_search($item->dependitem, $itemids);
         $index2 = array_search($item->id, $itemids);
         if ($index1 >= $index2) {
-            // Dependent item is after the current item in the feedback.
+            // Dependent item is after the current item in the peerassess.
             return true;
         }
         for ($i = $index1 + 1; $i < $index2; $i++) {
@@ -217,7 +217,7 @@ class mod_feedback_completion extends mod_feedback_structure {
     }
 
     /**
-     * Returns a value stored for this item in the feedback (temporary or not, depending on the mode)
+     * Returns a value stored for this item in the peerassess (temporary or not, depending on the mode)
      * @param stdClass $item
      * @return string
      */
@@ -232,7 +232,7 @@ class mod_feedback_completion extends mod_feedback_structure {
     /**
      * Retrieves responses from an unfinished attempt.
      *
-     * @return array the responses (from the feedback_valuetmp table)
+     * @return array the responses (from the peerassess_valuetmp table)
      * @since  Moodle 3.3
      */
     public function get_unfinished_responses() {
@@ -241,13 +241,13 @@ class mod_feedback_completion extends mod_feedback_structure {
 
         $completedtmp = $this->get_current_completed_tmp();
         if ($completedtmp) {
-            $responses = $DB->get_records('feedback_valuetmp', ['completed' => $completedtmp->id]);
+            $responses = $DB->get_records('peerassess_valuetmp', ['completed' => $completedtmp->id]);
         }
         return $responses;
     }
 
     /**
-     * Returns all temporary values for this feedback or just a value for an item
+     * Returns all temporary values for this peerassess or just a value for an item
      * @param stdClass $item
      * @return array
      */
@@ -269,7 +269,7 @@ class mod_feedback_completion extends mod_feedback_structure {
     /**
      * Retrieves responses from an finished attempt.
      *
-     * @return array the responses (from the feedback_value table)
+     * @return array the responses (from the peerassess_value table)
      * @since  Moodle 3.3
      */
     public function get_finished_responses() {
@@ -277,13 +277,13 @@ class mod_feedback_completion extends mod_feedback_structure {
         $responses = array();
 
         if ($this->completed) {
-            $responses = $DB->get_records('feedback_value', ['completed' => $this->completed->id]);
+            $responses = $DB->get_records('peerassess_value', ['completed' => $this->completed->id]);
         }
         return $responses;
     }
 
     /**
-     * Returns all completed values for this feedback or just a value for an item
+     * Returns all completed values for this peerassess or just a value for an item
      * @param stdClass $item
      * @return array
      */
@@ -303,7 +303,7 @@ class mod_feedback_completion extends mod_feedback_structure {
     }
 
     /**
-     * Splits the feedback items into pages
+     * Splits the peerassess items into pages
      *
      * Items that we definitely know at this stage as not applicable are excluded.
      * Items that are dependent on something that has not yet been answered are
@@ -367,7 +367,7 @@ class mod_feedback_completion extends mod_feedback_structure {
     }
 
     /**
-     * Get the next page for the feedback
+     * Get the next page for the peerassess
      *
      * This is normally $gopage+1 but may be bigger if there are empty pages or
      * pages without visible questions.
@@ -392,12 +392,12 @@ class mod_feedback_completion extends mod_feedback_structure {
                 return $pageidx;
             }
         }
-        // No further pages in the feedback have any visible items.
+        // No further pages in the peerassess have any visible items.
         return null;
     }
 
     /**
-     * Get the previous page for the feedback
+     * Get the previous page for the peerassess
      *
      * This is normally $gopage-1 but may be smaller if there are empty pages or
      * pages without visible questions.
@@ -435,9 +435,9 @@ class mod_feedback_completion extends mod_feedback_structure {
     }
 
     /**
-     * Page index to resume the feedback
+     * Page index to resume the peerassess
      *
-     * When user abandones answering feedback and then comes back to it we should send him
+     * When user abandones answering peerassess and then comes back to it we should send him
      * to the first page after the last page he fully completed.
      * @return int
      */
@@ -447,13 +447,13 @@ class mod_feedback_completion extends mod_feedback_structure {
     }
 
     /**
-     * Creates a new record in the 'feedback_completedtmp' table for the current user/guest session
+     * Creates a new record in the 'peerassess_completedtmp' table for the current user/guest session
      *
-     * @return stdClass record from feedback_completedtmp or false if not found
+     * @return stdClass record from peerassess_completedtmp or false if not found
      */
     protected function create_current_completed_tmp() {
         global $DB, $USER;
-        $record = (object)['feedback' => $this->feedback->id];
+        $record = (object)['peerassess' => $this->peerassess->id];
         if ($this->get_courseid()) {
             $record->courseid = $this->get_courseid();
         }
@@ -463,23 +463,23 @@ class mod_feedback_completion extends mod_feedback_structure {
             $record->guestid = sesskey();
         }
         $record->timemodified = time();
-        $record->anonymous_response = $this->feedback->anonymous;
-        $id = $DB->insert_record('feedback_completedtmp', $record);
-        $this->completedtmp = $DB->get_record('feedback_completedtmp', ['id' => $id]);
+        $record->anonymous_response = $this->peerassess->anonymous;
+        $id = $DB->insert_record('peerassess_completedtmp', $record);
+        $this->completedtmp = $DB->get_record('peerassess_completedtmp', ['id' => $id]);
         $this->valuestmp = null;
         return $this->completedtmp;
     }
 
     /**
-     * If user has already completed the feedback, create the temproray values from last completed attempt
+     * If user has already completed the peerassess, create the temproray values from last completed attempt
      *
-     * @return stdClass record from feedback_completedtmp or false if not found
+     * @return stdClass record from peerassess_completedtmp or false if not found
      */
     public function create_completed_tmp_from_last_completed() {
         if (!$this->get_current_completed_tmp()) {
             $lastcompleted = $this->find_last_completed();
             if ($lastcompleted) {
-                $this->completedtmp = feedback_set_tmp_values($lastcompleted);
+                $this->completedtmp = peerassess_set_tmp_values($lastcompleted);
             }
         }
         return $this->completedtmp;
@@ -493,7 +493,7 @@ class mod_feedback_completion extends mod_feedback_structure {
      * After the form submit the {@link save_response()} is called to
      * move response from temporary table to completion table.
      *
-     * @param stdClass $data data from the form mod_feedback_complete_form
+     * @param stdClass $data data from the form mod_peerassess_complete_form
      */
     public function save_response_tmp($data) {
         global $DB;
@@ -501,16 +501,16 @@ class mod_feedback_completion extends mod_feedback_structure {
             $completedtmp = $this->create_current_completed_tmp();
         } else {
             $currentime = time();
-            $DB->update_record('feedback_completedtmp',
+            $DB->update_record('peerassess_completedtmp',
                     ['id' => $completedtmp->id, 'timemodified' => $currentime]);
             $completedtmp->timemodified = $currentime;
         }
 
         // Find all existing values.
-        $existingvalues = $DB->get_records_menu('feedback_valuetmp',
+        $existingvalues = $DB->get_records_menu('peerassess_valuetmp',
                 ['completed' => $completedtmp->id], '', 'item, id');
 
-        // Loop through all feedback items and save the ones that are present in $data.
+        // Loop through all peerassess items and save the ones that are present in $data.
         $allitems = $this->get_items();
         foreach ($allitems as $item) {
             if (!$item->hasvalue) {
@@ -524,16 +524,16 @@ class mod_feedback_completion extends mod_feedback_structure {
 
             $newvalue = ['item' => $item->id, 'completed' => $completedtmp->id, 'course_id' => $completedtmp->courseid];
 
-            // Convert the value to string that can be stored in 'feedback_valuetmp' or 'feedback_value'.
-            $itemobj = feedback_get_item_class($item->typ);
+            // Convert the value to string that can be stored in 'peerassess_valuetmp' or 'peerassess_value'.
+            $itemobj = peerassess_get_item_class($item->typ);
             $newvalue['value'] = $itemobj->create_value($data->$keyname);
 
-            // Update or insert the value in the 'feedback_valuetmp' table.
+            // Update or insert the value in the 'peerassess_valuetmp' table.
             if (array_key_exists($item->id, $existingvalues)) {
                 $newvalue['id'] = $existingvalues[$item->id];
-                $DB->update_record('feedback_valuetmp', $newvalue);
+                $DB->update_record('peerassess_valuetmp', $newvalue);
             } else {
-                $DB->insert_record('feedback_valuetmp', $newvalue);
+                $DB->insert_record('peerassess_valuetmp', $newvalue);
             }
         }
 
@@ -552,32 +552,32 @@ class mod_feedback_completion extends mod_feedback_structure {
     public function save_response() {
         global $SESSION, $DB, $USER;
 
-        $feedbackcompleted = $this->find_last_completed();
-        $feedbackcompletedtmp = $this->get_current_completed_tmp();
+        $peerassesscompleted = $this->find_last_completed();
+        $peerassesscompletedtmp = $this->get_current_completed_tmp();
 
-        if (feedback_check_is_switchrole()) {
+        if (peerassess_check_is_switchrole()) {
             // We do not actually save anything if the role is switched, just delete temporary values.
             $this->delete_completedtmp();
             return;
         }
 
         // Save values.
-        $completedid = feedback_save_tmp_values($feedbackcompletedtmp, $feedbackcompleted);
-        $this->completed = $DB->get_record('feedback_completed', array('id' => $completedid));
+        $completedid = peerassess_save_tmp_values($peerassesscompletedtmp, $peerassesscompleted);
+        $this->completed = $DB->get_record('peerassess_completed', array('id' => $completedid));
 
         // Send email.
-        if ($this->feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {
-            feedback_send_email($this->cm, $this->feedback, $this->cm->get_course(), $this->userid, $this->completed);
+        if ($this->peerassess->anonymous == FEEDBACK_ANONYMOUS_NO) {
+            peerassess_send_email($this->cm, $this->peerassess, $this->cm->get_course(), $this->userid, $this->completed);
         } else {
-            feedback_send_email_anonym($this->cm, $this->feedback, $this->cm->get_course());
+            peerassess_send_email_anonym($this->cm, $this->peerassess, $this->cm->get_course());
         }
 
-        unset($SESSION->feedback->is_started);
+        unset($SESSION->peerassess->is_started);
 
         // Update completion state.
         $completion = new completion_info($this->cm->get_course());
         if ((isloggedin() || $USER->id != $this->userid) && $completion->is_enabled($this->cm) &&
-                $this->cm->completion == COMPLETION_TRACKING_AUTOMATIC && $this->feedback->completionsubmit) {
+                $this->cm->completion == COMPLETION_TRACKING_AUTOMATIC && $this->peerassess->completionsubmit) {
             $completion->update_state($this->cm, COMPLETION_COMPLETE, $this->userid);
         }
     }
@@ -589,8 +589,8 @@ class mod_feedback_completion extends mod_feedback_structure {
         global $DB;
 
         if ($completedtmp = $this->get_current_completed_tmp()) {
-            $DB->delete_records('feedback_valuetmp', ['completed' => $completedtmp->id]);
-            $DB->delete_records('feedback_completedtmp', ['id' => $completedtmp->id]);
+            $DB->delete_records('peerassess_valuetmp', ['completed' => $completedtmp->id]);
+            $DB->delete_records('peerassess_completedtmp', ['id' => $completedtmp->id]);
             $this->completedtmp = null;
         }
     }
@@ -598,37 +598,37 @@ class mod_feedback_completion extends mod_feedback_structure {
     /**
      * Retrieves the last completion record for the current user
      *
-     * @return stdClass record from feedback_completed or false if not found
+     * @return stdClass record from peerassess_completed or false if not found
      */
     public function find_last_completed() {
         global $DB, $USER;
         if ((!isloggedin() && $USER->id == $this->userid) || isguestuser($this->userid)) {
-            // Not possible to retrieve completed feedback for guests.
+            // Not possible to retrieve completed peerassess for guests.
             return false;
         }
         if ($this->is_anonymous()) {
-            // Not possible to retrieve completed anonymous feedback.
+            // Not possible to retrieve completed anonymous peerassess.
             return false;
         }
-        $params = array('feedback' => $this->feedback->id,
+        $params = array('peerassess' => $this->peerassess->id,
             'userid' => $this->userid,
             'anonymous_response' => FEEDBACK_ANONYMOUS_NO
         );
         if ($this->get_courseid()) {
             $params['courseid'] = $this->get_courseid();
         }
-        $this->completed = $DB->get_record('feedback_completed', $params);
+        $this->completed = $DB->get_record('peerassess_completed', $params);
         return $this->completed;
     }
 
     /**
-     * Checks if user has capability to submit the feedback
+     * Checks if user has capability to submit the peerassess
      *
-     * There is an exception for fully anonymous feedbacks when guests can complete
-     * feedback without the proper capability.
+     * There is an exception for fully anonymous peerassesss when guests can complete
+     * peerassess without the proper capability.
      *
      * This should be followed by checking {@link can_submit()} because even if
-     * user has capablity to complete, they may have already submitted feedback
+     * user has capablity to complete, they may have already submitted peerassess
      * and can not re-submit
      *
      * @return bool
@@ -637,15 +637,15 @@ class mod_feedback_completion extends mod_feedback_structure {
         global $CFG, $USER;
 
         $context = context_module::instance($this->cm->id);
-        if (has_capability('mod/feedback:complete', $context, $this->userid)) {
+        if (has_capability('mod/peerassess:complete', $context, $this->userid)) {
             return true;
         }
 
-        if (!empty($CFG->feedback_allowfullanonymous)
-                    AND $this->feedback->course == SITEID
-                    AND $this->feedback->anonymous == FEEDBACK_ANONYMOUS_YES
+        if (!empty($CFG->peerassess_allowfullanonymous)
+                    AND $this->peerassess->course == SITEID
+                    AND $this->peerassess->anonymous == FEEDBACK_ANONYMOUS_YES
                     AND ((!isloggedin() && $USER->id == $this->userid) || isguestuser($this->userid))) {
-            // Guests are allowed to complete fully anonymous feedback without having 'mod/feedback:complete' capability.
+            // Guests are allowed to complete fully anonymous peerassess without having 'mod/peerassess:complete' capability.
             return true;
         }
 
@@ -660,7 +660,7 @@ class mod_feedback_completion extends mod_feedback_structure {
      * @return bool
      */
     public function can_submit() {
-        if ($this->get_feedback()->multiple_submit == 0 ) {
+        if ($this->get_peerassess()->multiple_submit == 0 ) {
             if ($this->is_already_submitted()) {
                 return false;
             }
@@ -674,7 +674,7 @@ class mod_feedback_completion extends mod_feedback_structure {
      * @since Moodle 3.3
      */
     public function trigger_module_viewed() {
-        $event = \mod_feedback\event\course_module_viewed::create_from_record($this->feedback, $this->cm, $this->cm->get_course());
+        $event = \mod_peerassess\event\course_module_viewed::create_from_record($this->peerassess, $this->cm, $this->cm->get_course());
         $event->trigger();
     }
 
@@ -692,7 +692,7 @@ class mod_feedback_completion extends mod_feedback_structure {
     }
 
     /**
-     * Process a page jump via the mod_feedback_complete_form.
+     * Process a page jump via the mod_peerassess_complete_form.
      *
      * This function initializes the form and process the submission.
      *
@@ -708,17 +708,17 @@ class mod_feedback_completion extends mod_feedback_structure {
 
         // Save the form for later during the request.
         $this->create_completed_tmp_from_last_completed();
-        $this->form = new mod_feedback_complete_form(mod_feedback_complete_form::MODE_COMPLETE,
-            $this, 'feedback_complete_form', array('gopage' => $gopage));
+        $this->form = new mod_peerassess_complete_form(mod_peerassess_complete_form::MODE_COMPLETE,
+            $this, 'peerassess_complete_form', array('gopage' => $gopage));
 
         if ($this->form->is_cancelled()) {
             // Form was cancelled - return to the course page.
-            $urltogo = course_get_url($this->courseid ?: $this->feedback->course);
+            $urltogo = course_get_url($this->courseid ?: $this->peerassess->course);
         } else if ($this->form->is_submitted() &&
                 ($this->form->is_validated() || $gopreviouspage)) {
             // Form was submitted (skip validation for "Previous page" button).
             $data = $this->form->get_submitted_data();
-            if (!isset($SESSION->feedback->is_started) OR !$SESSION->feedback->is_started == true) {
+            if (!isset($SESSION->peerassess->is_started) OR !$SESSION->peerassess->is_started == true) {
                 print_error('error', '', $CFG->wwwroot.'/course/view.php?id='.$this->courseid);
             }
             $this->save_response_tmp($data);
@@ -730,8 +730,8 @@ class mod_feedback_completion extends mod_feedback_structure {
                     $this->jumpto = $nextpage;
                 } else {
                     $this->save_response();
-                    if (!$this->get_feedback()->page_after_submit) {
-                        \core\notification::success(get_string('entries_saved', 'feedback'));
+                    if (!$this->get_peerassess()->page_after_submit) {
+                        \core\notification::success(get_string('entries_saved', 'peerassess'));
                     }
                     $this->justcompleted = true;
                 }
@@ -756,7 +756,7 @@ class mod_feedback_completion extends mod_feedback_structure {
         global $SESSION;
 
         // Print the items.
-        $SESSION->feedback->is_started = true;
+        $SESSION->peerassess->is_started = true;
         return $this->form->render();
     }
 }

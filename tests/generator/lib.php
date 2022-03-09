@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_feedback data generator.
+ * mod_peerassess data generator.
  *
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @category   test
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,18 +26,18 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_feedback data generator class.
+ * mod_peerassess data generator class.
  *
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @category   test
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_feedback_generator extends testing_module_generator {
+class mod_peerassess_generator extends testing_module_generator {
 
     public function create_instance($record = null, array $options = null) {
         global $CFG;
-        require_once($CFG->dirroot.'/mod/feedback/lib.php');
+        require_once($CFG->dirroot.'/mod/peerassess/lib.php');
         $record = (object)(array)$record;
 
         if (!isset($record->anonymous)) {
@@ -77,7 +77,7 @@ class mod_feedback_generator extends testing_module_generator {
             $record->completionsubmit = 0;
         }
 
-        // Hack to bypass draft processing of feedback_add_instance.
+        // Hack to bypass draft processing of peerassess_add_instance.
         $record->page_after_submit_editor['itemid'] = false;
 
         return parent::create_instance($record, (array)$options);
@@ -86,21 +86,21 @@ class mod_feedback_generator extends testing_module_generator {
     /**
      * Create info question item.
      *
-     * @param object $feedback feedback record
+     * @param object $peerassess peerassess record
      * @param array $record (optional) to override default values
      * @return int
      */
-    public function create_item_info($feedback, $record = array()) {
+    public function create_item_info($peerassess, $record = array()) {
         global $DB, $CFG;
 
-        require_once($CFG->dirroot.'/mod/feedback/lib.php');
+        require_once($CFG->dirroot.'/mod/peerassess/lib.php');
 
-        $itemobj = feedback_get_item_class('info');
-        $position = $DB->count_records('feedback_item', array('feedback' => $feedback->id)) + 1;
+        $itemobj = peerassess_get_item_class('info');
+        $position = $DB->count_records('peerassess_item', array('peerassess' => $peerassess->id)) + 1;
 
         $record = (array)$record + array(
             'id' => 0,
-            'feedback' => $feedback->id,
+            'peerassess' => $peerassess->id,
             'template' => 0,
             'name' => 'Feedback question item ' . $position,
             'label' => 'Feedback label ' . $position,
@@ -121,21 +121,21 @@ class mod_feedback_generator extends testing_module_generator {
     /**
      * Create label question item.
      *
-     * @param object $feedback feedback record
+     * @param object $peerassess peerassess record
      * @param array $record (optional) to override default values
      * @return int
      */
-    public function create_item_label($feedback, $record = array()) {
+    public function create_item_label($peerassess, $record = array()) {
         global $DB, $CFG;
 
-        require_once($CFG->dirroot.'/mod/feedback/lib.php');
+        require_once($CFG->dirroot.'/mod/peerassess/lib.php');
 
-        $itemobj = feedback_get_item_class('label');
-        $position = $DB->count_records('feedback_item', array('feedback' => $feedback->id)) + 1;
+        $itemobj = peerassess_get_item_class('label');
+        $position = $DB->count_records('peerassess_item', array('peerassess' => $peerassess->id)) + 1;
 
         $record = (array)$record + array(
             'id' => 0,
-            'feedback' => $feedback->id,
+            'peerassess' => $peerassess->id,
             'template' => 0,
             'name' => 'label',
             'label' => '',
@@ -164,21 +164,21 @@ class mod_feedback_generator extends testing_module_generator {
     /**
      * Create multichoice question item.
      *
-     * @param object $feedback feedback record
+     * @param object $peerassess peerassess record
      * @param array $record (optional) to override default values
      * @return int
      */
-    public function create_item_multichoice($feedback, $record = array()) {
+    public function create_item_multichoice($peerassess, $record = array()) {
         global $DB, $CFG;
 
-        require_once($CFG->dirroot.'/mod/feedback/lib.php');
+        require_once($CFG->dirroot.'/mod/peerassess/lib.php');
 
-        $itemobj = feedback_get_item_class('multichoice');
-        $position = $DB->count_records('feedback_item', array('feedback' => $feedback->id)) + 1;
+        $itemobj = peerassess_get_item_class('multichoice');
+        $position = $DB->count_records('peerassess_item', array('peerassess' => $peerassess->id)) + 1;
 
         $record = (array)$record + array(
             'id' => 0,
-            'feedback' => $feedback->id,
+            'peerassess' => $peerassess->id,
             'template' => 0,
             'name' => 'Feedback question item ' . $position,
             'label' => 'Feedback label ' . $position,
@@ -211,21 +211,21 @@ class mod_feedback_generator extends testing_module_generator {
     /**
      * Create multichoicerated question item.
      *
-     * @param object $feedback feedback record
+     * @param object $peerassess peerassess record
      * @param array $record (optional) to override default values
      * @return int
      */
-    public function create_item_multichoicerated($feedback, $record = array()) {
+    public function create_item_multichoicerated($peerassess, $record = array()) {
         global $DB, $CFG;
 
-        require_once($CFG->dirroot.'/mod/feedback/lib.php');
+        require_once($CFG->dirroot.'/mod/peerassess/lib.php');
 
-        $itemobj = feedback_get_item_class('multichoicerated');
-        $position = $DB->count_records('feedback_item', array('feedback' => $feedback->id)) + 1;
+        $itemobj = peerassess_get_item_class('multichoicerated');
+        $position = $DB->count_records('peerassess_item', array('peerassess' => $peerassess->id)) + 1;
 
         $record = (array)$record + array(
             'id' => 0,
-            'feedback' => $feedback->id,
+            'peerassess' => $peerassess->id,
             'template' => 0,
             'name' => 'Feedback question item ' . $position,
             'label' => 'Feedback label ' . $position,
@@ -244,7 +244,7 @@ class mod_feedback_generator extends testing_module_generator {
             'values' => "0/a\n1/b\n2/c\n3/d\n4/e"
         );
 
-        $itemobj = new feedback_item_multichoicerated();
+        $itemobj = new peerassess_item_multichoicerated();
         $presentation = $itemobj->prepare_presentation_values_save(trim($record['values']),
             FEEDBACK_MULTICHOICERATED_VALUE_SEP2, FEEDBACK_MULTICHOICERATED_VALUE_SEP);
 
@@ -260,21 +260,21 @@ class mod_feedback_generator extends testing_module_generator {
     /**
      * Create numeric question item.
      *
-     * @param object $feedback feedback record
+     * @param object $peerassess peerassess record
      * @param array $record (optional) to override default values
      * @return int
      */
-    public function create_item_numeric($feedback, $record = array()) {
+    public function create_item_numeric($peerassess, $record = array()) {
         global $DB, $CFG;
 
-        require_once($CFG->dirroot.'/mod/feedback/lib.php');
+        require_once($CFG->dirroot.'/mod/peerassess/lib.php');
 
-        $itemobj = feedback_get_item_class('numeric');
-        $position = $DB->count_records('feedback_item', array('feedback' => $feedback->id)) + 1;
+        $itemobj = peerassess_get_item_class('numeric');
+        $position = $DB->count_records('peerassess_item', array('peerassess' => $peerassess->id)) + 1;
 
         $record = (array)$record + array(
             'id' => 0,
-            'feedback' => $feedback->id,
+            'peerassess' => $peerassess->id,
             'template' => 0,
             'name' => 'Feedback question item ' . $position,
             'label' => 'Feedback label ' . $position,
@@ -305,21 +305,21 @@ class mod_feedback_generator extends testing_module_generator {
     /**
      * Create textarea question item.
      *
-     * @param object $feedback feedback record
+     * @param object $peerassess peerassess record
      * @param array $record (optional) to override default values
      * @return int
      */
-    public function create_item_textarea($feedback, $record = array()) {
+    public function create_item_textarea($peerassess, $record = array()) {
         global $DB, $CFG;
 
-        require_once($CFG->dirroot.'/mod/feedback/lib.php');
+        require_once($CFG->dirroot.'/mod/peerassess/lib.php');
 
-        $itemobj = feedback_get_item_class('textarea');
-        $position = $DB->count_records('feedback_item', array('feedback' => $feedback->id)) + 1;
+        $itemobj = peerassess_get_item_class('textarea');
+        $position = $DB->count_records('peerassess_item', array('peerassess' => $peerassess->id)) + 1;
 
         $record = (array)$record + array(
             'id' => 0,
-            'feedback' => $feedback->id,
+            'peerassess' => $peerassess->id,
             'template' => 0,
             'name' => 'Feedback question item ' . $position,
             'label' => 'Feedback label ' . $position,
@@ -344,21 +344,21 @@ class mod_feedback_generator extends testing_module_generator {
     /**
      * Create textfield question item.
      *
-     * @param object $feedback feedback record
+     * @param object $peerassess peerassess record
      * @param array $record (optional) to override default values
      * @return int
      */
-    public function create_item_textfield($feedback, $record = array()) {
+    public function create_item_textfield($peerassess, $record = array()) {
         global $DB, $CFG;
 
-        require_once($CFG->dirroot.'/mod/feedback/lib.php');
+        require_once($CFG->dirroot.'/mod/peerassess/lib.php');
 
-        $itemobj = feedback_get_item_class('textfield');
-        $position = $DB->count_records('feedback_item', array('feedback' => $feedback->id)) + 1;
+        $itemobj = peerassess_get_item_class('textfield');
+        $position = $DB->count_records('peerassess_item', array('peerassess' => $peerassess->id)) + 1;
 
         $record = (array)$record + array(
             'id' => 0,
-            'feedback' => $feedback->id,
+            'peerassess' => $peerassess->id,
             'template' => 0,
             'name' => 'Feedback question item ' . $position,
             'label' => 'Feedback label ' . $position,
@@ -383,14 +383,14 @@ class mod_feedback_generator extends testing_module_generator {
     /**
      * Create pagebreak.
      *
-     * @param object $feedback feedback record
+     * @param object $peerassess peerassess record
      * @return mixed false if there already is a pagebreak on last position or the id of the pagebreak-item
      */
-    public function create_item_pagebreak($feedback) {
+    public function create_item_pagebreak($peerassess) {
         global $CFG;
-        require_once($CFG->dirroot.'/mod/feedback/lib.php');
+        require_once($CFG->dirroot.'/mod/peerassess/lib.php');
 
-        return feedback_create_pagebreak($feedback->id);
+        return peerassess_create_pagebreak($peerassess->id);
     }
 }
 

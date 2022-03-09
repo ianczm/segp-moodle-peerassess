@@ -14,9 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Edit items in feedback module
+ * Edit items in peerassess module
  *
- * @module     mod_feedback/edit
+ * @module     mod_peerassess/edit
  * @copyright  2016 Marina Glancy
  */
 define(['jquery', 'core/ajax', 'core/str', 'core/notification'],
@@ -33,7 +33,7 @@ function($, ajax, str, notification) {
                 },
                 {
                     key:        'confirmdeleteitem',
-                    component:  'mod_feedback'
+                    component:  'mod_peerassess'
                 },
                 {
                     key:        'yes',

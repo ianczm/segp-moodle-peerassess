@@ -1,8 +1,8 @@
-@mod @mod_feedback
-Feature: Mapping courses in a feedback
-  In order to collect the same feedback about multiple courses
+@mod @mod_peerassess
+Feature: Mapping courses in a peerassess
+  In order to collect the same peerassess about multiple courses
   As a manager
-  I need to be able to map site feedback to courses
+  I need to be able to map site peerassess to courses
 
   Background:
     Given the following "users" exist:
@@ -32,22 +32,22 @@ Feature: Mapping courses in a feedback
       | manager | Acceptance test site | manager |
     And the following "activities" exist:
       | activity   | name             | course               | idnumber  | anonymous | publish_stats | section |
-      | feedback   | Course feedback  | Acceptance test site | feedback0 | 1         | 1             | 1       |
-      | feedback   | Another feedback | C1                   | feedback1 | 1         | 1             | 0       |
+      | peerassess   | Course peerassess  | Acceptance test site | peerassess0 | 1         | 1             | 1       |
+      | peerassess   | Another peerassess | C1                   | peerassess1 | 1         | 1             | 0       |
     When I log in as "manager"
     And I am on site homepage
-    And I follow "Course feedback"
+    And I follow "Course peerassess"
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
-    And I add a "Information" question to the feedback with:
+    And I add a "Information" question to the peerassess with:
       | Question         | this is an information question |
       | Label            | info                            |
       | Information type | Course                          |
-    And I add a "Multiple choice (rated)" question to the feedback with:
+    And I add a "Multiple choice (rated)" question to the peerassess with:
       | Question               | this is a multiple choice rated    |
       | Label                  | multichoicerated                   |
       | Multiple choice type   | Multiple choice - single answer    |
       | Multiple choice values | 0/option a\n1/option b\n5/option c |
-    And I add a "Multiple choice" question to the feedback with:
+    And I add a "Multiple choice" question to the peerassess with:
       | Question               | this is a simple multiple choice    |
       | Label                  | multichoicesimple                   |
       | Multiple choice type   | Multiple choice - single answer allowed (drop-down menu) |
@@ -62,44 +62,44 @@ Feature: Mapping courses in a feedback
     And I add the "Feedback" block
     And I log out
 
-  Scenario: Course feedback can not be mapped
+  Scenario: Course peerassess can not be mapped
     And I log in as "manager"
     And I am on "Course 1" course homepage
-    And I follow "Another feedback"
+    And I follow "Another peerassess"
     And I should not see "Mapped courses"
-    And I should not see "Map feedback to courses"
+    And I should not see "Map peerassess to courses"
 
   @javascript
-  Scenario: Site feedback is not mapped to any course
+  Scenario: Site peerassess is not mapped to any course
     And I log in as "user1"
     And I am on site homepage
-    And I follow "Course feedback"
+    And I follow "Course peerassess"
     And I follow "Answer the questions"
-    And I should see "Acceptance test site" in the ".feedback_form" "css_element"
+    And I should see "Acceptance test site" in the ".peerassess_form" "css_element"
     And I set the following fields to these values:
       | option a                         | 1        |
       | this is a simple multiple choice | option d |
     And I press "Submit your answers"
     And I press "Continue"
     And I am on "Course 1" course homepage
-    And I click on "Course feedback" "link" in the "Feedback" "block"
+    And I click on "Course peerassess" "link" in the "Feedback" "block"
     And I follow "Answer the questions"
-    And I should not see "Acceptance test site" in the ".feedback_form" "css_element"
-    And I should see "C1" in the ".feedback_form" "css_element"
+    And I should not see "Acceptance test site" in the ".peerassess_form" "css_element"
+    And I should see "C1" in the ".peerassess_form" "css_element"
     And I set the following fields to these values:
       | option b                         | 1        |
       | this is a simple multiple choice | option e |
     And I press "Submit your answers"
     And I press "Continue"
-    And I click on "Course feedback" "link" in the "Feedback" "block"
+    And I click on "Course peerassess" "link" in the "Feedback" "block"
     And I should not see "Answer the questions"
     And I log out
     And I log in as "user2"
     And I am on "Course 1" course homepage
-    And I click on "Course feedback" "link" in the "Feedback" "block"
+    And I click on "Course peerassess" "link" in the "Feedback" "block"
     And I follow "Answer the questions"
-    And I should not see "Acceptance test site" in the ".feedback_form" "css_element"
-    And I should see "C1" in the ".feedback_form" "css_element"
+    And I should not see "Acceptance test site" in the ".peerassess_form" "css_element"
+    And I should see "C1" in the ".peerassess_form" "css_element"
     And I set the following fields to these values:
       | option c                         | 1        |
       | this is a simple multiple choice | option e |
@@ -108,11 +108,11 @@ Feature: Mapping courses in a feedback
     And I log out
     And I log in as "manager"
     And I am on site homepage
-    And I follow "Course feedback"
+    And I follow "Course peerassess"
 
     And I navigate to "Analysis" in current page administration
-    And I should see "All courses" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=option]" "css_element"
-    And I show chart data for the "multichoicerated" feedback
+    And I should see "All courses" in the "#peerassess_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=option]" "css_element"
+    And I show chart data for the "multichoicerated" peerassess
     And I should see "1 (33.33 %)" in the "option a" "table_row"
     And I should see "1 (33.33 %)" in the "option b" "table_row"
     And I should see "1 (33.33 %)" in the "option c" "table_row"
@@ -123,19 +123,19 @@ Feature: Mapping courses in a feedback
     And I click on "Back" "link" in the "region-main" "region"
     And I set the field "Filter by course" to "Course 1"
     And I press "Filter"
-    And I should see "Course 1" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=option]" "css_element"
-    And I show chart data for the "multichoicerated" feedback
+    And I should see "Course 1" in the "#peerassess_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=option]" "css_element"
+    And I show chart data for the "multichoicerated" peerassess
     And I should see "0" in the "option a" "table_row"
     And I should see "1 (50.00 %)" in the "option b" "table_row"
     And I should see "1 (50.00 %)" in the "option c" "table_row"
     And I log out
 
   @javascript
-  Scenario: Site feedback is mapped to courses
+  Scenario: Site peerassess is mapped to courses
     And I log in as "manager"
     And I am on site homepage
-    And I follow "Course feedback"
-    And I follow "Map feedback to courses"
+    And I follow "Course peerassess"
+    And I follow "Map peerassess to courses"
     And I set the field "Courses" to "Course 2, Course 3"
     And I press "Save changes"
     And I should see "Course mapping has been changed"
@@ -143,33 +143,33 @@ Feature: Mapping courses in a feedback
 
     And I log in as "user1"
     And I am on site homepage
-    And I follow "Course feedback"
-    And I should see "You can only access this feedback from a course"
+    And I follow "Course peerassess"
+    And I should see "You can only access this peerassess from a course"
     And I should not see "Answer the questions"
 
     And I am on "Course 1" course homepage
     And "Feedback" "block" should not exist
-    And I should not see "Course feedback"
+    And I should not see "Course peerassess"
 
     And I am on "Course 2" course homepage
-    And I click on "Course feedback" "link" in the "Feedback" "block"
+    And I click on "Course peerassess" "link" in the "Feedback" "block"
     And I follow "Answer the questions"
-    And I should not see "Acceptance test site" in the ".feedback_form" "css_element"
-    And I should see "C2" in the ".feedback_form" "css_element"
+    And I should not see "Acceptance test site" in the ".peerassess_form" "css_element"
+    And I should see "C2" in the ".peerassess_form" "css_element"
     And I set the following fields to these values:
       | option b                         | 1        |
       | this is a simple multiple choice | option e |
     And I press "Submit your answers"
     And I press "Continue"
-    And I click on "Course feedback" "link" in the "Feedback" "block"
+    And I click on "Course peerassess" "link" in the "Feedback" "block"
     And I should not see "Answer the questions"
     And I log out
     And I log in as "user2"
     And I am on "Course 2" course homepage
-    And I click on "Course feedback" "link" in the "Feedback" "block"
+    And I click on "Course peerassess" "link" in the "Feedback" "block"
     And I follow "Answer the questions"
-    And I should not see "Acceptance test site" in the ".feedback_form" "css_element"
-    And I should see "C2" in the ".feedback_form" "css_element"
+    And I should not see "Acceptance test site" in the ".peerassess_form" "css_element"
+    And I should see "C2" in the ".peerassess_form" "css_element"
     And I set the following fields to these values:
       | option c                         | 1        |
       | this is a simple multiple choice | option e |
@@ -178,10 +178,10 @@ Feature: Mapping courses in a feedback
     And I log out
     And I log in as "user3"
     And I am on "Course 3" course homepage
-    And I click on "Course feedback" "link" in the "Feedback" "block"
+    And I click on "Course peerassess" "link" in the "Feedback" "block"
     And I follow "Answer the questions"
-    And I should not see "Acceptance test site" in the ".feedback_form" "css_element"
-    And I should see "C3" in the ".feedback_form" "css_element"
+    And I should not see "Acceptance test site" in the ".peerassess_form" "css_element"
+    And I should see "C3" in the ".peerassess_form" "css_element"
     And I set the following fields to these values:
       | option c                         | 1        |
       | this is a simple multiple choice | option d |
@@ -190,10 +190,10 @@ Feature: Mapping courses in a feedback
     And I log out
     And I log in as "manager"
     And I am on site homepage
-    And I follow "Course feedback"
+    And I follow "Course peerassess"
     And I navigate to "Analysis" in current page administration
-    And I should see "All courses" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=option]" "css_element"
-    And I show chart data for the "multichoicerated" feedback
+    And I should see "All courses" in the "#peerassess_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=option]" "css_element"
+    And I show chart data for the "multichoicerated" peerassess
     And I should see "0" in the "option a" "table_row"
     And I should see "1 (33.33 %)" in the "option b" "table_row"
     And I should see "2 (66.67 %)" in the "option c" "table_row"
@@ -204,33 +204,33 @@ Feature: Mapping courses in a feedback
     And I click on "Back" "link" in the "region-main" "region"
     And I set the field "Filter by course" to "Course 2"
     And I press "Filter"
-    And I show chart data for the "multichoicerated" feedback
+    And I show chart data for the "multichoicerated" peerassess
     And I should see "0" in the "option a" "table_row"
     And I should see "1 (50.00 %)" in the "option b" "table_row"
     And I should see "1 (50.00 %)" in the "option c" "table_row"
-    And I show chart data for the "multichoicesimple" feedback
+    And I show chart data for the "multichoicesimple" peerassess
     And I should see "2 (100.00 %)" in the "option e" "table_row"
     And I set the field "Filter by course" to "Course 3"
     And I press "Filter"
-    And I show chart data for the "multichoicerated" feedback
+    And I show chart data for the "multichoicerated" peerassess
     And I should see "0" in the "option a" "table_row"
     And I should see "0" in the "option b" "table_row"
     And I should see "1 (100.00 %)" in the "option c" "table_row"
-    And I show chart data for the "multichoicesimple" feedback
+    And I show chart data for the "multichoicesimple" peerassess
     And I should see "1 (100.00 %)" in the "option d" "table_row"
     And I follow "Show all"
-    And I show chart data for the "multichoicesimple" feedback
+    And I show chart data for the "multichoicesimple" peerassess
     And I should see "1 (33.33 %)" in the "option d" "table_row"
     And I should see "2 (66.67 %)" in the "option e" "table_row"
     And I should see "0" in the "option f" "table_row"
 
-  Scenario: Site feedback deletion hides feedback block completely
+  Scenario: Site peerassess deletion hides peerassess block completely
     When I log in as "manager"
     And I am on site homepage
     And I turn editing mode on
     And I add the "Feedback" block
     And I add the "Main menu" block
-    And I click on "Delete" "link" in the "Course feedback" activity
+    And I click on "Delete" "link" in the "Course peerassess" activity
     And I press "Yes"
     And I follow "Turn editing off"
     And I am on site homepage

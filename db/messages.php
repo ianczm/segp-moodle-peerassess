@@ -17,14 +17,14 @@
 /**
  * Defines message providers (types of messages being sent)
  *
- * @package mod_feedback
+ * @package mod_peerassess
  * @copyright  2010 onwards  Aparup Banerjee  http://moodle.com
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $messageproviders = array (
 
-/// Submitting a feedback
+/// Submitting a peerassess
     'submission' => array (
     ),
 /// Message to nonrespondents

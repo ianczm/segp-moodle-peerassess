@@ -15,38 +15,38 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @subpackage backup-moodle2
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * Define all the restore steps that will be used by the restore_feedback_activity_task
+ * Define all the restore steps that will be used by the restore_peerassess_activity_task
  */
 
 /**
- * Structure step to restore one feedback activity
+ * Structure step to restore one peerassess activity
  */
-class restore_feedback_activity_structure_step extends restore_activity_structure_step {
+class restore_peerassess_activity_structure_step extends restore_activity_structure_step {
 
     protected function define_structure() {
 
         $paths = array();
         $userinfo = $this->get_setting_value('userinfo');
 
-        $paths[] = new restore_path_element('feedback', '/activity/feedback');
-        $paths[] = new restore_path_element('feedback_item', '/activity/feedback/items/item');
+        $paths[] = new restore_path_element('peerassess', '/activity/peerassess');
+        $paths[] = new restore_path_element('peerassess_item', '/activity/peerassess/items/item');
         if ($userinfo) {
-            $paths[] = new restore_path_element('feedback_completed', '/activity/feedback/completeds/completed');
-            $paths[] = new restore_path_element('feedback_value', '/activity/feedback/completeds/completed/values/value');
+            $paths[] = new restore_path_element('peerassess_completed', '/activity/peerassess/completeds/completed');
+            $paths[] = new restore_path_element('peerassess_value', '/activity/peerassess/completeds/completed/values/value');
         }
 
         // Return the paths wrapped into standard activity structure
         return $this->prepare_activity_structure($paths);
     }
 
-    protected function process_feedback($data) {
+    protected function process_peerassess($data) {
         global $DB;
 
         $data = (object)$data;
@@ -58,29 +58,29 @@ class restore_feedback_activity_structure_step extends restore_activity_structur
         $data->timeopen = $this->apply_date_offset($data->timeopen);
         $data->timeclose = $this->apply_date_offset($data->timeclose);
 
-        // insert the feedback record
-        $newitemid = $DB->insert_record('feedback', $data);
+        // insert the peerassess record
+        $newitemid = $DB->insert_record('peerassess', $data);
         // immediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
     }
 
-    protected function process_feedback_item($data) {
+    protected function process_peerassess_item($data) {
         global $DB;
 
         $data = (object)$data;
         $oldid = $data->id;
-        $data->feedback = $this->get_new_parentid('feedback');
+        $data->peerassess = $this->get_new_parentid('peerassess');
 
-        $newitemid = $DB->insert_record('feedback_item', $data);
-        $this->set_mapping('feedback_item', $oldid, $newitemid, true); // Can have files
+        $newitemid = $DB->insert_record('peerassess_item', $data);
+        $this->set_mapping('peerassess_item', $oldid, $newitemid, true); // Can have files
     }
 
-    protected function process_feedback_completed($data) {
+    protected function process_peerassess_completed($data) {
         global $DB;
 
         $data = (object)$data;
         $oldid = $data->id;
-        $data->feedback = $this->get_new_parentid('feedback');
+        $data->peerassess = $this->get_new_parentid('peerassess');
         $data->userid = $this->get_mappingid('user', $data->userid);
         if ($this->task->is_samesite() && !empty($data->courseid)) {
             $data->courseid = $data->courseid;
@@ -90,17 +90,17 @@ class restore_feedback_activity_structure_step extends restore_activity_structur
             $data->courseid = 0;
         }
 
-        $newitemid = $DB->insert_record('feedback_completed', $data);
-        $this->set_mapping('feedback_completed', $oldid, $newitemid);
+        $newitemid = $DB->insert_record('peerassess_completed', $data);
+        $this->set_mapping('peerassess_completed', $oldid, $newitemid);
     }
 
-    protected function process_feedback_value($data) {
+    protected function process_peerassess_value($data) {
         global $DB;
 
         $data = (object)$data;
         $oldid = $data->id;
-        $data->completed = $this->get_new_parentid('feedback_completed');
-        $data->item = $this->get_mappingid('feedback_item', $data->item);
+        $data->completed = $this->get_new_parentid('peerassess_completed');
+        $data->item = $this->get_mappingid('peerassess_item', $data->item);
         if ($this->task->is_samesite() && !empty($data->course_id)) {
             $data->course_id = $data->course_id;
         } else if ($this->get_courseid() == SITEID) {
@@ -109,23 +109,23 @@ class restore_feedback_activity_structure_step extends restore_activity_structur
             $data->course_id = 0;
         }
 
-        $newitemid = $DB->insert_record('feedback_value', $data);
-        $this->set_mapping('feedback_value', $oldid, $newitemid);
+        $newitemid = $DB->insert_record('peerassess_value', $data);
+        $this->set_mapping('peerassess_value', $oldid, $newitemid);
     }
 
     protected function after_execute() {
         global $DB;
-        // Add feedback related files, no need to match by itemname (just internally handled context)
-        $this->add_related_files('mod_feedback', 'intro', null);
-        $this->add_related_files('mod_feedback', 'page_after_submit', null);
-        $this->add_related_files('mod_feedback', 'item', 'feedback_item');
+        // Add peerassess related files, no need to match by itemname (just internally handled context)
+        $this->add_related_files('mod_peerassess', 'intro', null);
+        $this->add_related_files('mod_peerassess', 'page_after_submit', null);
+        $this->add_related_files('mod_peerassess', 'item', 'peerassess_item');
 
         // Once all items are restored we can set their dependency.
-        if ($records = $DB->get_records('feedback_item', array('feedback' => $this->task->get_activityid()))) {
+        if ($records = $DB->get_records('peerassess_item', array('peerassess' => $this->task->get_activityid()))) {
             foreach ($records as $record) {
                 // Get new id for dependitem if present. This will also reset dependitem if not found.
-                $record->dependitem = $this->get_mappingid('feedback_item', $record->dependitem);
-                $DB->update_record('feedback_item', $record);
+                $record->dependitem = $this->get_mappingid('peerassess_item', $record->dependitem);
+                $DB->update_record('peerassess_item', $record);
             }
         }
     }

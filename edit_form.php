@@ -19,7 +19,7 @@
  *
  * @author Andreas Grabs
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod_feedback
+ * @package mod_peerassess
  */
 
 //It must be included from a Moodle page
@@ -29,7 +29,7 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir.'/formslib.php');
 
-class feedback_edit_use_template_form extends moodleform {
+class peerassess_edit_use_template_form extends moodleform {
 
     /**
      * Form definition
@@ -41,15 +41,15 @@ class feedback_edit_use_template_form extends moodleform {
 
         $elementgroup = array();
         //headline
-        $mform->addElement('header', 'using_templates', get_string('using_templates', 'feedback'));
+        $mform->addElement('header', 'using_templates', get_string('using_templates', 'peerassess'));
         // hidden elements
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
         // visible elements
         $templates_options = array();
-        $owntemplates = feedback_get_template_list($course, 'own');
-        $publictemplates = feedback_get_template_list($course, 'public');
+        $owntemplates = peerassess_get_template_list($course, 'own');
+        $publictemplates = peerassess_get_template_list($course, 'public');
 
         $options = array();
         if ($owntemplates or $publictemplates) {
@@ -68,31 +68,31 @@ class feedback_edit_use_template_form extends moodleform {
                 foreach ($publictemplates as $template) {
                     $publicoptions[$template->id] = format_string($template->name);
                 }
-                $options[get_string('public', 'feedback')] = $publicoptions;
+                $options[get_string('public', 'peerassess')] = $publicoptions;
             }
 
             $attributes = 'onChange="M.core_formchangechecker.set_form_submitted(); this.form.submit()"';
             $elementgroup[] = $mform->createElement('selectgroups',
                                                      'templateid',
-                                                     get_string('using_templates', 'feedback'),
+                                                     get_string('using_templates', 'peerassess'),
                                                      $options,
                                                      $attributes);
 
             $elementgroup[] = $mform->createElement('submit',
                                                      'use_template',
-                                                     get_string('use_this_template', 'feedback'),
+                                                     get_string('use_this_template', 'peerassess'),
                                                      array('class' => 'hiddenifjs'));
 
             $mform->addGroup($elementgroup, 'elementgroup', '', array(' '), false);
         } else {
-            $mform->addElement('static', 'info', get_string('no_templates_available_yet', 'feedback'));
+            $mform->addElement('static', 'info', get_string('no_templates_available_yet', 'peerassess'));
         }
 
         $this->set_data(array('id' => $this->_customdata['id']));
     }
 }
 
-class feedback_edit_create_template_form extends moodleform {
+class peerassess_edit_create_template_form extends moodleform {
 
     /**
      * Form definition
@@ -108,31 +108,31 @@ class feedback_edit_create_template_form extends moodleform {
         $mform->setConstant('do_show', 'templates');
 
         //headline
-        $mform->addElement('header', 'creating_templates', get_string('creating_templates', 'feedback'));
+        $mform->addElement('header', 'creating_templates', get_string('creating_templates', 'peerassess'));
 
         // visible elements
         $elementgroup = array();
 
         $elementgroup[] = $mform->createElement('text',
                                                  'templatename',
-                                                 get_string('name', 'feedback'),
+                                                 get_string('name', 'peerassess'),
                                                  array('size'=>'40', 'maxlength'=>'200'));
 
-        if (has_capability('mod/feedback:createpublictemplate', context_system::instance())) {
+        if (has_capability('mod/peerassess:createpublictemplate', context_system::instance())) {
             $elementgroup[] = $mform->createElement('checkbox',
                                                      'ispublic', '',
-                                                     get_string('public', 'feedback'));
+                                                     get_string('public', 'peerassess'));
         }
 
 
         $mform->addGroup($elementgroup,
                          'elementgroup',
-                         get_string('name', 'feedback'),
+                         get_string('name', 'peerassess'),
                          array(' '),
                          false);
 
         // Buttons.
-        $mform->addElement('submit', 'create_template', get_string('save_as_new_template', 'feedback'));
+        $mform->addElement('submit', 'create_template', get_string('save_as_new_template', 'peerassess'));
 
         $mform->setType('templatename', PARAM_TEXT);
 
@@ -150,7 +150,7 @@ class feedback_edit_create_template_form extends moodleform {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         if (!isset($data['templatename']) || trim(strval($data['templatename'])) === '') {
-            $errors['elementgroup'] = get_string('name_required', 'feedback');
+            $errors['elementgroup'] = get_string('name_required', 'peerassess');
         }
         return $errors;
     }

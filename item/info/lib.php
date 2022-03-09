@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 defined('MOODLE_INTERNAL') OR die('not allowed');
-require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
+require_once($CFG->dirroot.'/mod/peerassess/item/peerassess_item_class.php');
 
-class feedback_item_info extends feedback_item_base {
+class peerassess_item_info extends peerassess_item_base {
     protected $type = "info";
 
-    /** Mode recording response time (for non-anonymous feedbacks only) */
+    /** Mode recording response time (for non-anonymous peerassesss only) */
     const MODE_RESPONSETIME = 1;
     /** Mode recording current course */
     const MODE_COURSE = 2;
@@ -30,13 +30,13 @@ class feedback_item_info extends feedback_item_base {
     /** Special constant to keep the current timestamp as value for the form element */
     const CURRENTTIMESTAMP = '__CURRENT__TIMESTAMP__';
 
-    public function build_editform($item, $feedback, $cm) {
+    public function build_editform($item, $peerassess, $cm) {
         global $DB, $CFG;
         require_once('info_form.php');
 
-        //get the lastposition number of the feedback_items
+        //get the lastposition number of the peerassess_items
         $position = $item->position;
-        $lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
+        $lastposition = $DB->count_records('peerassess_item', array('peerassess'=>$peerassess->id));
         if ($position == -1) {
             $i_formselect_last = $lastposition + 1;
             $i_formselect_value = $lastposition + 1;
@@ -52,25 +52,25 @@ class feedback_item_info extends feedback_item_base {
         $item->required = 0;
 
         //all items for dependitem
-        $feedbackitems = feedback_get_depend_candidates_for_item($feedback, $item);
+        $peerassessitems = peerassess_get_depend_candidates_for_item($peerassess, $item);
         $commonparams = array('cmid'=>$cm->id,
                              'id'=>isset($item->id) ? $item->id : null,
                              'typ'=>$item->typ,
-                             'items'=>$feedbackitems,
-                             'feedback'=>$feedback->id);
+                             'items'=>$peerassessitems,
+                             'peerassess'=>$peerassess->id);
 
         // Options for the 'presentation' select element.
         $presentationoptions = array();
-        if ($feedback->anonymous == FEEDBACK_ANONYMOUS_NO || $item->presentation == self::MODE_RESPONSETIME) {
-            // "Response time" is hidden anyway in case of anonymous feedback, no reason to offer this option.
+        if ($peerassess->anonymous == FEEDBACK_ANONYMOUS_NO || $item->presentation == self::MODE_RESPONSETIME) {
+            // "Response time" is hidden anyway in case of anonymous peerassess, no reason to offer this option.
             // However if it was already selected leave it in the dropdown.
-            $presentationoptions[self::MODE_RESPONSETIME] = get_string('responsetime', 'feedback');
+            $presentationoptions[self::MODE_RESPONSETIME] = get_string('responsetime', 'peerassess');
         }
         $presentationoptions[self::MODE_COURSE]  = get_string('course');
         $presentationoptions[self::MODE_CATEGORY]  = get_string('coursecategory');
 
         //build the form
-        $this->item_form = new feedback_info_form('edit_item.php',
+        $this->item_form = new peerassess_info_form('edit_item.php',
                                                   array('item'=>$item,
                                                   'common'=>$commonparams,
                                                   'positionlist'=>$positionlist,
@@ -93,18 +93,18 @@ class feedback_item_info extends feedback_item_base {
 
         $item->hasvalue = $this->get_hasvalue();
         if (!$item->id) {
-            $item->id = $DB->insert_record('feedback_item', $item);
+            $item->id = $DB->insert_record('peerassess_item', $item);
         } else {
-            $DB->update_record('feedback_item', $item);
+            $DB->update_record('peerassess_item', $item);
         }
 
-        return $DB->get_record('feedback_item', array('id'=>$item->id));
+        return $DB->get_record('peerassess_item', array('id'=>$item->id));
     }
 
     /**
      * Helper function for collected data, both for analysis page and export to excel
      *
-     * @param stdClass $item the db-object from feedback_item
+     * @param stdClass $item the db-object from peerassess_item
      * @param int|false $groupid
      * @param int $courseid
      * @return stdClass
@@ -115,7 +115,7 @@ class feedback_item_info extends feedback_item_base {
         $analysed_val = new stdClass();
         $analysed_val->data = null;
         $analysed_val->name = $item->name;
-        $values = feedback_get_group_values($item, $groupid, $courseid);
+        $values = peerassess_get_group_values($item, $groupid, $courseid);
         if ($values) {
             $data = array();
             foreach ($values as $value) {
@@ -200,16 +200,16 @@ class feedback_item_info extends feedback_item_base {
      * Calculates the value of the item (time, course, course category)
      *
      * @param stdClass $item
-     * @param stdClass $feedback
+     * @param stdClass $peerassess
      * @param int $courseid
      * @return string
      */
-    protected function get_current_value($item, $feedback, $courseid) {
+    protected function get_current_value($item, $peerassess, $courseid) {
         global $DB;
         switch ($item->presentation) {
             case self::MODE_RESPONSETIME:
-                if ($feedback->anonymous != FEEDBACK_ANONYMOUS_YES) {
-                    // Response time is not allowed in anonymous feedbacks.
+                if ($peerassess->anonymous != FEEDBACK_ANONYMOUS_YES) {
+                    // Response time is not allowed in anonymous peerassesss.
                     return time();
                 }
                 break;
@@ -234,14 +234,14 @@ class feedback_item_info extends feedback_item_base {
      * Adds an input element to the complete form
      *
      * @param stdClass $item
-     * @param mod_feedback_complete_form $form
+     * @param mod_peerassess_complete_form $form
      */
     public function complete_form_element($item, $form) {
-        if ($form->get_mode() == mod_feedback_complete_form::MODE_VIEW_RESPONSE) {
+        if ($form->get_mode() == mod_peerassess_complete_form::MODE_VIEW_RESPONSE) {
             $value = strval($form->get_item_value($item));
         } else {
             $value = $this->get_current_value($item,
-                    $form->get_feedback(), $form->get_current_course_id());
+                    $form->get_peerassess(), $form->get_current_course_id());
         }
         $printval = $this->get_printval($item, (object)['value' => $value]);
 
@@ -270,14 +270,14 @@ class feedback_item_info extends feedback_item_base {
                 false);
         $form->set_element_default($inputname, $value);
         $element->freeze();
-        if ($form->get_mode() == mod_feedback_complete_form::MODE_COMPLETE) {
+        if ($form->get_mode() == mod_peerassess_complete_form::MODE_COMPLETE) {
             $element->setPersistantFreeze(true);
         }
     }
 
     /**
      * Converts the value from complete_form data to the string value that is stored in the db.
-     * @param mixed $value element from mod_feedback_complete_form::get_data() with the name $item->typ.'_'.$item->id
+     * @param mixed $value element from mod_peerassess_complete_form::get_data() with the name $item->typ.'_'.$item->id
      * @return string
      */
     public function create_value($value) {
@@ -293,9 +293,9 @@ class feedback_item_info extends feedback_item_base {
 
     public function get_data_for_external($item) {
         global $DB;
-        $feedback = $DB->get_record('feedback', array('id' => $item->feedback), '*', MUST_EXIST);
+        $peerassess = $DB->get_record('peerassess', array('id' => $item->peerassess), '*', MUST_EXIST);
         // Return the default value (course name, category name or timestamp).
-        return $this->get_current_value($item, $feedback, $feedback->course);
+        return $this->get_current_value($item, $peerassess, $peerassess->course);
     }
 
     /**

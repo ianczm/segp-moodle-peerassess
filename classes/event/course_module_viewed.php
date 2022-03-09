@@ -15,26 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_feedback course module viewed event.
+ * The mod_peerassess course module viewed event.
  *
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_feedback\event;
+namespace mod_peerassess\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_feedback course module viewed event class.
+ * The mod_peerassess course module viewed event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - int anonymous if feedback is anonymous.
+ *      - int anonymous if peerassess is anonymous.
  * }
  *
- * @package    mod_feedback
+ * @package    mod_peerassess
  * @since      Moodle 2.6
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -47,29 +47,29 @@ class course_module_viewed extends \core\event\course_module_viewed {
     protected function init() {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
-        $this->data['objecttable'] = 'feedback';
+        $this->data['objecttable'] = 'peerassess';
     }
 
     /**
-     * Creates an instance from feedback record
+     * Creates an instance from peerassess record
      *
-     * @param stdClass $feedback
+     * @param stdClass $peerassess
      * @param cm_info|stdClass $cm
      * @param stdClass $course
      * @return course_module_viewed
      */
-    public static function create_from_record($feedback, $cm, $course) {
+    public static function create_from_record($peerassess, $cm, $course) {
         $event = self::create(array(
-            'objectid' => $feedback->id,
+            'objectid' => $peerassess->id,
             'context' => \context_module::instance($cm->id),
-            'anonymous' => ($feedback->anonymous == FEEDBACK_ANONYMOUS_YES),
+            'anonymous' => ($peerassess->anonymous == FEEDBACK_ANONYMOUS_YES),
             'other' => array(
-                'anonymous' => $feedback->anonymous // Deprecated.
+                'anonymous' => $peerassess->anonymous // Deprecated.
             )
         ));
         $event->add_record_snapshot('course_modules', $cm);
         $event->add_record_snapshot('course', $course);
-        $event->add_record_snapshot('feedback', $feedback);
+        $event->add_record_snapshot('peerassess', $peerassess);
         return $event;
     }
 
@@ -91,7 +91,7 @@ class course_module_viewed extends \core\event\course_module_viewed {
         if ($this->anonymous) {
             return is_siteadmin($userorid);
         } else {
-            return has_capability('mod/feedback:viewreports', $this->context, $userorid);
+            return has_capability('mod/peerassess:viewreports', $this->context, $userorid);
         }
     }
 
@@ -123,7 +123,7 @@ class course_module_viewed extends \core\event\course_module_viewed {
     }
 
     public static function get_objectid_mapping() {
-        return array('db' => 'feedback', 'restore' => 'feedback');
+        return array('db' => 'peerassess', 'restore' => 'peerassess');
     }
 
     public static function get_other_mapping() {

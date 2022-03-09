@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains class mod_feedback_complete_form
+ * Contains class mod_peerassess_complete_form
  *
- * @package   mod_feedback
+ * @package   mod_peerassess
  * @copyright 2016 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,13 +25,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class mod_feedback_complete_form
+ * Class mod_peerassess_complete_form
  *
- * @package   mod_feedback
+ * @package   mod_peerassess
  * @copyright 2016 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_feedback_complete_form extends moodleform {
+class mod_peerassess_complete_form extends moodleform {
 
     /** @var int */
     const MODE_COMPLETE = 1;
@@ -46,9 +46,9 @@ class mod_feedback_complete_form extends moodleform {
 
     /** @var int */
     protected $mode;
-    /** @var mod_feedback_structure|mod_feedback_completion */
+    /** @var mod_peerassess_structure|mod_peerassess_completion */
     protected $structure;
-    /** @var mod_feedback_completion */
+    /** @var mod_peerassess_completion */
     protected $completion;
     /** @var int */
     protected $gopage;
@@ -59,17 +59,17 @@ class mod_feedback_complete_form extends moodleform {
      * Constructor
      *
      * @param int $mode
-     * @param mod_feedback_structure $structure
+     * @param mod_peerassess_structure $structure
      * @param string $formid CSS id attribute of the form
      * @param array $customdata
      */
-    public function __construct($mode, mod_feedback_structure $structure, $formid, $customdata = null) {
+    public function __construct($mode, mod_peerassess_structure $structure, $formid, $customdata = null) {
         $this->mode = $mode;
         $this->structure = $structure;
         $this->gopage = isset($customdata['gopage']) ? $customdata['gopage'] : 0;
         $isanonymous = $this->structure->is_anonymous() ? ' ianonymous' : '';
         parent::__construct(null, $customdata, 'POST', '',
-                array('id' => $formid, 'class' => 'feedback_form' . $isanonymous), true);
+                array('id' => $formid, 'class' => 'peerassess_form' . $isanonymous), true);
         $this->set_display_vertical();
     }
 
@@ -95,22 +95,22 @@ class mod_feedback_complete_form extends moodleform {
                     $this->mode != self::MODE_VIEW_RESPONSE) {
             // Output information about the current mode (anonymous or not) in some modes.
             if ($this->structure->is_anonymous()) {
-                $anonymousmodeinfo = get_string('anonymous', 'feedback');
+                $anonymousmodeinfo = get_string('anonymous', 'peerassess');
             } else {
-                $anonymousmodeinfo = get_string('non_anonymous', 'feedback');
+                $anonymousmodeinfo = get_string('non_anonymous', 'peerassess');
             }
             $element = $mform->addElement('static', 'anonymousmode', '',
-                    get_string('mode', 'feedback') . ': ' . $anonymousmodeinfo);
-            $element->setAttributes($element->getAttributes() + ['class' => 'feedback_mode']);
+                    get_string('mode', 'peerassess') . ': ' . $anonymousmodeinfo);
+            $element->setAttributes($element->getAttributes() + ['class' => 'peerassess_mode']);
         }
 
-        // Add buttons to go to previous/next pages and submit the feedback.
+        // Add buttons to go to previous/next pages and submit the peerassess.
         if ($this->mode == self::MODE_COMPLETE) {
             $buttonarray = array();
-            $buttonarray[] = &$mform->createElement('submit', 'gopreviouspage', get_string('previous_page', 'feedback'));
-            $buttonarray[] = &$mform->createElement('submit', 'gonextpage', get_string('next_page', 'feedback'),
+            $buttonarray[] = &$mform->createElement('submit', 'gopreviouspage', get_string('previous_page', 'peerassess'));
+            $buttonarray[] = &$mform->createElement('submit', 'gonextpage', get_string('next_page', 'peerassess'),
                     array('class' => 'form-submit'));
-            $buttonarray[] = &$mform->createElement('submit', 'savevalues', get_string('save_entries', 'feedback'),
+            $buttonarray[] = &$mform->createElement('submit', 'savevalues', get_string('save_entries', 'peerassess'),
                     array('class' => 'form-submit'));
             $buttonarray[] = &$mform->createElement('cancel');
             $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
@@ -130,10 +130,10 @@ class mod_feedback_complete_form extends moodleform {
     /**
      * Called from definition_after_data() in the completion mode
      *
-     * This will add only items from a current page to the feedback and adjust the buttons
+     * This will add only items from a current page to the peerassess and adjust the buttons
      */
     protected function definition_complete() {
-        if (!$this->structure instanceof mod_feedback_completion) {
+        if (!$this->structure instanceof mod_peerassess_completion) {
             // We should not really be here but just in case.
             return;
         }
@@ -145,7 +145,7 @@ class mod_feedback_complete_form extends moodleform {
 
         // Add elements.
         foreach ($pageitems as $item) {
-            $itemobj = feedback_get_item_class($item->typ);
+            $itemobj = peerassess_get_item_class($item->typ);
             $itemobj->complete_form_element($item, $this);
         }
 
@@ -167,9 +167,9 @@ class mod_feedback_complete_form extends moodleform {
      * This will add all items to the form, including pagebreaks as horizontal rules.
      */
     protected function definition_preview() {
-        foreach ($this->structure->get_items() as $feedbackitem) {
-            $itemobj = feedback_get_item_class($feedbackitem->typ);
-            $itemobj->complete_form_element($feedbackitem, $this);
+        foreach ($this->structure->get_items() as $peerassessitem) {
+            $itemobj = peerassess_get_item_class($peerassessitem->typ);
+            $itemobj->complete_form_element($peerassessitem, $this);
         }
     }
 
@@ -196,18 +196,18 @@ class mod_feedback_complete_form extends moodleform {
      * @return string
      */
     public function get_item_value($item) {
-        if ($this->structure instanceof mod_feedback_completion) {
+        if ($this->structure instanceof mod_peerassess_completion) {
             return $this->structure->get_item_value($item);
         }
         return null;
     }
 
     /**
-     * Can be used by the items to get the course id for which feedback is taken
+     * Can be used by the items to get the course id for which peerassess is taken
      *
-     * This function returns 0 for feedbacks that are located inside the courses.
-     * $this->get_feedback()->course will return the course where feedback is located.
-     * $this->get_current_course_id() will return the course where user was before taking the feedback
+     * This function returns 0 for peerassesss that are located inside the courses.
+     * $this->get_peerassess()->course will return the course where peerassess is located.
+     * $this->get_current_course_id() will return the course where user was before taking the peerassess
      *
      * @return int
      */
@@ -216,15 +216,15 @@ class mod_feedback_complete_form extends moodleform {
     }
 
     /**
-     * Record from 'feedback' table corresponding to the current feedback
+     * Record from 'peerassess' table corresponding to the current peerassess
      * @return stdClass
      */
-    public function get_feedback() {
-        return $this->structure->get_feedback();
+    public function get_peerassess() {
+        return $this->structure->get_peerassess();
     }
 
     /**
-     * Current feedback mode, see constants on the top of this class
+     * Current peerassess mode, see constants on the top of this class
      * @return int
      */
     public function get_mode() {
@@ -251,15 +251,15 @@ class mod_feedback_complete_form extends moodleform {
     }
 
     /**
-     * Returns the course where user was before taking the feedback.
+     * Returns the course where user was before taking the peerassess.
      *
-     * For feedbacks inside the course it will be the same as $this->get_feedback()->course.
-     * For feedbacks on the frontpage it will be the same as $this->get_course_id()
+     * For peerassesss inside the course it will be the same as $this->get_peerassess()->course.
+     * For peerassesss on the frontpage it will be the same as $this->get_course_id()
      *
      * @return int
      */
     public function get_current_course_id() {
-        return $this->structure->get_courseid() ?: $this->get_feedback()->course;
+        return $this->structure->get_courseid() ?: $this->get_peerassess()->course;
     }
 
     /**
@@ -268,14 +268,14 @@ class mod_feedback_complete_form extends moodleform {
      * @return string
      */
     protected function get_suggested_class($item) {
-        $class = "feedback_itemlist feedback-item-{$item->typ}";
+        $class = "peerassess_itemlist peerassess-item-{$item->typ}";
         if ($item->dependitem) {
-            $class .= " feedback_is_dependent";
+            $class .= " peerassess_is_dependent";
         }
         if ($item->typ !== 'pagebreak') {
-            $itemobj = feedback_get_item_class($item->typ);
+            $itemobj = peerassess_get_item_class($item->typ);
             if ($itemobj->get_hasvalue()) {
-                $class .= " feedback_hasvalue";
+                $class .= " peerassess_hasvalue";
             }
         }
         return $class;
@@ -381,12 +381,12 @@ class mod_feedback_complete_form extends moodleform {
     }
 
     /**
-     * Adds an item number to the question name (if feedback autonumbering is on)
+     * Adds an item number to the question name (if peerassess autonumbering is on)
      * @param stdClass $item
      * @param HTML_QuickForm_element $element
      */
     protected function add_item_number($item, $element) {
-        if ($this->get_feedback()->autonumbering && !empty($item->itemnr)) {
+        if ($this->get_peerassess()->autonumbering && !empty($item->itemnr)) {
             $name = $element->getLabel();
             $element->setLabel(html_writer::span($item->itemnr. '.', 'itemnr') . ' ' . $name);
         }
@@ -399,7 +399,7 @@ class mod_feedback_complete_form extends moodleform {
      */
     protected function add_item_label($item, $element) {
         if (strlen($item->label) && ($this->mode == self::MODE_EDIT || $this->mode == self::MODE_VIEW_TEMPLATE)) {
-            $name = get_string('nameandlabelformat', 'mod_feedback',
+            $name = get_string('nameandlabelformat', 'mod_peerassess',
                 (object)['label' => format_string($item->label), 'name' => $element->getLabel()]);
             $element->setLabel($name);
         }
@@ -417,7 +417,7 @@ class mod_feedback_complete_form extends moodleform {
                 $dependitem = $allitems[$item->dependitem];
                 $name = $element->getLabel();
                 $name .= html_writer::span(' ('.format_string($dependitem->label).'-&gt;'.$item->dependvalue.')',
-                        'feedback_depend');
+                        'peerassess_depend');
                 $element->setLabel($name);
             }
         }
@@ -431,7 +431,7 @@ class mod_feedback_complete_form extends moodleform {
     protected function guess_element_id($item, $element) {
         if (!$id = $element->getAttribute('id')) {
             $attributes = $element->getAttributes();
-            $id = $attributes['id'] = 'feedback_item_' . $item->id;
+            $id = $attributes['id'] = 'peerassess_item_' . $item->id;
             $element->setAttributes($attributes);
         }
         if ($element->getType() === 'group') {
@@ -449,13 +449,13 @@ class mod_feedback_complete_form extends moodleform {
         global $OUTPUT;
         $menu = new action_menu();
         $menu->set_owner_selector('#' . $this->guess_element_id($item, $element));
-        $menu->set_constraint('.feedback_form');
+        $menu->set_constraint('.peerassess_form');
         $menu->set_alignment(action_menu::TR, action_menu::BR);
         $menu->set_menu_trigger(get_string('edit'));
         $menu->prioritise = true;
 
-        $itemobj = feedback_get_item_class($item->typ);
-        $actions = $itemobj->edit_actions($item, $this->get_feedback(), $this->get_cm());
+        $itemobj = peerassess_get_item_class($item->typ);
+        $actions = $itemobj->edit_actions($item, $this->get_peerassess(), $this->get_cm());
         foreach ($actions as $action) {
             $menu->add($action);
         }
@@ -463,7 +463,7 @@ class mod_feedback_complete_form extends moodleform {
 
         $name = $element->getLabel();
 
-        $name = html_writer::span('', 'itemdd', array('id' => 'feedback_item_box_' . $item->id)) .
+        $name = html_writer::span('', 'itemdd', array('id' => 'peerassess_item_box_' . $item->id)) .
                 html_writer::span($name, 'itemname') .
                 html_writer::span($editmenu, 'itemactions');
         $element->setLabel(html_writer::span($name, 'itemtitle'));
@@ -574,7 +574,7 @@ class mod_feedback_complete_form extends moodleform {
         $this->_form->display();
 
         if ($this->mode == self::MODE_EDIT) {
-            $PAGE->requires->js_call_amd('mod_feedback/edit', 'setup');
+            $PAGE->requires->js_call_amd('mod_peerassess/edit', 'setup');
         }
     }
 }
