@@ -61,7 +61,7 @@ class peerassess_item_info extends peerassess_item_base {
 
         // Options for the 'presentation' select element.
         $presentationoptions = array();
-        if ($peerassess->anonymous == FEEDBACK_ANONYMOUS_NO || $item->presentation == self::MODE_RESPONSETIME) {
+        if ($peerassess->anonymous == PEERASSESS_ANONYMOUS_NO || $item->presentation == self::MODE_RESPONSETIME) {
             // "Response time" is hidden anyway in case of anonymous peerassess, no reason to offer this option.
             // However if it was already selected leave it in the dropdown.
             $presentationoptions[self::MODE_RESPONSETIME] = get_string('responsetime', 'peerassess');
@@ -208,7 +208,7 @@ class peerassess_item_info extends peerassess_item_base {
         global $DB;
         switch ($item->presentation) {
             case self::MODE_RESPONSETIME:
-                if ($peerassess->anonymous != FEEDBACK_ANONYMOUS_YES) {
+                if ($peerassess->anonymous != PEERASSESS_ANONYMOUS_YES) {
                     // Response time is not allowed in anonymous peerassesss.
                     return time();
                 }

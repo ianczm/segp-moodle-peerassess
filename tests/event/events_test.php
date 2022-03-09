@@ -85,7 +85,7 @@ class events_test extends \advanced_testcase {
         $response = new \stdClass();
         $response->peerassess = $this->eventpeerassess->id;
         $response->userid = $this->eventuser->id;
-        $response->anonymous_response = FEEDBACK_ANONYMOUS_YES;
+        $response->anonymous_response = PEERASSESS_ANONYMOUS_YES;
         $completedid = $DB->insert_record('peerassess_completed', $response);
         $this->eventpeerassesscompleted = $DB->get_record('peerassess_completed', array('id' => $completedid), '*', MUST_EXIST);
 
@@ -144,7 +144,7 @@ class events_test extends \advanced_testcase {
         $response = new \stdClass();
         $response->peerassess = $this->eventcm->instance;
         $response->userid = $this->eventuser->id;
-        $response->anonymous_response = FEEDBACK_ANONYMOUS_NO;
+        $response->anonymous_response = PEERASSESS_ANONYMOUS_NO;
         $completedid = $DB->insert_record('peerassess_completed', $response);
         $DB->get_record('peerassess_completed', array('id' => $completedid), '*', MUST_EXIST);
         $value = new \stdClass();
@@ -206,7 +206,7 @@ class events_test extends \advanced_testcase {
         $response = new \stdClass();
         $response->peerassess = $this->eventcm->instance;
         $response->userid = $this->eventuser->id;
-        $response->anonymous_response = FEEDBACK_ANONYMOUS_YES;
+        $response->anonymous_response = PEERASSESS_ANONYMOUS_YES;
         $completedid = $DB->insert_record('peerassess_completedtmp', $response);
         $completed = $DB->get_record('peerassess_completedtmp', array('id' => $completedid), '*', MUST_EXIST);
         $value = new \stdClass();
@@ -230,7 +230,7 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($USER->id, $event->relateduserid);
         $this->assertEquals('peerassess_completed', $event->objecttable);
         $this->assertEquals(1, $event->anonymous);
-        $this->assertEquals(FEEDBACK_ANONYMOUS_YES, $event->other['anonymous']);
+        $this->assertEquals(PEERASSESS_ANONYMOUS_YES, $event->other['anonymous']);
         $this->setUser($this->eventuser);
         $this->assertFalse($event->can_view());
         $this->assertDebuggingCalled();
@@ -245,7 +245,7 @@ class events_test extends \advanced_testcase {
         $response = new \stdClass();
         $response->peerassess = $this->eventcm->instance;
         $response->userid = $this->eventuser->id;
-        $response->anonymous_response = FEEDBACK_ANONYMOUS_NO;
+        $response->anonymous_response = PEERASSESS_ANONYMOUS_NO;
         $completedid = $DB->insert_record('peerassess_completedtmp', $response);
         $completed = $DB->get_record('peerassess_completedtmp', array('id' => $completedid), '*', MUST_EXIST);
         $value = new \stdClass();

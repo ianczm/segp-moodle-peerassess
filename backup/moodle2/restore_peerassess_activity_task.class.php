@@ -67,10 +67,10 @@ class restore_peerassess_activity_task extends restore_activity_task {
     static public function define_decode_rules() {
         $rules = array();
 
-        $rules[] = new restore_decode_rule('FEEDBACKINDEX', '/mod/peerassess/index.php?id=$1', 'course');
-        $rules[] = new restore_decode_rule('FEEDBACKVIEWBYID', '/mod/peerassess/view.php?id=$1', 'course_module');
-        $rules[] = new restore_decode_rule('FEEDBACKANALYSISBYID', '/mod/peerassess/analysis.php?id=$1', 'course_module');
-        $rules[] = new restore_decode_rule('FEEDBACKSHOWENTRIESBYID', '/mod/peerassess/show_entries.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('PEERASSESSINDEX', '/mod/peerassess/index.php?id=$1', 'course');
+        $rules[] = new restore_decode_rule('PEERASSESSVIEWBYID', '/mod/peerassess/view.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('PEERASSESSANALYSISBYID', '/mod/peerassess/analysis.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('PEERASSESSSHOWENTRIESBYID', '/mod/peerassess/show_entries.php?id=$1', 'course_module');
 
         return $rules;
 

@@ -321,7 +321,7 @@ class external_test extends externallib_advanced_testcase {
         global $DB;
 
         // Force non anonymous.
-        $DB->set_field('peerassess', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->peerassess->id));
+        $DB->set_field('peerassess', 'anonymous', PEERASSESS_ANONYMOUS_NO, array('id' => $this->peerassess->id));
         // Add a completed_tmp record.
         $record = [
             'peerassess' => $this->peerassess->id,
@@ -329,7 +329,7 @@ class external_test extends externallib_advanced_testcase {
             'guestid' => '',
             'timemodified' => time() - DAYSECS,
             'random_response' => 0,
-            'anonymous_response' => FEEDBACK_ANONYMOUS_NO,
+            'anonymous_response' => PEERASSESS_ANONYMOUS_NO,
             'courseid' => $this->course->id,
         ];
         $record['id'] = $DB->insert_record('peerassess_completedtmp', (object) $record);
@@ -392,7 +392,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Now, try a peerassess that we attempted.
         // Force non anonymous.
-        $DB->set_field('peerassess', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->peerassess->id));
+        $DB->set_field('peerassess', 'anonymous', PEERASSESS_ANONYMOUS_NO, array('id' => $this->peerassess->id));
         // Add a completed_tmp record.
         $record = [
             'peerassess' => $this->peerassess->id,
@@ -400,7 +400,7 @@ class external_test extends externallib_advanced_testcase {
             'guestid' => '',
             'timemodified' => time() - DAYSECS,
             'random_response' => 0,
-            'anonymous_response' => FEEDBACK_ANONYMOUS_NO,
+            'anonymous_response' => PEERASSESS_ANONYMOUS_NO,
             'courseid' => $this->course->id,
         ];
         $record['id'] = $DB->insert_record('peerassess_completedtmp', (object) $record);
@@ -793,7 +793,7 @@ class external_test extends externallib_advanced_testcase {
         global $DB;
 
         // Force non anonymous.
-        $DB->set_field('peerassess', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->peerassess->id));
+        $DB->set_field('peerassess', 'anonymous', PEERASSESS_ANONYMOUS_NO, array('id' => $this->peerassess->id));
 
         // Create another student.
         $anotherstudent = self::getDataGenerator()->create_user();
@@ -935,7 +935,7 @@ class external_test extends externallib_advanced_testcase {
         global $DB;
 
         // Force non anonymous.
-        $DB->set_field('peerassess', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->peerassess->id));
+        $DB->set_field('peerassess', 'anonymous', PEERASSESS_ANONYMOUS_NO, array('id' => $this->peerassess->id));
 
         self::complete_basic_peerassess();
         // Retrieve the responses analysis.
@@ -958,7 +958,7 @@ class external_test extends externallib_advanced_testcase {
         global $DB;
 
         // Force anonymous.
-        $DB->set_field('peerassess', 'anonymous', FEEDBACK_ANONYMOUS_YES, array('id' => $this->peerassess->id));
+        $DB->set_field('peerassess', 'anonymous', PEERASSESS_ANONYMOUS_YES, array('id' => $this->peerassess->id));
 
         // Test user with full capabilities that didn't complete the peerassess.
         $this->setUser($this->student);
@@ -975,14 +975,14 @@ class external_test extends externallib_advanced_testcase {
         global $DB;
 
         // Force anonymous.
-        $DB->set_field('peerassess', 'anonymous', FEEDBACK_ANONYMOUS_YES, array('id' => $this->peerassess->id));
+        $DB->set_field('peerassess', 'anonymous', PEERASSESS_ANONYMOUS_YES, array('id' => $this->peerassess->id));
         // Add one completion record..
         $record = [
             'peerassess' => $this->peerassess->id,
             'userid' => $this->student->id,
             'timemodified' => time() - DAYSECS,
             'random_response' => 0,
-            'anonymous_response' => FEEDBACK_ANONYMOUS_YES,
+            'anonymous_response' => PEERASSESS_ANONYMOUS_YES,
             'courseid' => $this->course->id,
         ];
         $record['id'] = $DB->insert_record('peerassess_completed', (object) $record);
@@ -1002,14 +1002,14 @@ class external_test extends externallib_advanced_testcase {
         global $DB;
 
         // Force non anonymous.
-        $DB->set_field('peerassess', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->peerassess->id));
+        $DB->set_field('peerassess', 'anonymous', PEERASSESS_ANONYMOUS_NO, array('id' => $this->peerassess->id));
         // Add one completion record..
         $record = [
             'peerassess' => $this->peerassess->id,
             'userid' => $this->student->id,
             'timemodified' => time() - DAYSECS,
             'random_response' => 0,
-            'anonymous_response' => FEEDBACK_ANONYMOUS_NO,
+            'anonymous_response' => PEERASSESS_ANONYMOUS_NO,
             'courseid' => $this->course->id,
         ];
         $record['id'] = $DB->insert_record('peerassess_completed', (object) $record);
@@ -1028,7 +1028,7 @@ class external_test extends externallib_advanced_testcase {
         global $DB;
 
         // Force anonymous.
-        $DB->set_field('peerassess', 'anonymous', FEEDBACK_ANONYMOUS_NO, array('id' => $this->peerassess->id));
+        $DB->set_field('peerassess', 'anonymous', PEERASSESS_ANONYMOUS_NO, array('id' => $this->peerassess->id));
 
         // Test user with full capabilities that didn't complete the peerassess.
         $this->setUser($this->student);

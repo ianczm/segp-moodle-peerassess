@@ -16,8 +16,8 @@
 
 require_once($CFG->libdir.'/formslib.php');
 
-define('FEEDBACK_ITEM_NAME_TEXTBOX_SIZE', 80);
-define('FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE', 20);
+define('PEERASSESS_ITEM_NAME_TEXTBOX_SIZE', 80);
+define('PEERASSESS_ITEM_LABEL_TEXTBOX_SIZE', 20);
 abstract class peerassess_item_form extends moodleform {
     public function definition() {
         $item = $this->_customdata['item']; //the item object
@@ -48,7 +48,7 @@ abstract class peerassess_item_form extends moodleform {
             $mform->addElement('text',
                                 'dependvalue',
                                 get_string('dependvalue', 'peerassess'),
-                                array('size'=>FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength'=>255));
+                                array('size'=>PEERASSESS_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength'=>255));
             $mform->hideIf('dependvalue', 'dependitem', 'eq', '0');
         } else {
             $mform->addElement('hidden', 'dependitem', 0);

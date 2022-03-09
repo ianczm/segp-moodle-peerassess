@@ -62,7 +62,7 @@ class course_module_viewed extends \core\event\course_module_viewed {
         $event = self::create(array(
             'objectid' => $peerassess->id,
             'context' => \context_module::instance($cm->id),
-            'anonymous' => ($peerassess->anonymous == FEEDBACK_ANONYMOUS_YES),
+            'anonymous' => ($peerassess->anonymous == PEERASSESS_ANONYMOUS_YES),
             'other' => array(
                 'anonymous' => $peerassess->anonymous // Deprecated.
             )

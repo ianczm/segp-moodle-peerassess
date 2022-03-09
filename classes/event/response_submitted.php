@@ -69,7 +69,7 @@ class response_submitted extends \core\event\base {
             'relateduserid' => $completed->userid,
             'objectid' => $completed->id,
             'context' => \context_module::instance($cm->id),
-            'anonymous' => ($completed->anonymous_response == FEEDBACK_ANONYMOUS_YES),
+            'anonymous' => ($completed->anonymous_response == PEERASSESS_ANONYMOUS_YES),
             'other' => array(
                 'cmid' => $cm->id,
                 'instanceid' => $completed->peerassess,

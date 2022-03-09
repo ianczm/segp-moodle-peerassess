@@ -75,9 +75,9 @@ echo $OUTPUT->render_from_template('mod_peerassess/summary', $summary->export_fo
 $items = $peerassessstructure->get_items(true);
 
 $check_anonymously = true;
-if ($mygroupid > 0 AND $peerassess->anonymous == FEEDBACK_ANONYMOUS_YES) {
+if ($mygroupid > 0 AND $peerassess->anonymous == PEERASSESS_ANONYMOUS_YES) {
     $completedcount = $peerassessstructure->count_completed_responses($mygroupid);
-    if ($completedcount < FEEDBACK_MIN_ANONYMOUS_COUNT_IN_GROUP) {
+    if ($completedcount < PEERASSESS_MIN_ANONYMOUS_COUNT_IN_GROUP) {
         $check_anonymously = false;
     }
 }

@@ -69,7 +69,7 @@ class mod_peerassess_responses_anon_table extends mod_peerassess_responses_table
         $this->set_attribute('id', 'showentryanontable');
 
         $params = ['instance' => $cm->instance,
-            'anon' => FEEDBACK_ANONYMOUS_YES,
+            'anon' => PEERASSESS_ANONYMOUS_YES,
             'courseid' => $this->peerassessstructure->get_courseid()];
 
         $fields = 'c.id, c.random_response, c.courseid';

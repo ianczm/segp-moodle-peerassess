@@ -34,13 +34,13 @@ class peerassess_multichoicerated_form extends peerassess_item_form {
         $mform->addElement('text',
                             'name',
                             get_string('item_name', 'peerassess'),
-                            array('size'=>FEEDBACK_ITEM_NAME_TEXTBOX_SIZE,
+                            array('size'=>PEERASSESS_ITEM_NAME_TEXTBOX_SIZE,
                                   'maxlength'=>255));
 
         $mform->addElement('text',
                             'label',
                             get_string('item_label', 'peerassess'),
-                            array('size'=>FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE,
+                            array('size'=>PEERASSESS_ITEM_LABEL_TEXTBOX_SIZE,
                                   'maxlength'=>255));
 
         $mform->addElement('select',
@@ -101,17 +101,17 @@ class peerassess_multichoicerated_form extends peerassess_item_form {
         $itemobj = new peerassess_item_multichoicerated();
 
         $presentation = $itemobj->prepare_presentation_values_save(trim($item->values),
-                                                FEEDBACK_MULTICHOICERATED_VALUE_SEP2,
-                                                FEEDBACK_MULTICHOICERATED_VALUE_SEP);
+                                                PEERASSESS_MULTICHOICERATED_VALUE_SEP2,
+                                                PEERASSESS_MULTICHOICERATED_VALUE_SEP);
         if (!isset($item->subtype)) {
             $subtype = 'r';
         } else {
             $subtype = substr($item->subtype, 0, 1);
         }
         if (isset($item->horizontal) AND $item->horizontal == 1 AND $subtype != 'd') {
-            $presentation .= FEEDBACK_MULTICHOICERATED_ADJUST_SEP.'1';
+            $presentation .= PEERASSESS_MULTICHOICERATED_ADJUST_SEP.'1';
         }
-        $item->presentation = $subtype.FEEDBACK_MULTICHOICERATED_TYPE_SEP.$presentation;
+        $item->presentation = $subtype.PEERASSESS_MULTICHOICERATED_TYPE_SEP.$presentation;
         if (!isset($item->hidenoselect)) {
             $item->hidenoselect = 1;
         }

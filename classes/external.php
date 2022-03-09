@@ -824,9 +824,9 @@ class mod_peerassess_external extends external_api {
         $summarydata = $summary->export_for_template($PAGE->get_renderer('core'));
 
         $checkanonymously = true;
-        if ($groupid > 0 AND $peerassess->anonymous == FEEDBACK_ANONYMOUS_YES) {
+        if ($groupid > 0 AND $peerassess->anonymous == PEERASSESS_ANONYMOUS_YES) {
             $completedcount = $peerassessstructure->count_completed_responses($groupid);
-            if ($completedcount < FEEDBACK_MIN_ANONYMOUS_COUNT_IN_GROUP) {
+            if ($completedcount < PEERASSESS_MIN_ANONYMOUS_COUNT_IN_GROUP) {
                 $checkanonymously = false;
             }
         }
@@ -1073,7 +1073,7 @@ class mod_peerassess_external extends external_api {
         $peerassesscompletion = new mod_peerassess_completion($peerassess, $cm, $completioncourse->id);
         $completioncourseid = $peerassesscompletion->get_courseid();
 
-        if ($peerassess->anonymous != FEEDBACK_ANONYMOUS_NO || $peerassess->course == SITEID) {
+        if ($peerassess->anonymous != PEERASSESS_ANONYMOUS_NO || $peerassess->course == SITEID) {
             throw new moodle_exception('anonymous', 'peerassess');
         }
 
@@ -1106,7 +1106,7 @@ class mod_peerassess_external extends external_api {
         // Check if we are page filtering.
         if ($params['perpage'] == 0) {
             $page = $params['page'];
-            $perpage = FEEDBACK_DEFAULT_PAGE_COUNT;
+            $perpage = PEERASSESS_DEFAULT_PAGE_COUNT;
         } else {
             $perpage = $params['perpage'];
             $page = $perpage * $params['page'];

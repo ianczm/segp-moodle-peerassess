@@ -128,10 +128,10 @@ function peerassess_load_xml_data($xmlcontent) {
 
     $data = xmlize($xmlcontent, 1, 'UTF-8');
 
-    if (intval($data['FEEDBACK']['@']['VERSION']) != 200701) {
+    if (intval($data['PEERASSESS']['@']['VERSION']) != 200701) {
         return false;
     }
-    $data = $data['FEEDBACK']['#']['ITEMS'][0]['#']['ITEM'];
+    $data = $data['PEERASSESS']['#']['ITEMS'][0]['#']['ITEM'];
     return $data;
 }
 

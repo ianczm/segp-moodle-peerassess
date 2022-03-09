@@ -75,7 +75,7 @@ function peerassess_get_xml_data($peerassessid) {
 
     //writing the header of the xml file including the charset of the currrent used language
     $data = '<?xml version="1.0" encoding="UTF-8" ?>'."\n";
-    $data .= '<FEEDBACK VERSION="200701" COMMENT="XML-Importfile for mod/peerassess">'."\n";
+    $data .= '<PEERASSESS VERSION="200701" COMMENT="XML-Importfile for mod/peerassess">'."\n";
     $data .= $space.'<ITEMS>'."\n";
 
     //writing all the items
@@ -159,7 +159,7 @@ function peerassess_get_xml_data($peerassessid) {
 
     //writing the footer of the xml file
     $data .= $space.'</ITEMS>'."\n";
-    $data .= '</FEEDBACK>'."\n";
+    $data .= '</PEERASSESS>'."\n";
 
     return $data;
 }

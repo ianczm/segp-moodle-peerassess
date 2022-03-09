@@ -42,7 +42,7 @@ class moodle1_mod_peerassess_handler extends moodle1_mod_handler {
      * For each path returned, the corresponding conversion method must be
      * defined.
      *
-     * Note that the path /MOODLE_BACKUP/COURSE/MODULES/MOD/FEEDBACK does not
+     * Note that the path /MOODLE_BACKUP/COURSE/MODULES/MOD/PEERASSESS does not
      * actually exist in the file. The last element with the module name was
      * appended by the moodle1_converter class.
      *
@@ -51,7 +51,7 @@ class moodle1_mod_peerassess_handler extends moodle1_mod_handler {
     public function get_paths() {
         return array(
             new convert_path(
-                'peerassess', '/MOODLE_BACKUP/COURSE/MODULES/MOD/FEEDBACK',
+                'peerassess', '/MOODLE_BACKUP/COURSE/MODULES/MOD/PEERASSESS',
                 array(
                     'renamefields' => array(
                         'summary' => 'intro',
@@ -67,7 +67,7 @@ class moodle1_mod_peerassess_handler extends moodle1_mod_handler {
                 )
             ),
             new convert_path(
-                'peerassess_item', '/MOODLE_BACKUP/COURSE/MODULES/MOD/FEEDBACK/ITEMS/ITEM',
+                'peerassess_item', '/MOODLE_BACKUP/COURSE/MODULES/MOD/PEERASSESS/ITEMS/ITEM',
                 array (
                     'newfields' => array(
                         'label' => '',
@@ -81,7 +81,7 @@ class moodle1_mod_peerassess_handler extends moodle1_mod_handler {
     }
 
     /**
-     * This is executed every time we have one /MOODLE_BACKUP/COURSE/MODULES/MOD/FEEDBACK
+     * This is executed every time we have one /MOODLE_BACKUP/COURSE/MODULES/MOD/PEERASSESS
      * data available
      */
     public function process_peerassess($data) {
@@ -127,7 +127,7 @@ class moodle1_mod_peerassess_handler extends moodle1_mod_handler {
     }
 
     /**
-     * This is executed every time we have one /MOODLE_BACKUP/COURSE/MODULES/MOD/FEEDBACK/ITEMS/ITEM
+     * This is executed every time we have one /MOODLE_BACKUP/COURSE/MODULES/MOD/PEERASSESS/ITEMS/ITEM
      * data available
      */
     public function process_peerassess_item($data) {
