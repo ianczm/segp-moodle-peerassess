@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Feedback event handler definition.
+ * Peerassess event handler definition.
  *
  * @package mod_peerassess
  * @category event

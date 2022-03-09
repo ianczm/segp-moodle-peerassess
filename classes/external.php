@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Feedback external API
+ * Peerassess external API
  *
  * @package    mod_peerassess
  * @category   external
@@ -36,7 +36,7 @@ use mod_peerassess\external\peerassess_value_exporter;
 use mod_peerassess\external\peerassess_completed_exporter;
 
 /**
- * Feedback external functions
+ * Peerassess external functions
  *
  * @package    mod_peerassess
  * @category   external
@@ -218,7 +218,7 @@ class mod_peerassess_external extends external_api {
     public static function get_peerassess_access_information_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'Feedback instance id.'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id.'),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
                     VALUE_DEFAULT, 0),
             )
@@ -300,7 +300,7 @@ class mod_peerassess_external extends external_api {
     public static function view_peerassess_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'Feedback instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'moduleviewed' => new external_value(PARAM_BOOL, 'If we need to mark the module as viewed for completion',
                     VALUE_DEFAULT, false),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
@@ -370,7 +370,7 @@ class mod_peerassess_external extends external_api {
     public static function get_current_completed_tmp_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'Feedback instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
                     VALUE_DEFAULT, 0),
             )
@@ -431,7 +431,7 @@ class mod_peerassess_external extends external_api {
     public static function get_items_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'Feedback instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
                     VALUE_DEFAULT, 0),
             )
@@ -500,7 +500,7 @@ class mod_peerassess_external extends external_api {
     public static function launch_peerassess_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'Feedback instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
                     VALUE_DEFAULT, 0),
             )
@@ -563,7 +563,7 @@ class mod_peerassess_external extends external_api {
     public static function get_page_items_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'Feedback instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'page' => new external_value(PARAM_INT, 'The page to get starting by 0'),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
                     VALUE_DEFAULT, 0),
@@ -643,7 +643,7 @@ class mod_peerassess_external extends external_api {
     public static function process_page_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'Feedback instance id.'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id.'),
                 'page' => new external_value(PARAM_INT, 'The page being processed.'),
                 'responses' => new external_multiple_structure(
                     new external_single_structure(
@@ -766,7 +766,7 @@ class mod_peerassess_external extends external_api {
     public static function get_analysis_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'Feedback instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'groupid' => new external_value(PARAM_INT, 'Group id, 0 means that the function will determine the user group',
                                                 VALUE_DEFAULT, 0),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
@@ -898,7 +898,7 @@ class mod_peerassess_external extends external_api {
     public static function get_unfinished_responses_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'Feedback instance id.'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id.'),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
                     VALUE_DEFAULT, 0),
             )
@@ -964,7 +964,7 @@ class mod_peerassess_external extends external_api {
     public static function get_finished_responses_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'Feedback instance id.'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id.'),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
                     VALUE_DEFAULT, 0),
             )
@@ -1032,7 +1032,7 @@ class mod_peerassess_external extends external_api {
     public static function get_non_respondents_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'Feedback instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'groupid' => new external_value(PARAM_INT, 'Group id, 0 means that the function will determine the user group.',
                                                 VALUE_DEFAULT, 0),
                 'sort' => new external_value(PARAM_ALPHA, 'Sort param, must be firstname, lastname or lastaccess (default).',
@@ -1163,7 +1163,7 @@ class mod_peerassess_external extends external_api {
     public static function get_responses_analysis_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'Feedback instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'groupid' => new external_value(PARAM_INT, 'Group id, 0 means that the function will determine the user group',
                                                 VALUE_DEFAULT, 0),
                 'page' => new external_value(PARAM_INT, 'The page of records to return.', VALUE_DEFAULT, 0),
@@ -1292,7 +1292,7 @@ class mod_peerassess_external extends external_api {
     public static function get_last_completed_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'Feedback instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
                     VALUE_DEFAULT, 0),
             )

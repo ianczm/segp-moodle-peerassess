@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Feedback module conversion handler
+ * Peerassess module conversion handler
  */
 class moodle1_mod_peerassess_handler extends moodle1_mod_handler {
 

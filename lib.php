@@ -777,7 +777,7 @@ function peerassess_set_events($peerassess) {
         $peerassess->coursemodule = $cm->id;
     }
 
-    // Feedback start calendar events.
+    // Peerassess start calendar events.
     $eventid = $DB->get_field('event', 'id',
             array('modulename' => 'peerassess', 'instance' => $peerassess->id, 'eventtype' => FEEDBACK_EVENT_TYPE_OPEN));
 
@@ -813,7 +813,7 @@ function peerassess_set_events($peerassess) {
         $calendarevent->delete();
     }
 
-    // Feedback close calendar events.
+    // Peerassess close calendar events.
     $eventid = $DB->get_field('event', 'id',
             array('modulename' => 'peerassess', 'instance' => $peerassess->id, 'eventtype' => FEEDBACK_EVENT_TYPE_CLOSE));
 
@@ -857,7 +857,7 @@ function peerassess_set_events($peerassess) {
  * This function is used, in its new format, by restore_refresh_events()
  *
  * @param int $courseid
- * @param int|stdClass $instance Feedback module instance or ID.
+ * @param int|stdClass $instance Peerassess module instance or ID.
  * @param int|stdClass $cm Course module object or ID (not used in this module).
  * @return bool
  */
@@ -2655,7 +2655,7 @@ function peerassess_send_email($cm, $peerassess, $course, $user, $completed = nu
                 $eventdata->courseid         = $course->id;
                 $eventdata->contexturl       = $info->url;
                 $eventdata->contexturlname   = $info->peerassess;
-                // Feedback icon if can be easily reachable.
+                // Peerassess icon if can be easily reachable.
                 $customdata['notificationiconurl'] = ($cm instanceof cm_info) ? $cm->get_icon_url()->out() : '';
                 $eventdata->customdata = $customdata;
                 message_send($eventdata);
@@ -3039,7 +3039,7 @@ function mod_peerassess_core_calendar_provide_event_action(calendar_event $event
     $peerassesscompletion = new mod_peerassess_completion(null, $cm, 0, false, null, null, $userid);
 
     if (!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < time()) {
-        // Feedback is already closed, do not display it even if it was never submitted.
+        // Peerassess is already closed, do not display it even if it was never submitted.
         return null;
     }
 

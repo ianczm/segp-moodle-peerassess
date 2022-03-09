@@ -49,18 +49,18 @@ class peerassess_summary_exporter extends exporter {
             ),
             'name' => array(
                 'type' => PARAM_TEXT,
-                'description' => 'Feedback name.',
+                'description' => 'Peerassess name.',
             ),
             'intro' => array(
                 'default' => '',
                 'type' => PARAM_RAW,
-                'description' => 'Feedback introduction text.',
+                'description' => 'Peerassess introduction text.',
             ),
             'introformat' => array(
                 'choices' => array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN),
                 'type' => PARAM_INT,
                 'default' => FORMAT_MOODLE,
-                'description' => 'Feedback intro text format.',
+                'description' => 'Peerassess intro text format.',
             ),
             'anonymous' => array(
                 'type' => PARAM_INT,

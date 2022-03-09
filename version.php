@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Feedback version information
+ * Peerassess version information
  *
  * @package mod_peerassess
  * @author     Andreas Grabs

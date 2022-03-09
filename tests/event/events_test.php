@@ -223,7 +223,7 @@ class events_test extends \advanced_testcase {
         $event = array_pop($events); // Response submitted peerassess event.
         $sink->close();
 
-        // Validate event data. Feedback is anonymous.
+        // Validate event data. Peerassess is anonymous.
         $this->assertInstanceOf('\mod_peerassess\event\response_submitted', $event);
         $this->assertEquals($id, $event->objectid);
         $this->assertEquals($USER->id, $event->userid);

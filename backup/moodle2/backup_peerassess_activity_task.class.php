@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/mod/peerassess/backup/moodle2/backup_peerassess_s
 require_once($CFG->dirroot . '/mod/peerassess/backup/moodle2/backup_peerassess_settingslib.php');
 
 /**
- * Provides the steps to perform one complete backup of the Feedback instance
+ * Provides the steps to perform one complete backup of the Peerassess instance
  */
 class backup_peerassess_activity_task extends backup_activity_task {
 

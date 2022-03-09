@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Feedback module external functions tests
+ * Peerassess module external functions tests
  *
  * @package    mod_peerassess
  * @category   external
@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/peerassess/lib.php');
 
 /**
- * Feedback module external functions tests
+ * Peerassess module external functions tests
  *
  * @package    mod_peerassess
  * @category   external
