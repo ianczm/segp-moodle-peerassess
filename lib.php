@@ -28,19 +28,19 @@ defined('MOODLE_INTERNAL') || die();
 // Include forms lib.
 require_once($CFG->libdir.'/formslib.php');
 
-define('peerassess_ANONYMOUS_YES', 1);
-define('peerassess_ANONYMOUS_NO', 2);
-define('peerassess_MIN_ANONYMOUS_COUNT_IN_GROUP', 2);
-define('peerassess_DECIMAL', '.');
-define('peerassess_THOUSAND', ',');
-define('peerassess_RESETFORM_RESET', 'peerassess_reset_data_');
-define('peerassess_RESETFORM_DROP', 'peerassess_drop_peerassess_');
-define('peerassess_MAX_PIX_LENGTH', '400'); //max. Breite des grafischen Balkens in der Auswertung
-define('peerassess_DEFAULT_PAGE_COUNT', 20);
+define('PEERASSESS_ANONYMOUS_YES', 1);
+define('PEERASSESS_ANONYMOUS_NO', 2);
+define('PEERASSESS_MIN_ANONYMOUS_COUNT_IN_GROUP', 2);
+define('PEERASSESS_DECIMAL', '.');
+define('PEERASSESS_THOUSAND', ',');
+define('PEERASSESS_RESETFORM_RESET', 'peerassess_reset_data_');
+define('PEERASSESS_RESETFORM_DROP', 'peerassess_drop_peerassess_');
+define('PEERASSESS_MAX_PIX_LENGTH', '400'); //max. Breite des grafischen Balkens in der Auswertung
+define('PEERASSESS_DEFAULT_PAGE_COUNT', 20);
 
 // Event types.
-define('peerassess_EVENT_TYPE_OPEN', 'open');
-define('peerassess_EVENT_TYPE_CLOSE', 'close');
+define('PEERASSESS_EVENT_TYPE_OPEN', 'open');
+define('PEERASSESS_EVENT_TYPE_CLOSE', 'close');
 
 require_once(__DIR__ . '/deprecatedlib.php');
 
@@ -219,7 +219,7 @@ function peerassess_pluginfile($course, $cm, $context, $filearea, $args, $forced
         if (isset($CFG->peerassess_allowfullanonymous)
                     AND $CFG->peerassess_allowfullanonymous
                     AND $course->id == SITEID
-                    AND $peerassess->anonymous == peerassess_ANONYMOUS_YES ) {
+                    AND $peerassess->anonymous == PEERASSESS_ANONYMOUS_YES ) {
             $canload = true;
         }
 
@@ -330,12 +330,12 @@ function peerassess_delete_instance($id) {
 function peerassess_user_outline($course, $user, $mod, $peerassess) {
     global $DB;
     $outline = (object)['info' => '', 'time' => 0];
-    if ($peerassess->anonymous != peerassess_ANONYMOUS_NO) {
+    if ($peerassess->anonymous != PEERASSESS_ANONYMOUS_NO) {
         // Do not disclose any user info if peerassess is anonymous.
         return $outline;
     }
     $params = array('userid' => $user->id, 'peerassess' => $peerassess->id,
-        'anonymous_response' => peerassess_ANONYMOUS_NO);
+        'anonymous_response' => PEERASSESS_ANONYMOUS_NO);
     $status = null;
     $context = context_module::instance($mod->id);
     if ($completed = $DB->get_record('peerassess_completed', $params)) {
@@ -406,7 +406,7 @@ function peerassess_get_recent_mod_activity(&$activities, &$index,
                 AND fc.anonymous_response = ?";
     $sqlargs[] = $timemodified;
     $sqlargs[] = $cm->instance;
-    $sqlargs[] = peerassess_ANONYMOUS_NO;
+    $sqlargs[] = PEERASSESS_ANONYMOUS_NO;
 
     if ($userid) {
         $sql .= " AND u.id = ? ";
@@ -524,12 +524,12 @@ function peerassess_print_recent_mod_activity($activity, $courseid, $detail, $mo
  */
 function peerassess_user_complete($course, $user, $mod, $peerassess) {
     global $DB;
-    if ($peerassess->anonymous != peerassess_ANONYMOUS_NO) {
+    if ($peerassess->anonymous != PEERASSESS_ANONYMOUS_NO) {
         // Do not disclose any user info if peerassess is anonymous.
         return;
     }
     $params = array('userid' => $user->id, 'peerassess' => $peerassess->id,
-        'anonymous_response' => peerassess_ANONYMOUS_NO);
+        'anonymous_response' => PEERASSESS_ANONYMOUS_NO);
     $url = $status = null;
     $context = context_module::instance($mod->id);
     if ($completed = $DB->get_record('peerassess_completed', $params)) {
@@ -616,8 +616,8 @@ function peerassess_get_post_actions() {
  *
  * @global object
  * @global object
- * @uses peerassess_RESETFORM_RESET
- * @uses peerassess_RESETFORM_DROP
+ * @uses PEERASSESS_RESETFORM_RESET
+ * @uses PEERASSESS_RESETFORM_DROP
  * @param object $data the data submitted from the reset course.
  * @return array status array
  */
@@ -632,7 +632,7 @@ function peerassess_reset_userdata($data) {
     //get the relevant entries from $data
     foreach ($data as $key => $value) {
         switch(true) {
-            case substr($key, 0, strlen(peerassess_RESETFORM_RESET)) == peerassess_RESETFORM_RESET:
+            case substr($key, 0, strlen(PEERASSESS_RESETFORM_RESET)) == PEERASSESS_RESETFORM_RESET:
                 if ($value == 1) {
                     $templist = explode('_', $key);
                     if (isset($templist[3])) {
@@ -640,7 +640,7 @@ function peerassess_reset_userdata($data) {
                     }
                 }
             break;
-            case substr($key, 0, strlen(peerassess_RESETFORM_DROP)) == peerassess_RESETFORM_DROP:
+            case substr($key, 0, strlen(PEERASSESS_RESETFORM_DROP)) == PEERASSESS_RESETFORM_DROP:
                 if ($value == 1) {
                     $templist = explode('_', $key);
                     if (isset($templist[3])) {
@@ -675,7 +675,7 @@ function peerassess_reset_userdata($data) {
  * Called by course/reset.php
  *
  * @global object
- * @uses peerassess_RESETFORM_RESET
+ * @uses PEERASSESS_RESETFORM_RESET
  * @param object $mform form passed by reference
  */
 function peerassess_reset_course_form_definition(&$mform) {
@@ -689,7 +689,7 @@ function peerassess_reset_course_form_definition(&$mform) {
 
     $mform->addElement('static', 'hint', get_string('resetting_data', 'peerassess'));
     foreach ($peerassesss as $peerassess) {
-        $mform->addElement('checkbox', peerassess_RESETFORM_RESET.$peerassess->id, $peerassess->name);
+        $mform->addElement('checkbox', PEERASSESS_RESETFORM_RESET.$peerassess->id, $peerassess->name);
     }
 }
 
@@ -697,7 +697,7 @@ function peerassess_reset_course_form_definition(&$mform) {
  * Course reset form defaults.
  *
  * @global object
- * @uses peerassess_RESETFORM_RESET
+ * @uses PEERASSESS_RESETFORM_RESET
  * @param object $course
  */
 function peerassess_reset_course_form_defaults($course) {
@@ -708,7 +708,7 @@ function peerassess_reset_course_form_defaults($course) {
         return;
     }
     foreach ($peerassesss as $peerassess) {
-        $return[peerassess_RESETFORM_RESET.$peerassess->id] = true;
+        $return[PEERASSESS_RESETFORM_RESET.$peerassess->id] = true;
     }
     return $return;
 }
@@ -721,8 +721,8 @@ function peerassess_reset_course_form_defaults($course) {
  * 2) delete userdata and drop the peerassess
  *
  * @global object
- * @uses peerassess_RESETFORM_RESET
- * @uses peerassess_RESETFORM_DROP
+ * @uses PEERASSESS_RESETFORM_RESET
+ * @uses PEERASSESS_RESETFORM_DROP
  * @param object $course
  * @return void
  */
@@ -737,11 +737,11 @@ function peerassess_reset_course_form($course) {
     foreach ($peerassesss as $peerassess) {
         echo '<p>';
         echo get_string('name', 'peerassess').': '.$peerassess->name.'<br />';
-        echo html_writer::checkbox(peerassess_RESETFORM_RESET.$peerassess->id,
+        echo html_writer::checkbox(PEERASSESS_RESETFORM_RESET.$peerassess->id,
                                 1, true,
                                 get_string('resetting_data', 'peerassess'));
         echo '<br />';
-        echo html_writer::checkbox(peerassess_RESETFORM_DROP.$peerassess->id,
+        echo html_writer::checkbox(PEERASSESS_RESETFORM_DROP.$peerassess->id,
                                 1, false,
                                 get_string('drop_peerassess', 'peerassess'));
         echo '</p>';
@@ -777,13 +777,13 @@ function peerassess_set_events($peerassess) {
         $peerassess->coursemodule = $cm->id;
     }
 
-    // peerassess start calendar events.
+    // Peerassess start calendar events.
     $eventid = $DB->get_field('event', 'id',
-            array('modulename' => 'peerassess', 'instance' => $peerassess->id, 'eventtype' => peerassess_EVENT_TYPE_OPEN));
+            array('modulename' => 'peerassess', 'instance' => $peerassess->id, 'eventtype' => PEERASSESS_EVENT_TYPE_OPEN));
 
     if (isset($peerassess->timeopen) && $peerassess->timeopen > 0) {
         $event = new stdClass();
-        $event->eventtype    = peerassess_EVENT_TYPE_OPEN;
+        $event->eventtype    = PEERASSESS_EVENT_TYPE_OPEN;
         $event->type         = empty($peerassess->timeclose) ? CALENDAR_EVENT_TYPE_ACTION : CALENDAR_EVENT_TYPE_STANDARD;
         $event->name         = get_string('calendarstart', 'peerassess', $peerassess->name);
         $event->description  = format_module_intro('peerassess', $peerassess, $peerassess->coursemodule, false);
@@ -804,7 +804,7 @@ function peerassess_set_events($peerassess) {
             $event->userid       = 0;
             $event->modulename   = 'peerassess';
             $event->instance     = $peerassess->id;
-            $event->eventtype    = peerassess_EVENT_TYPE_OPEN;
+            $event->eventtype    = PEERASSESS_EVENT_TYPE_OPEN;
             calendar_event::create($event, false);
         }
     } else if ($eventid) {
@@ -813,14 +813,14 @@ function peerassess_set_events($peerassess) {
         $calendarevent->delete();
     }
 
-    // peerassess close calendar events.
+    // Peerassess close calendar events.
     $eventid = $DB->get_field('event', 'id',
-            array('modulename' => 'peerassess', 'instance' => $peerassess->id, 'eventtype' => peerassess_EVENT_TYPE_CLOSE));
+            array('modulename' => 'peerassess', 'instance' => $peerassess->id, 'eventtype' => PEERASSESS_EVENT_TYPE_CLOSE));
 
     if (isset($peerassess->timeclose) && $peerassess->timeclose > 0) {
         $event = new stdClass();
         $event->type         = CALENDAR_EVENT_TYPE_ACTION;
-        $event->eventtype    = peerassess_EVENT_TYPE_CLOSE;
+        $event->eventtype    = PEERASSESS_EVENT_TYPE_CLOSE;
         $event->name         = get_string('calendarend', 'peerassess', $peerassess->name);
         $event->description  = format_module_intro('peerassess', $peerassess, $peerassess->coursemodule, false);
         $event->format       = FORMAT_HTML;
@@ -857,7 +857,7 @@ function peerassess_set_events($peerassess) {
  * This function is used, in its new format, by restore_refresh_events()
  *
  * @param int $courseid
- * @param int|stdClass $instance peerassess module instance or ID.
+ * @param int|stdClass $instance Peerassess module instance or ID.
  * @param int|stdClass $cm Course module object or ID (not used in this module).
  * @return bool
  */
@@ -1028,7 +1028,7 @@ function peerassess_count_incomplete_users($cm, $group = false) {
  * count users which have completed a peerassess
  *
  * @global object
- * @uses peerassess_ANONYMOUS_NO
+ * @uses PEERASSESS_ANONYMOUS_NO
  * @param object $cm
  * @param int $group single groupid
  * @return int count of userrecords
@@ -1036,7 +1036,7 @@ function peerassess_count_incomplete_users($cm, $group = false) {
 function peerassess_count_complete_users($cm, $group = false) {
     global $DB;
 
-    $params = array(peerassess_ANONYMOUS_NO, $cm->instance);
+    $params = array(PEERASSESS_ANONYMOUS_NO, $cm->instance);
 
     $fromgroup = '';
     $wheregroup = '';
@@ -1059,7 +1059,7 @@ function peerassess_count_complete_users($cm, $group = false) {
  *
  * @global object
  * @uses CONTEXT_MODULE
- * @uses peerassess_ANONYMOUS_NO
+ * @uses PEERASSESS_ANONYMOUS_NO
  * @param object $cm
  * @param int $group single groupid
  * @param string $where a sql where condition (must end with " AND ")
@@ -1083,7 +1083,7 @@ function peerassess_get_complete_users($cm,
 
     $params = (array)$params;
 
-    $params['anon'] = peerassess_ANONYMOUS_NO;
+    $params['anon'] = PEERASSESS_ANONYMOUS_NO;
     $params['instance'] = $cm->instance;
 
     $fromgroup = '';
@@ -2187,7 +2187,7 @@ function peerassess_get_group_values($item,
         }
     }
     $params = array('id'=>$item->peerassess);
-    if ($DB->get_field('peerassess', 'anonymous', $params) == peerassess_ANONYMOUS_YES) {
+    if ($DB->get_field('peerassess', 'anonymous', $params) == PEERASSESS_ANONYMOUS_YES) {
         if (is_array($values)) {
             shuffle($values);
         }
@@ -2535,7 +2535,7 @@ function peerassess_print_numeric_option_list() {
  *
  * @global object
  * @global object
- * @uses peerassess_ANONYMOUS_NO
+ * @uses PEERASSESS_ANONYMOUS_NO
  * @uses FORMAT_PLAIN
  * @param object $cm the coursemodule-record
  * @param object $peerassess
@@ -2580,7 +2580,7 @@ function peerassess_send_email($cm, $peerassess, $course, $user, $completed = nu
         $strpeerassesss = get_string('modulenameplural', 'peerassess');
         $strpeerassess  = get_string('modulename', 'peerassess');
 
-        if ($peerassess->anonymous == peerassess_ANONYMOUS_NO) {
+        if ($peerassess->anonymous == PEERASSESS_ANONYMOUS_NO) {
             $printusername = fullname($user);
         } else {
             $printusername = get_string('anonymous_user', 'peerassess');
@@ -2616,7 +2616,7 @@ function peerassess_send_email($cm, $peerassess, $course, $user, $completed = nu
                 'cmid' => $cm->id,
                 'instance' => $peerassess->id,
             ];
-            if ($peerassess->anonymous == peerassess_ANONYMOUS_NO) {
+            if ($peerassess->anonymous == PEERASSESS_ANONYMOUS_NO) {
                 $eventdata = new \core\message\message();
                 $eventdata->anonymous        = false;
                 $eventdata->courseid         = $course->id;
@@ -2655,7 +2655,7 @@ function peerassess_send_email($cm, $peerassess, $course, $user, $completed = nu
                 $eventdata->courseid         = $course->id;
                 $eventdata->contexturl       = $info->url;
                 $eventdata->contexturlname   = $info->peerassess;
-                // peerassess icon if can be easily reachable.
+                // Peerassess icon if can be easily reachable.
                 $customdata['notificationiconurl'] = ($cm instanceof cm_info) ? $cm->get_icon_url()->out() : '';
                 $eventdata->customdata = $customdata;
                 message_send($eventdata);
@@ -2850,7 +2850,7 @@ function peerassess_extend_settings_navigation(settings_navigation $settings,
                     new moodle_url('/mod/peerassess/show_entries.php',
                                     array('id' => $PAGE->cm->id)));
 
-        if ($peerassess->anonymous == peerassess_ANONYMOUS_NO AND $peerassess->course != SITEID) {
+        if ($peerassess->anonymous == PEERASSESS_ANONYMOUS_NO AND $peerassess->course != SITEID) {
             $peerassessnode->add(get_string('show_nonrespondents', 'peerassess'),
                         new moodle_url('/mod/peerassess/show_nonrespondents.php',
                                         array('id' => $PAGE->cm->id)));
@@ -3039,7 +3039,7 @@ function mod_peerassess_core_calendar_provide_event_action(calendar_event $event
     $peerassesscompletion = new mod_peerassess_completion(null, $cm, 0, false, null, null, $userid);
 
     if (!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < time()) {
-        // peerassess is already closed, do not display it even if it was never submitted.
+        // Peerassess is already closed, do not display it even if it was never submitted.
         return null;
     }
 
@@ -3163,7 +3163,7 @@ function mod_peerassess_core_calendar_get_valid_event_timestart_range(\calendar_
     $mindate = null;
     $maxdate = null;
 
-    if ($event->eventtype == peerassess_EVENT_TYPE_OPEN) {
+    if ($event->eventtype == PEERASSESS_EVENT_TYPE_OPEN) {
         // The start time of the open event can't be equal to or after the
         // close time of the choice activity.
         if (!empty($instance->timeclose)) {
@@ -3172,7 +3172,7 @@ function mod_peerassess_core_calendar_get_valid_event_timestart_range(\calendar_
                 get_string('openafterclose', 'peerassess')
             ];
         }
-    } else if ($event->eventtype == peerassess_EVENT_TYPE_CLOSE) {
+    } else if ($event->eventtype == PEERASSESS_EVENT_TYPE_CLOSE) {
         // The start time of the close event can't be equal to or earlier than the
         // open time of the choice activity.
         if (!empty($instance->timeopen)) {
@@ -3208,7 +3208,7 @@ function mod_peerassess_core_calendar_event_timestart_updated(\calendar_event $e
         return;
     }
 
-    if (!in_array($event->eventtype, [peerassess_EVENT_TYPE_OPEN, peerassess_EVENT_TYPE_CLOSE])) {
+    if (!in_array($event->eventtype, [PEERASSESS_EVENT_TYPE_OPEN, PEERASSESS_EVENT_TYPE_CLOSE])) {
         return;
     }
 
@@ -3225,7 +3225,7 @@ function mod_peerassess_core_calendar_event_timestart_updated(\calendar_event $e
         return;
     }
 
-    if ($event->eventtype == peerassess_EVENT_TYPE_OPEN) {
+    if ($event->eventtype == PEERASSESS_EVENT_TYPE_OPEN) {
         // If the event is for the peerassess activity opening then we should
         // set the start time of the peerassess activity to be the new start
         // time of the event.
@@ -3234,7 +3234,7 @@ function mod_peerassess_core_calendar_event_timestart_updated(\calendar_event $e
             $peerassess->timemodified = time();
             $modified = true;
         }
-    } else if ($event->eventtype == peerassess_EVENT_TYPE_CLOSE) {
+    } else if ($event->eventtype == PEERASSESS_EVENT_TYPE_CLOSE) {
         // If the event is for the peerassess activity closing then we should
         // set the end time of the peerassess activity to be the new start
         // time of the event.

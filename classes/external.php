@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * peerassess external API
+ * Peerassess external API
  *
  * @package    mod_peerassess
  * @category   external
@@ -36,7 +36,7 @@ use mod_peerassess\external\peerassess_value_exporter;
 use mod_peerassess\external\peerassess_completed_exporter;
 
 /**
- * peerassess external functions
+ * Peerassess external functions
  *
  * @package    mod_peerassess
  * @category   external
@@ -218,7 +218,7 @@ class mod_peerassess_external extends external_api {
     public static function get_peerassess_access_information_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'peerassess instance id.'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id.'),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
                     VALUE_DEFAULT, 0),
             )
@@ -300,7 +300,7 @@ class mod_peerassess_external extends external_api {
     public static function view_peerassess_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'peerassess instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'moduleviewed' => new external_value(PARAM_BOOL, 'If we need to mark the module as viewed for completion',
                     VALUE_DEFAULT, false),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
@@ -370,7 +370,7 @@ class mod_peerassess_external extends external_api {
     public static function get_current_completed_tmp_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'peerassess instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
                     VALUE_DEFAULT, 0),
             )
@@ -431,7 +431,7 @@ class mod_peerassess_external extends external_api {
     public static function get_items_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'peerassess instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
                     VALUE_DEFAULT, 0),
             )
@@ -500,7 +500,7 @@ class mod_peerassess_external extends external_api {
     public static function launch_peerassess_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'peerassess instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
                     VALUE_DEFAULT, 0),
             )
@@ -563,7 +563,7 @@ class mod_peerassess_external extends external_api {
     public static function get_page_items_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'peerassess instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'page' => new external_value(PARAM_INT, 'The page to get starting by 0'),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
                     VALUE_DEFAULT, 0),
@@ -643,7 +643,7 @@ class mod_peerassess_external extends external_api {
     public static function process_page_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'peerassess instance id.'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id.'),
                 'page' => new external_value(PARAM_INT, 'The page being processed.'),
                 'responses' => new external_multiple_structure(
                     new external_single_structure(
@@ -766,7 +766,7 @@ class mod_peerassess_external extends external_api {
     public static function get_analysis_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'peerassess instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'groupid' => new external_value(PARAM_INT, 'Group id, 0 means that the function will determine the user group',
                                                 VALUE_DEFAULT, 0),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
@@ -824,9 +824,9 @@ class mod_peerassess_external extends external_api {
         $summarydata = $summary->export_for_template($PAGE->get_renderer('core'));
 
         $checkanonymously = true;
-        if ($groupid > 0 AND $peerassess->anonymous == peerassess_ANONYMOUS_YES) {
+        if ($groupid > 0 AND $peerassess->anonymous == PEERASSESS_ANONYMOUS_YES) {
             $completedcount = $peerassessstructure->count_completed_responses($groupid);
-            if ($completedcount < peerassess_MIN_ANONYMOUS_COUNT_IN_GROUP) {
+            if ($completedcount < PEERASSESS_MIN_ANONYMOUS_COUNT_IN_GROUP) {
                 $checkanonymously = false;
             }
         }
@@ -898,7 +898,7 @@ class mod_peerassess_external extends external_api {
     public static function get_unfinished_responses_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'peerassess instance id.'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id.'),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
                     VALUE_DEFAULT, 0),
             )
@@ -964,7 +964,7 @@ class mod_peerassess_external extends external_api {
     public static function get_finished_responses_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'peerassess instance id.'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id.'),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
                     VALUE_DEFAULT, 0),
             )
@@ -1032,7 +1032,7 @@ class mod_peerassess_external extends external_api {
     public static function get_non_respondents_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'peerassess instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'groupid' => new external_value(PARAM_INT, 'Group id, 0 means that the function will determine the user group.',
                                                 VALUE_DEFAULT, 0),
                 'sort' => new external_value(PARAM_ALPHA, 'Sort param, must be firstname, lastname or lastaccess (default).',
@@ -1073,7 +1073,7 @@ class mod_peerassess_external extends external_api {
         $peerassesscompletion = new mod_peerassess_completion($peerassess, $cm, $completioncourse->id);
         $completioncourseid = $peerassesscompletion->get_courseid();
 
-        if ($peerassess->anonymous != peerassess_ANONYMOUS_NO || $peerassess->course == SITEID) {
+        if ($peerassess->anonymous != PEERASSESS_ANONYMOUS_NO || $peerassess->course == SITEID) {
             throw new moodle_exception('anonymous', 'peerassess');
         }
 
@@ -1106,7 +1106,7 @@ class mod_peerassess_external extends external_api {
         // Check if we are page filtering.
         if ($params['perpage'] == 0) {
             $page = $params['page'];
-            $perpage = peerassess_DEFAULT_PAGE_COUNT;
+            $perpage = PEERASSESS_DEFAULT_PAGE_COUNT;
         } else {
             $perpage = $params['perpage'];
             $page = $perpage * $params['page'];
@@ -1163,7 +1163,7 @@ class mod_peerassess_external extends external_api {
     public static function get_responses_analysis_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'peerassess instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'groupid' => new external_value(PARAM_INT, 'Group id, 0 means that the function will determine the user group',
                                                 VALUE_DEFAULT, 0),
                 'page' => new external_value(PARAM_INT, 'The page of records to return.', VALUE_DEFAULT, 0),
@@ -1292,7 +1292,7 @@ class mod_peerassess_external extends external_api {
     public static function get_last_completed_parameters() {
         return new external_function_parameters (
             array(
-                'peerassessid' => new external_value(PARAM_INT, 'peerassess instance id'),
+                'peerassessid' => new external_value(PARAM_INT, 'Peerassess instance id'),
                 'courseid' => new external_value(PARAM_INT, 'Course where user completes the peerassess (for site peerassesss only).',
                     VALUE_DEFAULT, 0),
             )

@@ -76,7 +76,7 @@ if (has_capability('mod/peerassess:viewreports', $context)) {
                             $reporturl->out(),
                             get_string('show_entries', 'peerassess'));
 
-    if ($peerassess->anonymous == peerassess_ANONYMOUS_NO AND $peerassess->course != SITEID) {
+    if ($peerassess->anonymous == PEERASSESS_ANONYMOUS_NO AND $peerassess->course != SITEID) {
         $nonrespondenturl = new moodle_url('/mod/peerassess/show_nonrespondents.php', $urlparams);
         $row[] = new tabobject('nonrespondents',
                                 $nonrespondenturl->out(),

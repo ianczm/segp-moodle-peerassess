@@ -34,13 +34,13 @@ class peerassess_multichoice_form extends peerassess_item_form {
         $mform->addElement('text',
                             'name',
                             get_string('item_name', 'peerassess'),
-                            array('size' => peerassess_ITEM_NAME_TEXTBOX_SIZE,
+                            array('size' => PEERASSESS_ITEM_NAME_TEXTBOX_SIZE,
                                   'maxlength' => 255));
 
         $mform->addElement('text',
                             'label',
                             get_string('item_label', 'peerassess'),
-                            array('size' => peerassess_ITEM_LABEL_TEXTBOX_SIZE,
+                            array('size' => PEERASSESS_ITEM_LABEL_TEXTBOX_SIZE,
                                   'maxlength' => 255));
 
         $mform->addElement('select',
@@ -83,7 +83,7 @@ class peerassess_multichoice_form extends peerassess_item_form {
 
         $item->subtype = $info->subtype;
 
-        $itemvalues = str_replace(peerassess_MULTICHOICE_LINE_SEP, "\n", $info->presentation);
+        $itemvalues = str_replace(PEERASSESS_MULTICHOICE_LINE_SEP, "\n", $info->presentation);
         $itemvalues = str_replace("\n\n", "\n", $itemvalues);
         $item->values = $itemvalues;
 
@@ -95,14 +95,14 @@ class peerassess_multichoice_form extends peerassess_item_form {
             return false;
         }
 
-        $presentation = str_replace("\n", peerassess_MULTICHOICE_LINE_SEP, trim($item->values));
+        $presentation = str_replace("\n", PEERASSESS_MULTICHOICE_LINE_SEP, trim($item->values));
         if (!isset($item->subtype)) {
             $subtype = 'r';
         } else {
             $subtype = substr($item->subtype, 0, 1);
         }
         if (isset($item->horizontal) AND $item->horizontal == 1 AND $subtype != 'd') {
-            $presentation .= peerassess_MULTICHOICE_ADJUST_SEP.'1';
+            $presentation .= PEERASSESS_MULTICHOICE_ADJUST_SEP.'1';
         }
         if (!isset($item->hidenoselect)) {
             $item->hidenoselect = 1;
@@ -111,7 +111,7 @@ class peerassess_multichoice_form extends peerassess_item_form {
             $item->ignoreempty = 0;
         }
 
-        $item->presentation = $subtype.peerassess_MULTICHOICE_TYPE_SEP.$presentation;
+        $item->presentation = $subtype.PEERASSESS_MULTICHOICE_TYPE_SEP.$presentation;
         return $item;
     }
 }

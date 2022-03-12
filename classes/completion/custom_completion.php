@@ -43,7 +43,7 @@ class custom_completion extends activity_custom_completion {
 
         $this->validate_rule($rule);
 
-        // peerassess only supports completionsubmit as a custom rule.
+        // Peerassess only supports completionsubmit as a custom rule.
         $status = $DB->record_exists('peerassess_completed', ['peerassess' => $this->cm->instance, 'userid' => $this->userid]);
         return $status ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE;
     }

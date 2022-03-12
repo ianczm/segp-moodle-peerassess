@@ -46,7 +46,7 @@ class mod_peerassess_restore_date_testcase extends restore_date_testcase {
         $response = new stdClass();
         $response->peerassess = $peerassess->id;
         $response->userid = $USER->id;
-        $response->anonymous_response = peerassess_ANONYMOUS_NO;
+        $response->anonymous_response = PEERASSESS_ANONYMOUS_NO;
         $response->timemodified = $time;
         $completedid = $DB->insert_record('peerassess_completed', $response);
         $response = $DB->get_record('peerassess_completed', array('id' => $completedid), '*', MUST_EXIST);

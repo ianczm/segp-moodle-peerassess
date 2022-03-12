@@ -181,7 +181,7 @@ class mod_peerassess_structure {
      * @return bool
      */
     public function is_anonymous() {
-        return $this->peerassess->anonymous == peerassess_ANONYMOUS_YES;
+        return $this->peerassess->anonymous == PEERASSESS_ANONYMOUS_YES;
     }
 
     /**
@@ -280,7 +280,7 @@ class mod_peerassess_structure {
         global $DB;
         $params = array('peerassess' => $this->peerassess->id,
             'random_response' => 0,
-            'anonymous_response' => peerassess_ANONYMOUS_YES);
+            'anonymous_response' => PEERASSESS_ANONYMOUS_YES);
 
         if ($DB->count_records('peerassess_completed', $params, 'random_response')) {
             // Get all of the anonymous records, go through them and assign a response id.

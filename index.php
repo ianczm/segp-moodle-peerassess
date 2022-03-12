@@ -27,7 +27,6 @@ require_once("lib.php");
 
 $id = required_param('id', PARAM_INT);
 
-echo "<h1>?Hellow World<h1><br>";
 $url = new moodle_url('/mod/peerassess/index.php', array('id'=>$id));
 
 $PAGE->set_url($url);
