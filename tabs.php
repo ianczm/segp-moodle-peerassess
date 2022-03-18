@@ -71,6 +71,11 @@ if (has_capability('mod/peerassess:viewreports', $context)) {
     }
     $row[] = new tabobject('analysis', $analysisurl->out(), get_string('analysis', 'peerassess'));
 
+    $breakdownurl = new moodle_url('/mod/peerassess/breakdown_per_group.php', $urlparams);
+    $row[] = new tabobject('breakdown_per_group',
+                            $breakdownurl->out(),
+                            get_string('breakdown_per_group', 'peerassess'));
+
     $reporturl = new moodle_url('/mod/peerassess/show_entries.php', $urlparams);
     $row[] = new tabobject('showentries',
                             $reporturl->out(),
