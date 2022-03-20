@@ -36,7 +36,7 @@ $userid = optional_param('userid', false, PARAM_INT);
 $showcompleted = optional_param('showcompleted', false, PARAM_INT);
 $deleteid = optional_param('delete', null, PARAM_INT);
 $courseid = optional_param('courseid', null, PARAM_INT);
-$perpage = optional_param('perpage', peerassess_DEFAULT_PAGE_COUNT, PARAM_INT);  // how many per page
+$perpage = optional_param('perpage', PEERASSESS_DEFAULT_PAGE_COUNT, PARAM_INT);  // how many per page
 $showall = optional_param('showall', false, PARAM_INT);  // should we show all users
 
 ////////////////////////////////////////////////////////
@@ -269,7 +269,7 @@ if (empty($students)) {
 
     if ($showall) {
         $allurl->param('showall', 0);
-        echo $OUTPUT->container(html_writer::link($allurl, get_string('showperpage', '', peerassess_DEFAULT_PAGE_COUNT)),
+        echo $OUTPUT->container(html_writer::link($allurl, get_string('showperpage', '', PEERASSESS_DEFAULT_PAGE_COUNT)),
                                     array(), 'showall');
 
     } else if ($matchcount > 0 && $perpage < $matchcount) {
