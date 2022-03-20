@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
 class mod_peerassess_mod_form extends moodleform_mod {
 
     public function definition() {
-        global $CFG, $DB;
+        global $CFG, $DB, $COURSE;
 
         $editoroptions = peerassess_get_editor_options();
 
@@ -40,13 +40,39 @@ class mod_peerassess_mod_form extends moodleform_mod {
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
-
+        
         $mform->addElement('text', 'name', get_string('name', 'peerassess'), array('size'=>'64'));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-
+        
         $this->standard_intro_elements(get_string('description', 'peerassess'));
+        
+        // [!] Refactor --> get list of assignments in course
+        $assignments_sql = 'SELECT
+                                cm.id AS cmid,
+                                cm.course,
+                                m.id AS mid,
+                                m.name,
+                                a.name AS assignment_name
+                            FROM {course_modules} cm
+                                INNER JOIN {modules} m
+                                ON cm.module = m.id
+                                INNER JOIN {assign} a
+                                ON cm.instance = a.id
+                            WHERE m.name = "assign"
+                                AND cm.course = ?';
+
+        $assignments_list = array_values((array) $DB->get_records_sql($assignments_sql, array($COURSE->id)));
+        
+        $assignments = [];
+        foreach ($assignments_list as $assignment) {
+            array_push($assignments, $assignment->assignment_name);
+        }
+
+        $select = $mform->addElement('select', 'assignments_select', "Assignments", $assignments);
+        $select->setMultiple(true);
+        // $mform->addHelpButton('assignments_select', 'assignments_select', 'peerassess');
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'timinghdr', get_string('availability'));
