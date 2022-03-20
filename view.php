@@ -109,6 +109,11 @@ if (has_capability('mod/peerassess:edititems', $context)) {
         echo $OUTPUT->heading(get_string("page_after_submit", "peerassess"), 3);
         echo $OUTPUT->box($pageaftersubmit, 'generalbox peerassess_after_submit');
     }
+
+    echo $OUTPUT->box_start('generalbox boxaligncenter');
+    $releasegradesurl = new moodle_url('/mod/peerassess/release_grades.php', ['id' => $cm->id]);
+    echo html_writer::div(html_writer::link($releasegradesurl, get_string("releaseallgradesforallgroups", 'peerassess'), array('class' => 'btn btn-secondary')));
+    echo $OUTPUT->box_end();
 }
 
 if (!has_capability('mod/peerassess:viewreports', $context) &&
