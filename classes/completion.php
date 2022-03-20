@@ -88,7 +88,7 @@ class mod_peerassess_completion extends mod_peerassess_structure {
             if ($nonanonymouseuserid) {
                 // We must respect the anonymousity of the reply that the user saw when they were completing the peerassess,
                 // not the current state that may have been changed later by the teacher.
-                $params['anonymous_response'] = peerassess_ANONYMOUS_NO;
+                $params['anonymous_response'] = PEERASSESS_ANONYMOUS_NO;
                 $params['userid'] = $nonanonymouseuserid;
             }
             $this->completed = $DB->get_record('peerassess_completed', $params, '*', MUST_EXIST);
@@ -566,7 +566,7 @@ class mod_peerassess_completion extends mod_peerassess_structure {
         $this->completed = $DB->get_record('peerassess_completed', array('id' => $completedid));
 
         // Send email.
-        if ($this->peerassess->anonymous == peerassess_ANONYMOUS_NO) {
+        if ($this->peerassess->anonymous == PEERASSESS_ANONYMOUS_NO) {
             peerassess_send_email($this->cm, $this->peerassess, $this->cm->get_course(), $this->userid, $this->completed);
         } else {
             peerassess_send_email_anonym($this->cm, $this->peerassess, $this->cm->get_course());
@@ -612,7 +612,7 @@ class mod_peerassess_completion extends mod_peerassess_structure {
         }
         $params = array('peerassess' => $this->peerassess->id,
             'userid' => $this->userid,
-            'anonymous_response' => peerassess_ANONYMOUS_NO
+            'anonymous_response' => PEERASSESS_ANONYMOUS_NO
         );
         if ($this->get_courseid()) {
             $params['courseid'] = $this->get_courseid();
@@ -643,7 +643,7 @@ class mod_peerassess_completion extends mod_peerassess_structure {
 
         if (!empty($CFG->peerassess_allowfullanonymous)
                     AND $this->peerassess->course == SITEID
-                    AND $this->peerassess->anonymous == peerassess_ANONYMOUS_YES
+                    AND $this->peerassess->anonymous == PEERASSESS_ANONYMOUS_YES
                     AND ((!isloggedin() && $USER->id == $this->userid) || isguestuser($this->userid))) {
             // Guests are allowed to complete fully anonymous peerassess without having 'mod/peerassess:complete' capability.
             return true;

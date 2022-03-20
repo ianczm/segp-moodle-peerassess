@@ -33,11 +33,11 @@ class peerassess_captcha_form extends peerassess_item_form {
         $mform->addElement('text',
                             'name',
                             get_string('item_name', 'peerassess'),
-                            array('size'=>peerassess_ITEM_NAME_TEXTBOX_SIZE, 'maxlength'=>255));
+                            array('size'=>PEERASSESS_ITEM_NAME_TEXTBOX_SIZE, 'maxlength'=>255));
         $mform->addElement('text',
                             'label',
                             get_string('item_label', 'peerassess'),
-                            array('size'=>peerassess_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength'=>255));
+                            array('size'=>PEERASSESS_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength'=>255));
 
         $mform->addElement('select',
                             'presentation',

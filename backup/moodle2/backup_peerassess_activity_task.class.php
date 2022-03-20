@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/mod/peerassess/backup/moodle2/backup_peerassess_s
 require_once($CFG->dirroot . '/mod/peerassess/backup/moodle2/backup_peerassess_settingslib.php');
 
 /**
- * Provides the steps to perform one complete backup of the peerassess instance
+ * Provides the steps to perform one complete backup of the Peerassess instance
  */
 class backup_peerassess_activity_task extends backup_activity_task {
 
@@ -61,19 +61,19 @@ class backup_peerassess_activity_task extends backup_activity_task {
 
         // Link to the list of peerassesss
         $search="/(".$base."\/mod\/peerassess\/index.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@peerassessINDEX*$2@$', $content);
+        $content= preg_replace($search, '$@PEERASSESSINDEX*$2@$', $content);
 
         // Link to peerassess view by moduleid
         $search="/(".$base."\/mod\/peerassess\/view.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@peerassessVIEWBYID*$2@$', $content);
+        $content= preg_replace($search, '$@PEERASSESSVIEWBYID*$2@$', $content);
 
         // Link to peerassess analyis by moduleid
         $search="/(".$base."\/mod\/peerassess\/analysis.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@peerassessANALYSISBYID*$2@$', $content);
+        $content= preg_replace($search, '$@PEERASSESSANALYSISBYID*$2@$', $content);
 
         // Link to peerassess entries by moduleid
         $search="/(".$base."\/mod\/peerassess\/show_entries.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@peerassessSHOWENTRIESBYID*$2@$', $content);
+        $content= preg_replace($search, '$@PEERASSESSSHOWENTRIESBYID*$2@$', $content);
 
         return $content;
     }

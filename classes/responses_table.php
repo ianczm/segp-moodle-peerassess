@@ -164,7 +164,7 @@ class mod_peerassess_responses_table extends table_sql {
         $this->set_attribute('id', 'showentrytable');
 
         $params = array();
-        $params['anon'] = peerassess_ANONYMOUS_NO;
+        $params['anon'] = PEERASSESS_ANONYMOUS_NO;
         $params['instance'] = $this->peerassessstructure->get_peerassess()->id;
         $params['notdeleted'] = 0;
         $params['courseid'] = $this->peerassessstructure->get_courseid();
@@ -435,14 +435,14 @@ class mod_peerassess_responses_table extends table_sql {
             echo $OUTPUT->notification(get_string('questionslimited', 'peerassess', self::PREVIEWCOLUMNSLIMIT), 'info');
         }
 
-        $this->out($this->showall ? $grandtotal : peerassess_DEFAULT_PAGE_COUNT,
-                $grandtotal > peerassess_DEFAULT_PAGE_COUNT);
+        $this->out($this->showall ? $grandtotal : PEERASSESS_DEFAULT_PAGE_COUNT,
+                $grandtotal > PEERASSESS_DEFAULT_PAGE_COUNT);
 
         // Toggle 'Show all' link.
-        if ($this->totalrows > peerassess_DEFAULT_PAGE_COUNT) {
+        if ($this->totalrows > PEERASSESS_DEFAULT_PAGE_COUNT) {
             if (!$this->use_pages) {
                 echo html_writer::div(html_writer::link(new moodle_url($this->baseurl, [$this->showallparamname => 0]),
-                        get_string('showperpage', '', peerassess_DEFAULT_PAGE_COUNT)), 'showall');
+                        get_string('showperpage', '', PEERASSESS_DEFAULT_PAGE_COUNT)), 'showall');
             } else {
                 echo html_writer::div(html_writer::link(new moodle_url($this->baseurl, [$this->showallparamname => 1]),
                         get_string('showall', '', $this->totalrows)), 'showall');
@@ -465,7 +465,7 @@ class mod_peerassess_responses_table extends table_sql {
         while ($this->rawdata->valid()) {
             $row = $this->rawdata->current();
             if ($row->id == $record->id) {
-                $page = $this->showall ? 0 : floor($counter / peerassess_DEFAULT_PAGE_COUNT);
+                $page = $this->showall ? 0 : floor($counter / PEERASSESS_DEFAULT_PAGE_COUNT);
                 $thisrow = $row;
                 $this->rawdata->next();
                 $nextrow = $this->rawdata->valid() ? $this->rawdata->current() : null;

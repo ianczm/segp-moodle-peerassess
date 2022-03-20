@@ -35,7 +35,7 @@ $message = optional_param_array('message', '', PARAM_CLEANHTML);
 $format = optional_param('format', FORMAT_MOODLE, PARAM_INT);
 $messageuser = optional_param_array('messageuser', false, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
-$perpage = optional_param('perpage', peerassess_DEFAULT_PAGE_COUNT, PARAM_INT);  // how many per page
+$perpage = optional_param('perpage', PEERASSESS_DEFAULT_PAGE_COUNT, PARAM_INT);  // how many per page
 $showall = optional_param('showall', false, PARAM_INT);  // should we show all users
 // $SESSION->peerassess->current_tab = $do_show;
 $current_tab = 'nonrespondents';
@@ -55,7 +55,7 @@ if (! $peerassess = $DB->get_record("peerassess", array("id"=>$cm->instance))) {
 
 //this page only can be shown on nonanonymous peerassesss in courses
 //we should never reach this page
-if ($peerassess->anonymous != peerassess_ANONYMOUS_NO OR $peerassess->course == SITEID) {
+if ($peerassess->anonymous != PEERASSESS_ANONYMOUS_NO OR $peerassess->course == SITEID) {
     print_error('error');
 }
 
@@ -282,7 +282,7 @@ if (empty($students)) {
 
     if ($showall) {
         $allurl->param('showall', 0);
-        echo $OUTPUT->container(html_writer::link($allurl, get_string('showperpage', '', peerassess_DEFAULT_PAGE_COUNT)),
+        echo $OUTPUT->container(html_writer::link($allurl, get_string('showperpage', '', PEERASSESS_DEFAULT_PAGE_COUNT)),
                                     array(), 'showall');
 
     } else if ($matchcount > 0 && $perpage < $matchcount) {

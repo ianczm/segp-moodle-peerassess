@@ -63,7 +63,7 @@ class provider_test extends provider_testcase {
         $c1 = $dg->create_course();
         $c2 = $dg->create_course();
         $cm0a = $dg->create_module('peerassess', ['course' => SITEID]);
-        $cm1a = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => peerassess_ANONYMOUS_NO]);
+        $cm1a = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => PEERASSESS_ANONYMOUS_NO]);
         $cm1b = $dg->create_module('peerassess', ['course' => $c1]);
         $cm2a = $dg->create_module('peerassess', ['course' => $c2]);
         $cm2b = $dg->create_module('peerassess', ['course' => $c2]);
@@ -129,7 +129,7 @@ class provider_test extends provider_testcase {
         $c1 = $dg->create_course();
         $c2 = $dg->create_course();
         $cm0 = $dg->create_module('peerassess', ['course' => SITEID]);
-        $cm1a = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => peerassess_ANONYMOUS_NO]);
+        $cm1a = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => PEERASSESS_ANONYMOUS_NO]);
         $cm1b = $dg->create_module('peerassess', ['course' => $c1]);
         $cm2 = $dg->create_module('peerassess', ['course' => $c2]);
 
@@ -205,7 +205,7 @@ class provider_test extends provider_testcase {
         $c1 = $dg->create_course();
         $c2 = $dg->create_course();
         $cm0a = $dg->create_module('peerassess', ['course' => SITEID]);
-        $cm1a = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => peerassess_ANONYMOUS_NO]);
+        $cm1a = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => PEERASSESS_ANONYMOUS_NO]);
         $cm2a = $dg->create_module('peerassess', ['course' => $c2]);
 
         $u1 = $dg->create_user();
@@ -259,7 +259,7 @@ class provider_test extends provider_testcase {
         $c1 = $dg->create_course();
         $c2 = $dg->create_course();
         $cm0 = $dg->create_module('peerassess', ['course' => SITEID]);
-        $cm1 = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => peerassess_ANONYMOUS_NO]);
+        $cm1 = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => PEERASSESS_ANONYMOUS_NO]);
         $cm2 = $dg->create_module('peerassess', ['course' => $c2]);
         $context0 = \context_module::instance($cm0->cmid);
         $context1 = \context_module::instance($cm1->cmid);
@@ -319,7 +319,7 @@ class provider_test extends provider_testcase {
         $c1 = $dg->create_course();
         $c2 = $dg->create_course();
         $cm0a = $dg->create_module('peerassess', ['course' => SITEID]);
-        $cm1a = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => peerassess_ANONYMOUS_NO]);
+        $cm1a = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => PEERASSESS_ANONYMOUS_NO]);
 
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
@@ -358,8 +358,8 @@ class provider_test extends provider_testcase {
         $c1 = $dg->create_course();
         $c2 = $dg->create_course();
         $cm0a = $dg->create_module('peerassess', ['course' => SITEID]);
-        $cm1a = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => peerassess_ANONYMOUS_NO]);
-        $cm2a = $dg->create_module('peerassess', ['course' => $c2, 'anonymous' => peerassess_ANONYMOUS_YES, 'multiple_submit' => 1]);
+        $cm1a = $dg->create_module('peerassess', ['course' => $c1, 'anonymous' => PEERASSESS_ANONYMOUS_NO]);
+        $cm2a = $dg->create_module('peerassess', ['course' => $c2, 'anonymous' => PEERASSESS_ANONYMOUS_YES, 'multiple_submit' => 1]);
         $cm2b = $dg->create_module('peerassess', ['course' => $c2]);
         $cm2c = $dg->create_module('peerassess', ['course' => $c2]);
 

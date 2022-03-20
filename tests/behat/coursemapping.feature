@@ -55,11 +55,11 @@ Feature: Mapping courses in a peerassess
     And I log out
     And I log in as "teacher"
     And I am on "Course 1" course homepage with editing mode on
-    And I add the "peerassess" block
+    And I add the "Peerassess" block
     And I am on "Course 2" course homepage
-    And I add the "peerassess" block
+    And I add the "Peerassess" block
     And I am on "Course 3" course homepage
-    And I add the "peerassess" block
+    And I add the "Peerassess" block
     And I log out
 
   Scenario: Course peerassess can not be mapped
@@ -82,7 +82,7 @@ Feature: Mapping courses in a peerassess
     And I press "Submit your answers"
     And I press "Continue"
     And I am on "Course 1" course homepage
-    And I click on "Course peerassess" "link" in the "peerassess" "block"
+    And I click on "Course peerassess" "link" in the "Peerassess" "block"
     And I follow "Answer the questions"
     And I should not see "Acceptance test site" in the ".peerassess_form" "css_element"
     And I should see "C1" in the ".peerassess_form" "css_element"
@@ -91,12 +91,12 @@ Feature: Mapping courses in a peerassess
       | this is a simple multiple choice | option e |
     And I press "Submit your answers"
     And I press "Continue"
-    And I click on "Course peerassess" "link" in the "peerassess" "block"
+    And I click on "Course peerassess" "link" in the "Peerassess" "block"
     And I should not see "Answer the questions"
     And I log out
     And I log in as "user2"
     And I am on "Course 1" course homepage
-    And I click on "Course peerassess" "link" in the "peerassess" "block"
+    And I click on "Course peerassess" "link" in the "Peerassess" "block"
     And I follow "Answer the questions"
     And I should not see "Acceptance test site" in the ".peerassess_form" "css_element"
     And I should see "C1" in the ".peerassess_form" "css_element"
@@ -148,11 +148,11 @@ Feature: Mapping courses in a peerassess
     And I should not see "Answer the questions"
 
     And I am on "Course 1" course homepage
-    And "peerassess" "block" should not exist
+    And "Peerassess" "block" should not exist
     And I should not see "Course peerassess"
 
     And I am on "Course 2" course homepage
-    And I click on "Course peerassess" "link" in the "peerassess" "block"
+    And I click on "Course peerassess" "link" in the "Peerassess" "block"
     And I follow "Answer the questions"
     And I should not see "Acceptance test site" in the ".peerassess_form" "css_element"
     And I should see "C2" in the ".peerassess_form" "css_element"
@@ -161,12 +161,12 @@ Feature: Mapping courses in a peerassess
       | this is a simple multiple choice | option e |
     And I press "Submit your answers"
     And I press "Continue"
-    And I click on "Course peerassess" "link" in the "peerassess" "block"
+    And I click on "Course peerassess" "link" in the "Peerassess" "block"
     And I should not see "Answer the questions"
     And I log out
     And I log in as "user2"
     And I am on "Course 2" course homepage
-    And I click on "Course peerassess" "link" in the "peerassess" "block"
+    And I click on "Course peerassess" "link" in the "Peerassess" "block"
     And I follow "Answer the questions"
     And I should not see "Acceptance test site" in the ".peerassess_form" "css_element"
     And I should see "C2" in the ".peerassess_form" "css_element"
@@ -178,7 +178,7 @@ Feature: Mapping courses in a peerassess
     And I log out
     And I log in as "user3"
     And I am on "Course 3" course homepage
-    And I click on "Course peerassess" "link" in the "peerassess" "block"
+    And I click on "Course peerassess" "link" in the "Peerassess" "block"
     And I follow "Answer the questions"
     And I should not see "Acceptance test site" in the ".peerassess_form" "css_element"
     And I should see "C3" in the ".peerassess_form" "css_element"
@@ -228,12 +228,12 @@ Feature: Mapping courses in a peerassess
     When I log in as "manager"
     And I am on site homepage
     And I turn editing mode on
-    And I add the "peerassess" block
+    And I add the "Peerassess" block
     And I add the "Main menu" block
     And I click on "Delete" "link" in the "Course peerassess" activity
     And I press "Yes"
     And I follow "Turn editing off"
     And I am on site homepage
-    Then "peerassess" "block" should not exist
+    Then "Peerassess" "block" should not exist
     And I am on "Course 1" course homepage
-    And "peerassess" "block" should not exist
+    And "Peerassess" "block" should not exist
