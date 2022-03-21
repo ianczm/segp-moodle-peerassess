@@ -24,7 +24,6 @@ require_once("../../config.php");
 require_once("lib.php");
 
 $id = required_param('id', PARAM_INT);
-$groupid = required_param('groupid', PARAM_INT);
 
 list($course, $cm) = get_course_and_cm_from_cmid($id, 'peerassess');
 $context = context_module::instance($cm->id);
@@ -61,7 +60,6 @@ foreach ($submissions as $submission) {
             'groupid' => $submission->groupid
         ]
     ];
-    $event = \mod_peerassess\event\grades_released::create($params);
     $event->add_record_snapshot('peerassess_submission', $submission);
     $event->trigger();
 }
