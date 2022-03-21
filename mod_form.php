@@ -70,6 +70,9 @@ class mod_peerassess_mod_form extends moodleform_mod {
         $select->setMultiple(true);
         // $mform->addHelpButton('assignments', 'assignments', 'peerassess');
 
+        // Note to lecturer that this question would be converted into a drop down menu
+        $mform->addElement('static', 'hint', '', 'Ctrl+Click to select the assignment(s) you would like to apply the peer factor on.', 'peerassess');
+
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'timinghdr', get_string('availability'));
 
