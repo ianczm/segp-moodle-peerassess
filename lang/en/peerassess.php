@@ -22,8 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['assignments_select'] = 'Assignments';
-$string['assignments_select_help'] = 'Help';
+$string['assignments'] = 'Assignments';
+$string['assignments_help'] = 'Help';
 
 $string['add_item'] = 'Add question';
 $string['add_pagebreak'] = 'Add a page break';

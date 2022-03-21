@@ -50,10 +50,11 @@ class mod_peerassess_mod_form extends moodleform_mod {
         
         // [!] Refactor --> get list of assignments in course
         $assignments_sql = 'SELECT
-                                cm.id AS cmid,
-                                cm.course,
-                                m.id AS mid,
-                                m.name,
+                                -- cm.id AS cmid,
+                                -- cm.course,
+                                -- m.id AS mid,
+                                -- m.name,
+                                a.id AS aid,
                                 a.name AS assignment_name
                             FROM {course_modules} cm
                                 INNER JOIN {modules} m
@@ -63,16 +64,11 @@ class mod_peerassess_mod_form extends moodleform_mod {
                             WHERE m.name = "assign"
                                 AND cm.course = ?';
 
-        $assignments_list = array_values((array) $DB->get_records_sql($assignments_sql, array($COURSE->id)));
-        
-        $assignments = [];
-        foreach ($assignments_list as $assignment) {
-            array_push($assignments, $assignment->assignment_name);
-        }
+        $assignments_list = $DB->get_records_sql_menu($assignments_sql, array($COURSE->id));
 
-        $select = $mform->addElement('select', 'assignments_select', "Assignments", $assignments);
+        $select = $mform->addElement('select', 'assignments', "Assignments", $assignments_list);
         $select->setMultiple(true);
-        // $mform->addHelpButton('assignments_select', 'assignments_select', 'peerassess');
+        // $mform->addHelpButton('assignments', 'assignments', 'peerassess');
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'timinghdr', get_string('availability'));
@@ -182,7 +178,6 @@ class mod_peerassess_mod_form extends moodleform_mod {
             $default_values['page_after_submit_editor']['text'] = '';
             $default_values['page_after_submit_editor']['format'] = editors_get_preferred_format();
             $default_values['page_after_submit_editor']['itemid'] = $draftitemid;
-            echo "HelloWorld><br>";
         }
 
     }
@@ -209,6 +204,12 @@ class mod_peerassess_mod_form extends moodleform_mod {
                     $data->completionsubmit=0;
                 }
             }
+        }
+
+        $assignarray = [];
+        foreach ($data->assignments as $assign) {
+            print_object($assign);
+            echo "Hello World";
         }
     }
 
