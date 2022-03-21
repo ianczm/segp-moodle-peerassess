@@ -165,24 +165,6 @@ $baseurl->params(array('id'=>$id, 'showall'=>$showall));
 $tablecolumns = array('userpic', 'fullname', 'status');
 $tableheaders = array(get_string('userpic'), get_string('fullnameuser'), get_string('status'));
 
-if ($canbulkmessaging) {
-    $tablecolumns[] = 'select';
-
-    // Build the select/deselect all control.
-    $selectallid = 'selectall-non-respondents';
-    $mastercheckbox = new \core\output\checkbox_toggleall('peerassess-non-respondents', true, [
-        'id' => $selectallid,
-        'name' => $selectallid,
-        'value' => 1,
-        'label' => get_string('select'),
-        // Consistent label to prevent the select column from resizing.
-        'selectall' => get_string('select'),
-        'deselectall' => get_string('select'),
-        'labelclasses' => 'm-0',
-    ]);
-    $tableheaders[] = $OUTPUT->render($mastercheckbox);
-}
-
 $table = new flexible_table('peerassess-shownonrespondents-'.$course->id);
 
 $table->define_columns($tablecolumns);
