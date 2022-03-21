@@ -66,7 +66,7 @@ class mod_peerassess_mod_form extends moodleform_mod {
 
         $assignments_list = $DB->get_records_sql_menu($assignments_sql, array($COURSE->id));
 
-        $select = $mform->addElement('select', 'assignments', "Assignments", $assignments_list);
+        $select = $mform->addElement('select', 'assignments', "Assignments", $assignments_list, array("size" => 8, "style" => 'width: 50%'));
         $select->setMultiple(true);
         // $mform->addHelpButton('assignments', 'assignments', 'peerassess');
 
