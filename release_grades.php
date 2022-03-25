@@ -30,39 +30,9 @@ $context = context_module::instance($cm->id);
 
 require_login($course, false, $cm);
 
-$PAGE->set_url('/mod/peerassess/release_grades.php', ['id' => $cm->id, 'groupid' => $groupid]);
+$PAGE->set_url('/mod/peerassess/release_grades.php', ['id' => $cm->id]);
 
-$peerassess = $DB->get_record('peerassess', ['id' => $cm->instance], '*', MUST_EXIST);
-
-if ($groupid > 0) {
-    $sql = 'peerassessid = :peerassessid AND groupid = :groupid AND COALESCE(timegraded) > 0 AND released = 0';
-    $submissions = $DB->get_records_select('peerassess_submission', $sql, [
-        'peerassessid' => $peerassess->id,
-        'groupid' => $groupid
-    ]);
-} else {
-    $sql = 'peerassessid = :peerassessid AND COALESCE(timegraded) > 0 AND released = 0';
-    $submissions = $DB->get_records_select('peerassess_submission', $sql, ['peerassessid' => $peerassess->id]);
-}
-
-foreach ($submissions as $submission) {
-
-    // Release the submission.
-    $submission->released = time();
-    $submission->releasedby = $USER->id;
-    $DB->update_record('peerassess_submission', $submission);
-
-    // Trigger the event.
-    $params = [
-        'objectid' => $submission->id,
-        'context' => $context,
-        'other' => [
-            'groupid' => $submission->groupid
-        ]
-    ];
-    $event->add_record_snapshot('peerassess_submission', $submission);
-    $event->trigger();
-}
+$finalgradesreleased = 1;
 
 // Trigger the gradebook update.
 // peerassess_update_grades($peerassess);

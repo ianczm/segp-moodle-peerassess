@@ -111,8 +111,13 @@ if (has_capability('mod/peerassess:edititems', $context)) {
     }
 
     echo $OUTPUT->box_start('generalbox boxaligncenter');
-    $releasegradesurl = new moodle_url('/mod/peerassess/release_grades.php', ['id' => $cm->id]);
-    echo html_writer::div(html_writer::link($releasegradesurl, get_string("releaseallgradesforallgroups", 'peerassess'), array('class' => 'btn btn-secondary')));
+    if($finalgradesreleased = 0){
+        $releasegradesurl = new moodle_url('/mod/peerassess/release_grades.php', ['id' => $cm->id]);
+        echo html_writer::div(html_writer::link($releasegradesurl, get_string("releaseallgradesforallgroups", 'peerassess'), array('class' => 'btn btn-secondary')));
+    }
+    else {
+        echo $OUTPUT->notification(get_string('finalgradeshasbeenreleased', 'peerassess'));
+    }
     echo $OUTPUT->box_end();
 }
 
@@ -153,9 +158,13 @@ if ($peerassesscompletion->can_complete()) {
     } else {
         // Peerassess was already submitted.
         echo $OUTPUT->notification(get_string('this_peerassess_is_already_submitted', 'peerassess'));
-        // if ($finalgradesreleased = 1){
-        echo get_string('your_final_grade_is', 'peerassess');
-        // }
+        // Release status of final grades to students.
+        if ($finalgradesreleased = 1){
+            echo get_string('your_final_grade_is', 'peerassess', $finalgrades);
+        }
+        else {
+            echo get_string('finalgradeshasnotbeenreleased', 'peerassess');
+        }
         $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
     }
     echo $OUTPUT->box_end();
