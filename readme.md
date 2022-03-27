@@ -1,3 +1,6 @@
-# SEGP Moodle
+# SEGP Moodle Plugin for Peer Assessment
 
-This is a test readme.
+### Group: 
+10a
+### Goal: 
+Develop a Moodle plugin to collect peer feedback, analyse the data, produce a report, calculate scores, and more.
