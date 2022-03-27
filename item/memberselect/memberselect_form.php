@@ -27,7 +27,7 @@ class peerassess_memberselect_form extends peerassess_item_form {
 
         $mform =& $this->_form;
 
-        $mform->addElement('header', 'general', get_string($this->type, 'peerassess'));
+        $mform->addElement('header', 'general', 'Member Select');
 
         // This question is set to be required by default
         $mform->addElement('hidden', 'required', 0);

@@ -166,6 +166,7 @@ $string['insufficient_responses'] = 'insufficient responses';
 $string['insufficient_responses_help'] = 'For the peerassess to be anonymous, there must be at least 2 responses.';
 $string['item_label'] = 'Label';
 $string['item_name'] = 'Question';
+$string['memberselect'] = 'Member Select';
 $string['label'] = 'Label';
 $string['labelcontents'] = 'Contents';
 $string['mapcourseinfo'] = 'This is a site-wide peerassess that is available to all courses using the peerassess block. You can however limit the courses to which it will appear by mapping them. Search the course and map it to this peerassess.';
