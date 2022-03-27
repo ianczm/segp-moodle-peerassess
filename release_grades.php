@@ -24,7 +24,7 @@ require_once("../../config.php");
 require_once("lib.php");
 
 $id = required_param('id', PARAM_INT);
-// $finalgradesreleased = optional_param('finalgradesreleased', false, PARAM_INT);
+// $finalgradesreleased = optional_param('finalgradesreleased', false, PARAM_BOOL);
 
 list($course, $cm) = get_course_and_cm_from_cmid($id, 'peerassess');
 $context = context_module::instance($cm->id);
@@ -34,6 +34,7 @@ require_login($course, true, $cm);
 $PAGE->set_url('/mod/peerassess/release_grades.php', ['id' => $cm->id]);
 
 // Flag that final grades has been released
-return $finalgradesreleased = 1;
+$finalgradesreleased = true;
 
-redirect(new moodle_url('view.php', ['id' => $cm->id]));
+redirect('view.php?id='.$id);
+exit;
