@@ -306,4 +306,4 @@ $string['use_one_line_for_each_value'] = 'Use one line for each answer!';
 $string['use_this_template'] = 'Use this template';
 $string['using_templates'] = 'Use a template';
 $string['vertical'] = 'Vertical';
-$string['your_final_grade_is'] = 'Your final grade: ';
+$string['your_final_grade_is'] = 'Your final grade: {$a}';
