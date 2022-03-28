@@ -34,8 +34,9 @@ $current_tab = 'breakdown';
 $id = required_param('id', PARAM_INT);
 $userid = optional_param('userid', false, PARAM_INT);
 $showcompleted = optional_param('showcompleted', false, PARAM_INT);
+$deleteid = optional_param('delete', null, PARAM_INT);
 $courseid = optional_param('courseid', null, PARAM_INT);
-$perpage = optional_param('perpage', peerassess_DEFAULT_PAGE_COUNT, PARAM_INT);  // how many per page
+$perpage = optional_param('perpage', PEERASSESS_DEFAULT_PAGE_COUNT, PARAM_INT);  // how many per page
 $showall = optional_param('showall', false, PARAM_INT);  // should we show all users
 
 ////////////////////////////////////////////////////////
@@ -45,7 +46,8 @@ $showall = optional_param('showall', false, PARAM_INT);  // should we show all u
 list($course, $cm) = get_course_and_cm_from_cmid($id, 'peerassess');
 
 $baseurl = new moodle_url('/mod/peerassess/breakdown_per_group.php', array('id' => $cm->id));
-$PAGE->set_url(new moodle_url($baseurl, array('userid' => $userid, 'showcompleted' => $showcompleted,'showall'=>$showall)));
+$PAGE->set_url(new moodle_url($baseurl, array('userid' => $userid, 'showcompleted' => $showcompleted,
+        'delete' => $deleteid)));
 
 $context = context_module::instance($cm->id);
 
@@ -54,7 +56,38 @@ $peerassess = $PAGE->activityrecord;
 
 require_capability('mod/peerassess:viewreports', $context);
 
-/// Print the page header
+if ($deleteid) {
+    // This is a request to delete a reponse.
+    require_capability('mod/peerassess:deletesubmissions', $context);
+    require_sesskey();
+    $peerassessstructure = new mod_peerassess_completion($peerassess, $cm, 0, true, $deleteid);
+    peerassess_delete_completed($peerassessstructure->get_completed(), $peerassess, $cm);
+    redirect($baseurl);
+} else if ($showcompleted || $userid) {
+    // Viewing individual response.
+    $peerassessstructure = new mod_peerassess_completion($peerassess, $cm, 0, true, $showcompleted, $userid);
+} else {
+    // Viewing list of reponses.
+    $peerassessstructure = new mod_peerassess_structure($peerassess, $cm, $courseid);
+}
+
+$responsestable = new mod_peerassess_responses_table($peerassessstructure);
+$anonresponsestable = new mod_peerassess_responses_anon_table($peerassessstructure);
+
+if ($responsestable->is_downloading()) {
+    $responsestable->download();
+}
+if ($anonresponsestable->is_downloading()) {
+    $anonresponsestable->download();
+}
+
+// Process course select form.
+$courseselectform = new mod_peerassess_course_select_form($baseurl, $peerassessstructure, $peerassess->course == SITEID);
+if ($data = $courseselectform->get_data()) {
+    redirect(new moodle_url($baseurl, ['courseid' => $data->courseid]));
+}
+// Print the page header.
+navigation_node::override_active_url($baseurl);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($peerassess->name);
 echo $OUTPUT->header();
@@ -63,25 +96,102 @@ echo $OUTPUT->heading(format_string($peerassess->name));
 require('tabs.php');
 
 /// Print the main part of the page
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+if ($userid || $showcompleted) {
+    // Print the response of the given user.
+    $completedrecord = $peerassessstructure->get_completed();
+
+    if ($userid) {
+        $usr = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+        $responsetitle = userdate($completedrecord->timemodified) . ' (' . fullname($usr) . ')';
+    } else {
+        $responsetitle = get_string('response_nr', 'peerassess') . ': ' .
+                $completedrecord->random_response . ' (' . get_string('anonymous', 'peerassess') . ')';
+    }
+
+    echo $OUTPUT->heading($responsetitle, 4);
+
+    $form = new mod_peerassess_complete_form(mod_peerassess_complete_form::MODE_VIEW_RESPONSE,
+            $peerassessstructure, 'peerassess_viewresponse_form');
+    $form->display();
+
+    list($prevresponseurl, $returnurl, $nextresponseurl) = $userid ?
+            $responsestable->get_reponse_navigation_links($completedrecord) :
+            $anonresponsestable->get_reponse_navigation_links($completedrecord);
+
+    echo html_writer::start_div('response_navigation');
+
+    $responsenavigation = [
+        'col1content' => '',
+        'col2content' => html_writer::link($returnurl, get_string('back'), ['class' => 'back_to_list']),
+        'col3content' => '',
+    ];
+
+    if ($prevresponseurl) {
+        $responsenavigation['col1content'] = html_writer::link($prevresponseurl, get_string('prev'), ['class' => 'prev_response']);
+    }
+
+    if ($nextresponseurl) {
+        $responsenavigation['col3content'] = html_writer::link($nextresponseurl, get_string('next'), ['class' => 'next_response']);
+    }
+
+    echo $OUTPUT->render_from_template('core/columns-1to1to1', $responsenavigation);
+    echo html_writer::end_div();
+
+} else {
+    // Print the list of responses.
+    $courseselectform->display();
+
+    // Show non-anonymous responses (always retrieve them even if current peerassess is anonymous).
+    $totalrows = $responsestable->get_total_responses_count();
+    if (!$peerassessstructure->is_anonymous() || $totalrows) {
+        echo $OUTPUT->heading(get_string('non_anonymous_entries', 'peerassess', $totalrows), 4);
+        $responsestable->display();
+    }
+
+    // Show anonymous responses (always retrieve them even if current peerassess is not anonymous).
+    $peerassessstructure->shuffle_anonym_responses();
+    $totalrows = $anonresponsestable->get_total_responses_count();
+    if ($peerassessstructure->is_anonymous() || $totalrows) {
+        echo $OUTPUT->heading(get_string('anonymous_entries', 'peerassess', $totalrows), 4);
+        $anonresponsestable->display();
+    }
+
+}
+
+/// Print the main part of the page
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////
+/// Print the users with no responses
+////////////////////////////////////////////////////////
 //get the effective groupmode of this course and module
 if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
     $groupmode =  $cm->groupmode;
 } else {
     $groupmode = $course->groupmode;
 }
-
-$groupselect = groups_print_activity_menu($cm, $baseurl->out(), true);
+$url = new moodle_url('/mod/peerassess/show_enteries.php', array('id'=>$cm->id));
+$groupselect = groups_print_activity_menu($cm, $url->out(), true);
 $mygroupid = groups_get_activity_group($cm);
 
 // preparing the table for output
-$tablecolumns = array('userpic', 'fullname', 'TimedCompleted','PeerFactor');
-$tableheaders = array(get_string('userpic'), get_string('fullnameuser'), get_string('TimeCompleted'),get_string('PeerFactor'));
+$nonresponbaseurl = new moodle_url('/mod/peerassess/show_enteries.php');
+$nonresponbaseurl->params(array('id'=>$id, 'showall'=>$showall));
 
-$table = new flexible_table('peerassess-breakdown-per-group'.$course->id);
+$tablecolumns = array('userpic', 'fullname', 'status');
+$tableheaders = array(get_string('userpic'), get_string('fullnameuser'), get_string('status'));
+
+$table = new flexible_table('peerassess-shownonrespondents-'.$course->id);
 
 $table->define_columns($tablecolumns);
 $table->define_headers($tableheaders);
-$table->define_baseurl($baseurl);
+$table->define_baseurl($nonresponbaseurl);
 
 $table->sortable(true, 'lastname', SORT_DESC);
 $table->set_attribute('cellspacing', '0');
@@ -93,6 +203,9 @@ $table->set_control_variables(array(
             TABLE_VAR_ILAST   => 'silast',
             TABLE_VAR_PAGE    => 'spage'
             ));
+
+$table->no_sorting('select');
+$table->no_sorting('status');
 
 $table->setup();
 
@@ -113,7 +226,7 @@ if ($groupmode > 0) {
     $usedgroupid = false;
 }
 
-$matchcount = peerassess_count_incomplete_users($cm, $usedgroupid) + peerassess_count_complete_users($cm, $usedgroupid);
+$matchcount = peerassess_count_incomplete_users($cm, $usedgroupid);
 $table->initialbars(false);
 
 if ($showall) {
@@ -126,13 +239,12 @@ if ($showall) {
 }
 
 // Return students record including if they started or not the peerassess.
-$students = peerassess_get_all_users_records($cm, $usedgroupid, $sort, $startpage, $pagecount, true);
+$students = peerassess_get_incomplete_users($cm, $usedgroupid, $sort, $startpage, $pagecount, true);
 //####### viewreports-start
 //print the list of students
-echo $OUTPUT->heading(get_string('member_in_current_group', 'peerassess', $matchcount), 4);
-echo $OUTPUT->heading($matchcount);
-echo isset($groupselect) ? $groupselect : '';
-echo '<div class="clearer"></div>';
+//echo $OUTPUT->heading(get_string('non_respondents_students', 'peerassess', $matchcount), 4);
+//echo isset($groupselect) ? $groupselect : '';
+//echo '<div class="clearer"></div>';
 
 if (empty($students)) {
     echo $OUTPUT->notification(get_string('noexistingparticipants', 'enrol'));
@@ -145,20 +257,19 @@ if (empty($students)) {
         $data = array($OUTPUT->user_picture($student, array('courseid' => $course->id)), $profilelink);
 
         if ($student->peerassessstarted) {
-            $data[] = 'started';
+            $data[] = get_string('started', 'peerassess');
         } else {
-            array_push($data, 'started loh', 'hihi');
+            $data[] = get_string('not_started', 'peerassess');
         }
-
         $table->add_data($data);
     }
     $table->print_html();
 
-    $allurl = new moodle_url($baseurl);
+    $allurl = new moodle_url($nonresponbaseurl);
 
     if ($showall) {
         $allurl->param('showall', 0);
-        echo $OUTPUT->container(html_writer::link($allurl, get_string('showperpage', '', peerassess_DEFAULT_PAGE_COUNT)),
+        echo $OUTPUT->container(html_writer::link($allurl, get_string('showperpage', '', PEERASSESS_DEFAULT_PAGE_COUNT)),
                                     array(), 'showall');
 
     } else if ($matchcount > 0 && $perpage < $matchcount) {

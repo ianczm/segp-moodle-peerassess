@@ -39,7 +39,7 @@ Feature: Show users who have not responded to the peerassess survey
     # Set up a peerassess.
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "peerassess" to section "1" and I fill the form with:
+    And I add a "Peerassess" to section "1" and I fill the form with:
       | Name                | Frogs                                             |
       | Description         | x                                                 |
       | Record user names   | User's name will be logged and shown with answers |

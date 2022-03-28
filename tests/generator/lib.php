@@ -41,7 +41,7 @@ class mod_peerassess_generator extends testing_module_generator {
         $record = (object)(array)$record;
 
         if (!isset($record->anonymous)) {
-            $record->anonymous = peerassess_ANONYMOUS_YES;
+            $record->anonymous = PEERASSESS_ANONYMOUS_YES;
         }
         if (!isset($record->email_notification)) {
             $record->email_notification = 0;
@@ -102,8 +102,8 @@ class mod_peerassess_generator extends testing_module_generator {
             'id' => 0,
             'peerassess' => $peerassess->id,
             'template' => 0,
-            'name' => 'peerassess question item ' . $position,
-            'label' => 'peerassess label ' . $position,
+            'name' => 'Peerassess question item ' . $position,
+            'label' => 'Peerassess label ' . $position,
             'presentation' => $itemobj::MODE_COURSE,
             'typ' => 'info',
             'hasvalue' => 0,
@@ -180,8 +180,8 @@ class mod_peerassess_generator extends testing_module_generator {
             'id' => 0,
             'peerassess' => $peerassess->id,
             'template' => 0,
-            'name' => 'peerassess question item ' . $position,
-            'label' => 'peerassess label ' . $position,
+            'name' => 'Peerassess question item ' . $position,
+            'label' => 'Peerassess label ' . $position,
             'presentation' => '',
             'typ' => 'multichoice',
             'hasvalue' => 0,
@@ -197,12 +197,12 @@ class mod_peerassess_generator extends testing_module_generator {
             'values' => "a\nb\nc\nd\ne"
         );
 
-        $presentation = str_replace("\n", peerassess_MULTICHOICE_LINE_SEP, trim($record['values']));
+        $presentation = str_replace("\n", PEERASSESS_MULTICHOICE_LINE_SEP, trim($record['values']));
 
         if ($record['horizontal'] == 1 AND $record['subtype'] != 'd') {
-            $presentation .= peerassess_MULTICHOICE_ADJUST_SEP.'1';
+            $presentation .= PEERASSESS_MULTICHOICE_ADJUST_SEP.'1';
         }
-        $record['presentation'] = $record['subtype'].peerassess_MULTICHOICE_TYPE_SEP.$presentation;
+        $record['presentation'] = $record['subtype'].PEERASSESS_MULTICHOICE_TYPE_SEP.$presentation;
 
         $itemobj->set_data((object) $record);
         return $itemobj->save_item();
@@ -227,8 +227,8 @@ class mod_peerassess_generator extends testing_module_generator {
             'id' => 0,
             'peerassess' => $peerassess->id,
             'template' => 0,
-            'name' => 'peerassess question item ' . $position,
-            'label' => 'peerassess label ' . $position,
+            'name' => 'Peerassess question item ' . $position,
+            'label' => 'Peerassess label ' . $position,
             'presentation' => '',
             'typ' => 'multichoicerated',
             'hasvalue' => 0,
@@ -246,12 +246,12 @@ class mod_peerassess_generator extends testing_module_generator {
 
         $itemobj = new peerassess_item_multichoicerated();
         $presentation = $itemobj->prepare_presentation_values_save(trim($record['values']),
-            peerassess_MULTICHOICERATED_VALUE_SEP2, peerassess_MULTICHOICERATED_VALUE_SEP);
+            PEERASSESS_MULTICHOICERATED_VALUE_SEP2, PEERASSESS_MULTICHOICERATED_VALUE_SEP);
 
         if ($record['horizontal'] == 1 AND $record['subtype'] != 'd') {
-            $presentation .= peerassess_MULTICHOICERATED_ADJUST_SEP.'1';
+            $presentation .= PEERASSESS_MULTICHOICERATED_ADJUST_SEP.'1';
         }
-        $record['presentation'] = $record['subtype'].peerassess_MULTICHOICERATED_TYPE_SEP.$presentation;
+        $record['presentation'] = $record['subtype'].PEERASSESS_MULTICHOICERATED_TYPE_SEP.$presentation;
 
         $itemobj->set_data((object) $record);
         return $itemobj->save_item();
@@ -276,8 +276,8 @@ class mod_peerassess_generator extends testing_module_generator {
             'id' => 0,
             'peerassess' => $peerassess->id,
             'template' => 0,
-            'name' => 'peerassess question item ' . $position,
-            'label' => 'peerassess label ' . $position,
+            'name' => 'Peerassess question item ' . $position,
+            'label' => 'Peerassess label ' . $position,
             'presentation' => '',
             'typ' => 'numeric',
             'hasvalue' => 0,
@@ -321,8 +321,8 @@ class mod_peerassess_generator extends testing_module_generator {
             'id' => 0,
             'peerassess' => $peerassess->id,
             'template' => 0,
-            'name' => 'peerassess question item ' . $position,
-            'label' => 'peerassess label ' . $position,
+            'name' => 'Peerassess question item ' . $position,
+            'label' => 'Peerassess label ' . $position,
             'presentation' => '',
             'typ' => 'textarea',
             'hasvalue' => 0,
@@ -360,8 +360,8 @@ class mod_peerassess_generator extends testing_module_generator {
             'id' => 0,
             'peerassess' => $peerassess->id,
             'template' => 0,
-            'name' => 'peerassess question item ' . $position,
-            'label' => 'peerassess label ' . $position,
+            'name' => 'Peerassess question item ' . $position,
+            'label' => 'Peerassess label ' . $position,
             'presentation' => '',
             'typ' => 'textfield',
             'hasvalue' => 0,

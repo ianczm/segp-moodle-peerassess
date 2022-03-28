@@ -159,7 +159,7 @@ class lib_test extends \advanced_testcase {
             'userid' => $student->id,
             'timemodified' => time(),
             'random_response' => 0,
-            'anonymous_response' => peerassess_ANONYMOUS_NO,
+            'anonymous_response' => PEERASSESS_ANONYMOUS_NO,
             'courseid' => $course->id,
         ];
         $DB->insert_record('peerassess_completed', (object)$record);
@@ -185,7 +185,7 @@ class lib_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $peerassess = $this->getDataGenerator()->create_module('peerassess', ['course' => $course->id,
                 'timeopen' => $now - DAYSECS, 'timeclose' => $now + DAYSECS]);
-        $event = $this->create_action_event($course->id, $peerassess->id, peerassess_EVENT_TYPE_OPEN);
+        $event = $this->create_action_event($course->id, $peerassess->id, PEERASSESS_EVENT_TYPE_OPEN);
 
         $factory = new \core_calendar\action_factory();
         $actionevent = mod_peerassess_core_calendar_provide_event_action($event, $factory);
@@ -215,7 +215,7 @@ class lib_test extends \advanced_testcase {
 
         $peerassess = $this->getDataGenerator()->create_module('peerassess', ['course' => $course->id,
             'timeopen' => $now - DAYSECS, 'timeclose' => $now + DAYSECS]);
-        $event = $this->create_action_event($course->id, $peerassess->id, peerassess_EVENT_TYPE_OPEN);
+        $event = $this->create_action_event($course->id, $peerassess->id, PEERASSESS_EVENT_TYPE_OPEN);
         $factory = new \core_calendar\action_factory();
 
         $this->setUser($user2);
@@ -243,7 +243,7 @@ class lib_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $peerassess = $this->getDataGenerator()->create_module('peerassess', array('course' => $course->id,
                 'timeclose' => time() - DAYSECS));
-        $event = $this->create_action_event($course->id, $peerassess->id, peerassess_EVENT_TYPE_OPEN);
+        $event = $this->create_action_event($course->id, $peerassess->id, PEERASSESS_EVENT_TYPE_OPEN);
 
         $factory = new \core_calendar\action_factory();
         $actionevent = mod_peerassess_core_calendar_provide_event_action($event, $factory);
@@ -269,7 +269,7 @@ class lib_test extends \advanced_testcase {
 
         $peerassess = $this->getDataGenerator()->create_module('peerassess', array('course' => $course->id,
             'timeclose' => time() - DAYSECS));
-        $event = $this->create_action_event($course->id, $peerassess->id, peerassess_EVENT_TYPE_OPEN);
+        $event = $this->create_action_event($course->id, $peerassess->id, PEERASSESS_EVENT_TYPE_OPEN);
         $factory = new \core_calendar\action_factory();
         $this->setUser($user2);
 
@@ -296,7 +296,7 @@ class lib_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $peerassess = $this->getDataGenerator()->create_module('peerassess', ['course' => $course->id,
                 'timeopen' => time() + DAYSECS]);
-        $event = $this->create_action_event($course->id, $peerassess->id, peerassess_EVENT_TYPE_OPEN);
+        $event = $this->create_action_event($course->id, $peerassess->id, PEERASSESS_EVENT_TYPE_OPEN);
 
         $factory = new \core_calendar\action_factory();
         $actionevent = mod_peerassess_core_calendar_provide_event_action($event, $factory);
@@ -327,7 +327,7 @@ class lib_test extends \advanced_testcase {
 
         $peerassess = $this->getDataGenerator()->create_module('peerassess', ['course' => $course->id,
             'timeopen' => time() + DAYSECS]);
-        $event = $this->create_action_event($course->id, $peerassess->id, peerassess_EVENT_TYPE_OPEN);
+        $event = $this->create_action_event($course->id, $peerassess->id, PEERASSESS_EVENT_TYPE_OPEN);
 
         $factory = new \core_calendar\action_factory();
         $this->setUser($user2);
@@ -357,7 +357,7 @@ class lib_test extends \advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
         $peerassess = $this->getDataGenerator()->create_module('peerassess', ['course' => $course->id]);
-        $event = $this->create_action_event($course->id, $peerassess->id, peerassess_EVENT_TYPE_OPEN);
+        $event = $this->create_action_event($course->id, $peerassess->id, PEERASSESS_EVENT_TYPE_OPEN);
 
         $factory = new \core_calendar\action_factory();
         $actionevent = mod_peerassess_core_calendar_provide_event_action($event, $factory);
@@ -387,7 +387,7 @@ class lib_test extends \advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id, 'manual');
 
         $peerassess = $this->getDataGenerator()->create_module('peerassess', ['course' => $course->id]);
-        $event = $this->create_action_event($course->id, $peerassess->id, peerassess_EVENT_TYPE_OPEN);
+        $event = $this->create_action_event($course->id, $peerassess->id, PEERASSESS_EVENT_TYPE_OPEN);
 
         $factory = new \core_calendar\action_factory();
         $this->setUser($user2);
@@ -419,7 +419,7 @@ class lib_test extends \advanced_testcase {
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $course = $this->getDataGenerator()->create_course();
         $peerassess = $this->getDataGenerator()->create_module('peerassess', ['course' => $course->id]);
-        $event = $this->create_action_event($course->id, $peerassess->id, peerassess_EVENT_TYPE_OPEN);
+        $event = $this->create_action_event($course->id, $peerassess->id, PEERASSESS_EVENT_TYPE_OPEN);
         $cm = get_coursemodule_from_instance('peerassess', $peerassess->id);
         $context = \context_module::instance($cm->id);
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id, 'manual');
@@ -447,7 +447,7 @@ class lib_test extends \advanced_testcase {
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $course = $this->getDataGenerator()->create_course();
         $peerassess = $this->getDataGenerator()->create_module('peerassess', ['course' => $course->id]);
-        $event = $this->create_action_event($course->id, $peerassess->id, peerassess_EVENT_TYPE_OPEN);
+        $event = $this->create_action_event($course->id, $peerassess->id, PEERASSESS_EVENT_TYPE_OPEN);
         $cm = get_coursemodule_from_instance('peerassess', $peerassess->id);
         $context = \context_module::instance($cm->id);
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id, 'manual');
@@ -480,7 +480,7 @@ class lib_test extends \advanced_testcase {
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $course = $this->getDataGenerator()->create_course();
         $peerassess = $this->getDataGenerator()->create_module('peerassess', ['course' => $course->id]);
-        $event = $this->create_action_event($course->id, $peerassess->id, peerassess_EVENT_TYPE_OPEN);
+        $event = $this->create_action_event($course->id, $peerassess->id, PEERASSESS_EVENT_TYPE_OPEN);
         $cm = get_coursemodule_from_instance('peerassess', $peerassess->id);
         $context = \context_module::instance($cm->id);
 
@@ -491,7 +491,7 @@ class lib_test extends \advanced_testcase {
             'userid' => $user->id,
             'timemodified' => time(),
             'random_response' => 0,
-            'anonymous_response' => peerassess_ANONYMOUS_NO,
+            'anonymous_response' => PEERASSESS_ANONYMOUS_NO,
             'courseid' => 0,
         ];
         $DB->insert_record('peerassess_completed', (object) $record);
@@ -516,7 +516,7 @@ class lib_test extends \advanced_testcase {
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $course = $this->getDataGenerator()->create_course();
         $peerassess = $this->getDataGenerator()->create_module('peerassess', ['course' => $course->id]);
-        $event = $this->create_action_event($course->id, $peerassess->id, peerassess_EVENT_TYPE_OPEN);
+        $event = $this->create_action_event($course->id, $peerassess->id, PEERASSESS_EVENT_TYPE_OPEN);
         $cm = get_coursemodule_from_instance('peerassess', $peerassess->id);
         $context = \context_module::instance($cm->id);
 
@@ -527,7 +527,7 @@ class lib_test extends \advanced_testcase {
             'userid' => $user->id,
             'timemodified' => time(),
             'random_response' => 0,
-            'anonymous_response' => peerassess_ANONYMOUS_NO,
+            'anonymous_response' => PEERASSESS_ANONYMOUS_NO,
             'courseid' => 0,
         ];
         $DB->insert_record('peerassess_completed', (object) $record);
@@ -615,7 +615,7 @@ class lib_test extends \advanced_testcase {
      *
      * @param int $courseid The course id.
      * @param int $instanceid The peerassess id.
-     * @param string $eventtype The event type. eg. peerassess_EVENT_TYPE_OPEN.
+     * @param string $eventtype The event type. eg. PEERASSESS_EVENT_TYPE_OPEN.
      * @return bool|calendar_event
      */
     private function create_action_event($courseid, $instanceid, $eventtype) {
@@ -709,7 +709,7 @@ class lib_test extends \advanced_testcase {
     }
 
     /**
-     * A peerassess_EVENT_TYPE_OPEN should have a max timestart equal to the activity
+     * A PEERASSESS_EVENT_TYPE_OPEN should have a max timestart equal to the activity
      * close time.
      */
     public function test_get_valid_event_timestart_range_event_type_open() {
@@ -737,7 +737,7 @@ class lib_test extends \advanced_testcase {
             'userid' => 2,
             'modulename' => 'peerassess',
             'instance' => $peerassess->id,
-            'eventtype' => peerassess_EVENT_TYPE_OPEN,
+            'eventtype' => PEERASSESS_EVENT_TYPE_OPEN,
             'timestart' => $timeopen,
             'timeduration' => 86400,
             'visible' => 1
@@ -750,7 +750,7 @@ class lib_test extends \advanced_testcase {
     }
 
     /**
-     * A peerassess_EVENT_TYPE_OPEN should not have a max timestamp if the activity
+     * A PEERASSESS_EVENT_TYPE_OPEN should not have a max timestamp if the activity
      * doesn't have a close date.
      */
     public function test_get_valid_event_timestart_range_event_type_open_no_close() {
@@ -778,7 +778,7 @@ class lib_test extends \advanced_testcase {
             'userid' => 2,
             'modulename' => 'peerassess',
             'instance' => $peerassess->id,
-            'eventtype' => peerassess_EVENT_TYPE_OPEN,
+            'eventtype' => PEERASSESS_EVENT_TYPE_OPEN,
             'timestart' => $timeopen,
             'timeduration' => 86400,
             'visible' => 1
@@ -790,7 +790,7 @@ class lib_test extends \advanced_testcase {
     }
 
     /**
-     * A peerassess_EVENT_TYPE_CLOSE should have a min timestart equal to the activity
+     * A PEERASSESS_EVENT_TYPE_CLOSE should have a min timestart equal to the activity
      * open time.
      */
     public function test_get_valid_event_timestart_range_event_type_close() {
@@ -818,7 +818,7 @@ class lib_test extends \advanced_testcase {
             'userid' => 2,
             'modulename' => 'peerassess',
             'instance' => $peerassess->id,
-            'eventtype' => peerassess_EVENT_TYPE_CLOSE,
+            'eventtype' => PEERASSESS_EVENT_TYPE_CLOSE,
             'timestart' => $timeopen,
             'timeduration' => 86400,
             'visible' => 1
@@ -831,7 +831,7 @@ class lib_test extends \advanced_testcase {
     }
 
     /**
-     * A peerassess_EVENT_TYPE_CLOSE should not have a minimum timestamp if the activity
+     * A PEERASSESS_EVENT_TYPE_CLOSE should not have a minimum timestamp if the activity
      * doesn't have an open date.
      */
     public function test_get_valid_event_timestart_range_event_type_close_no_open() {
@@ -859,7 +859,7 @@ class lib_test extends \advanced_testcase {
             'userid' => 2,
             'modulename' => 'peerassess',
             'instance' => $peerassess->id,
-            'eventtype' => peerassess_EVENT_TYPE_CLOSE,
+            'eventtype' => PEERASSESS_EVENT_TYPE_CLOSE,
             'timestart' => $timeopen,
             'timeduration' => 86400,
             'visible' => 1
@@ -899,7 +899,7 @@ class lib_test extends \advanced_testcase {
             'userid' => 2,
             'modulename' => 'peerassess',
             'instance' => $peerassess->id,
-            'eventtype' => peerassess_EVENT_TYPE_OPEN . "SOMETHING ELSE",
+            'eventtype' => PEERASSESS_EVENT_TYPE_OPEN . "SOMETHING ELSE",
             'timestart' => 1,
             'timeduration' => 86400,
             'visible' => 1
@@ -913,7 +913,7 @@ class lib_test extends \advanced_testcase {
     }
 
     /**
-     * A peerassess_EVENT_TYPE_OPEN event should update the timeopen property of
+     * A PEERASSESS_EVENT_TYPE_OPEN event should update the timeopen property of
      * the peerassess activity.
      */
     public function test_mod_peerassess_core_calendar_event_timestart_updated_open_event() {
@@ -945,7 +945,7 @@ class lib_test extends \advanced_testcase {
             'userid' => 2,
             'modulename' => 'peerassess',
             'instance' => $peerassess->id,
-            'eventtype' => peerassess_EVENT_TYPE_OPEN,
+            'eventtype' => PEERASSESS_EVENT_TYPE_OPEN,
             'timestart' => $newtimeopen,
             'timeduration' => 86400,
             'visible' => 1
@@ -963,7 +963,7 @@ class lib_test extends \advanced_testcase {
     }
 
     /**
-     * A peerassess_EVENT_TYPE_CLOSE event should update the timeclose property of
+     * A PEERASSESS_EVENT_TYPE_CLOSE event should update the timeclose property of
      * the peerassess activity.
      */
     public function test_mod_peerassess_core_calendar_event_timestart_updated_close_event() {
@@ -995,7 +995,7 @@ class lib_test extends \advanced_testcase {
             'userid' => 2,
             'modulename' => 'peerassess',
             'instance' => $peerassess->id,
-            'eventtype' => peerassess_EVENT_TYPE_CLOSE,
+            'eventtype' => PEERASSESS_EVENT_TYPE_CLOSE,
             'timestart' => $newtimeclose,
             'timeduration' => 86400,
             'visible' => 1
@@ -1053,7 +1053,7 @@ class lib_test extends \advanced_testcase {
             'userid' => $user->id,
             'modulename' => 'peerassess',
             'instance' => $peerassess->id,
-            'eventtype' => peerassess_EVENT_TYPE_CLOSE,
+            'eventtype' => PEERASSESS_EVENT_TYPE_CLOSE,
             'timestart' => $newtimeclose,
             'timeduration' => 86400,
             'visible' => 1
@@ -1112,7 +1112,7 @@ class lib_test extends \advanced_testcase {
             'userid' => $user->id,
             'modulename' => 'peerassess',
             'instance' => $peerassess->id,
-            'eventtype' => peerassess_EVENT_TYPE_CLOSE,
+            'eventtype' => PEERASSESS_EVENT_TYPE_CLOSE,
             'timestart' => $newtimeclose,
             'timeduration' => 86400,
             'visible' => 1
