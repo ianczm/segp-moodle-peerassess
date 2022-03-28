@@ -196,6 +196,7 @@ $string['multichoicetype'] = 'Multiple choice type';
 $string['multichoice_values'] = 'Multiple choice values';
 $string['multiplesubmit'] = 'Allow multiple submissions';
 $string['multiplesubmit_help'] = 'If enabled for anonymous surveys, users can submit peerassess an unlimited number of times.';
+$string['member_in_current_group'] = 'Members in current group';
 $string['name'] = 'Name';
 $string['name_required'] = 'Name required';
 $string['nameandlabelformat'] = '({$a->label}) {$a->name}';

@@ -39,7 +39,6 @@ $courseid = optional_param('courseid', null, PARAM_INT);
 ////////////////////////////////////////////////////////
 
 list($course, $cm) = get_course_and_cm_from_cmid($id, 'peerassess');
-
 $baseurl = new moodle_url('/mod/peerassess/show_entries.php', array('id' => $cm->id));
 $PAGE->set_url(new moodle_url($baseurl, array('userid' => $userid, 'showcompleted' => $showcompleted,
         'delete' => $deleteid)));
@@ -58,10 +57,10 @@ if ($deleteid) {
     $peerassessstructure = new mod_peerassess_completion($peerassess, $cm, 0, true, $deleteid);
     peerassess_delete_completed($peerassessstructure->get_completed(), $peerassess, $cm);
     redirect($baseurl);
-} else if ($showcompleted || $userid) {
+} /*else if ($showcompleted || $userid) {
     // Viewing individual response.
-    $peerassessstructure = new mod_peerassess_completion($peerassess, $cm, 0, true, $showcompleted, $userid);
-} else {
+$peerassessstructure = new mod_peerassess_completion($peerassess, $cm, 0, true, $showcompleted, $userid);
+} */else {
     // Viewing list of reponses.
     $peerassessstructure = new mod_peerassess_structure($peerassess, $cm, $courseid);
 }
@@ -137,7 +136,7 @@ if ($userid || $showcompleted) {
     echo $OUTPUT->render_from_template('core/columns-1to1to1', $responsenavigation);
     echo html_writer::end_div();
 
-} else {
+}else {
     // Print the list of responses.
     $courseselectform->display();
 
@@ -160,4 +159,3 @@ if ($userid || $showcompleted) {
 
 // Finish the page.
 echo $OUTPUT->footer();
-
