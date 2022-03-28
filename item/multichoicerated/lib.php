@@ -17,16 +17,16 @@
 defined('MOODLE_INTERNAL') OR die('not allowed');
 require_once($CFG->dirroot.'/mod/peerassess/item/peerassess_item_class.php');
 
-define('peerassess_RADIORATED_ADJUST_SEP', '<<<<<');
+define('PEERASSESS_RADIORATED_ADJUST_SEP', '<<<<<');
 
-define('peerassess_MULTICHOICERATED_MAXCOUNT', 10); //count of possible items
-define('peerassess_MULTICHOICERATED_VALUE_SEP', '####');
-define('peerassess_MULTICHOICERATED_VALUE_SEP2', '/');
-define('peerassess_MULTICHOICERATED_TYPE_SEP', '>>>>>');
-define('peerassess_MULTICHOICERATED_LINE_SEP', '|');
-define('peerassess_MULTICHOICERATED_ADJUST_SEP', '<<<<<');
-define('peerassess_MULTICHOICERATED_IGNOREEMPTY', 'i');
-define('peerassess_MULTICHOICERATED_HIDENOSELECT', 'h');
+define('PEERASSESS_MULTICHOICERATED_MAXCOUNT', 10); //count of possible items
+define('PEERASSESS_MULTICHOICERATED_VALUE_SEP', '####');
+define('PEERASSESS_MULTICHOICERATED_VALUE_SEP2', '/');
+define('PEERASSESS_MULTICHOICERATED_TYPE_SEP', '>>>>>');
+define('PEERASSESS_MULTICHOICERATED_LINE_SEP', '|');
+define('PEERASSESS_MULTICHOICERATED_ADJUST_SEP', '<<<<<');
+define('PEERASSESS_MULTICHOICERATED_IGNOREEMPTY', 'i');
+define('PEERASSESS_MULTICHOICERATED_HIDENOSELECT', 'h');
 
 class peerassess_item_multichoicerated extends peerassess_item_base {
     protected $type = "multichoicerated";
@@ -116,7 +116,7 @@ class peerassess_item_multichoicerated extends peerassess_item_base {
         //die moeglichen Antworten extrahieren
         $info = $this->get_info($item);
         $lines = null;
-        $lines = explode (peerassess_MULTICHOICERATED_LINE_SEP, $info->presentation);
+        $lines = explode (PEERASSESS_MULTICHOICERATED_LINE_SEP, $info->presentation);
         if (!is_array($lines)) {
             return null;
         }
@@ -131,7 +131,7 @@ class peerassess_item_multichoicerated extends peerassess_item_base {
         $analysed_answer = array();
         $sizeoflines = count($lines);
         for ($i = 1; $i <= $sizeoflines; $i++) {
-            $item_values = explode(peerassess_MULTICHOICERATED_VALUE_SEP, $lines[$i-1]);
+            $item_values = explode(PEERASSESS_MULTICHOICERATED_VALUE_SEP, $lines[$i-1]);
             $ans = new stdClass();
             $ans->answertext = $item_values[1];
             $avg = 0.0;
@@ -162,11 +162,11 @@ class peerassess_item_multichoicerated extends peerassess_item_base {
 
         $info = $this->get_info($item);
 
-        $presentation = explode (peerassess_MULTICHOICERATED_LINE_SEP, $info->presentation);
+        $presentation = explode (PEERASSESS_MULTICHOICERATED_LINE_SEP, $info->presentation);
         $index = 1;
         foreach ($presentation as $pres) {
             if ($value->value == $index) {
-                $item_label = explode(peerassess_MULTICHOICERATED_VALUE_SEP, $pres);
+                $item_label = explode(PEERASSESS_MULTICHOICERATED_VALUE_SEP, $pres);
                 $printval = format_string($item_label[1]);
                 break;
             }
@@ -275,10 +275,10 @@ class peerassess_item_multichoicerated extends peerassess_item_base {
      */
     protected function get_options($item) {
         $info = $this->get_info($item);
-        $lines = explode(peerassess_MULTICHOICERATED_LINE_SEP, $info->presentation);
+        $lines = explode(PEERASSESS_MULTICHOICERATED_LINE_SEP, $info->presentation);
         $options = array();
         foreach ($lines as $idx => $line) {
-            list($weight, $optiontext) = explode(peerassess_MULTICHOICERATED_VALUE_SEP, $line);
+            list($weight, $optiontext) = explode(PEERASSESS_MULTICHOICERATED_VALUE_SEP, $line);
             $a = new stdclass();
             $a->weight = $weight;
             $a->name = format_text($optiontext, FORMAT_HTML, array('noclean' => true, 'para' => false));
@@ -347,14 +347,14 @@ class peerassess_item_multichoicerated extends peerassess_item_base {
         if (is_array($dbvalue)) {
             $dbvalues = $dbvalue;
         } else {
-            $dbvalues = explode(peerassess_MULTICHOICERATED_LINE_SEP, $dbvalue);
+            $dbvalues = explode(PEERASSESS_MULTICHOICERATED_LINE_SEP, $dbvalue);
         }
 
         $info = $this->get_info($item);
-        $presentation = explode (peerassess_MULTICHOICERATED_LINE_SEP, $info->presentation);
+        $presentation = explode (PEERASSESS_MULTICHOICERATED_LINE_SEP, $info->presentation);
         $index = 1;
         foreach ($presentation as $pres) {
-            $presvalues = explode(peerassess_MULTICHOICERATED_VALUE_SEP, $pres);
+            $presvalues = explode(PEERASSESS_MULTICHOICERATED_VALUE_SEP, $pres);
 
             foreach ($dbvalues as $dbval) {
                 if ($dbval == $index AND trim($presvalues[1]) == $dependvalue) {
@@ -376,7 +376,7 @@ class peerassess_item_multichoicerated extends peerassess_item_base {
         $info->presentation = '';
         $info->horizontal = false;
 
-        $parts = explode(peerassess_MULTICHOICERATED_TYPE_SEP, $item->presentation);
+        $parts = explode(PEERASSESS_MULTICHOICERATED_TYPE_SEP, $item->presentation);
         @list($info->subtype, $info->presentation) = $parts;
 
         if (!isset($info->subtype)) {
@@ -384,7 +384,7 @@ class peerassess_item_multichoicerated extends peerassess_item_base {
         }
 
         if ($info->subtype != 'd') {
-            $parts = explode(peerassess_MULTICHOICERATED_ADJUST_SEP, $info->presentation);
+            $parts = explode(PEERASSESS_MULTICHOICERATED_ADJUST_SEP, $info->presentation);
             @list($info->presentation, $info->horizontal) = $parts;
 
             if (isset($info->horizontal) AND $info->horizontal == 1) {
@@ -395,8 +395,8 @@ class peerassess_item_multichoicerated extends peerassess_item_base {
         }
 
         $info->values = $this->prepare_presentation_values_print($info->presentation,
-                                                    peerassess_MULTICHOICERATED_VALUE_SEP,
-                                                    peerassess_MULTICHOICERATED_VALUE_SEP2);
+                                                    PEERASSESS_MULTICHOICERATED_VALUE_SEP,
+                                                    PEERASSESS_MULTICHOICERATED_VALUE_SEP2);
         return $info;
     }
 
@@ -427,7 +427,7 @@ class peerassess_item_multichoicerated extends peerassess_item_base {
 
     public function prepare_presentation_values_print($valuestring, $valuesep1, $valuesep2) {
         $valuestring = str_replace(array("\n","\r"), "", $valuestring);
-        return $this->prepare_presentation_values(peerassess_MULTICHOICERATED_LINE_SEP,
+        return $this->prepare_presentation_values(PEERASSESS_MULTICHOICERATED_LINE_SEP,
                                                   "\n",
                                                   $valuestring,
                                                   $valuesep1,
@@ -438,35 +438,35 @@ class peerassess_item_multichoicerated extends peerassess_item_base {
         $valuestring = str_replace("\r", "\n", $valuestring);
         $valuestring = str_replace("\n\n", "\n", $valuestring);
         return $this->prepare_presentation_values("\n",
-                        peerassess_MULTICHOICERATED_LINE_SEP,
+                        PEERASSESS_MULTICHOICERATED_LINE_SEP,
                         $valuestring,
                         $valuesep1,
                         $valuesep2);
     }
 
     public function set_ignoreempty($item, $ignoreempty=true) {
-        $item->options = str_replace(peerassess_MULTICHOICERATED_IGNOREEMPTY, '', $item->options);
+        $item->options = str_replace(PEERASSESS_MULTICHOICERATED_IGNOREEMPTY, '', $item->options);
         if ($ignoreempty) {
-            $item->options .= peerassess_MULTICHOICERATED_IGNOREEMPTY;
+            $item->options .= PEERASSESS_MULTICHOICERATED_IGNOREEMPTY;
         }
     }
 
     public function ignoreempty($item) {
-        if (strstr($item->options, peerassess_MULTICHOICERATED_IGNOREEMPTY)) {
+        if (strstr($item->options, PEERASSESS_MULTICHOICERATED_IGNOREEMPTY)) {
             return true;
         }
         return false;
     }
 
     public function set_hidenoselect($item, $hidenoselect=true) {
-        $item->options = str_replace(peerassess_MULTICHOICERATED_HIDENOSELECT, '', $item->options);
+        $item->options = str_replace(PEERASSESS_MULTICHOICERATED_HIDENOSELECT, '', $item->options);
         if ($hidenoselect) {
-            $item->options .= peerassess_MULTICHOICERATED_HIDENOSELECT;
+            $item->options .= PEERASSESS_MULTICHOICERATED_HIDENOSELECT;
         }
     }
 
     public function hidenoselect($item) {
-        if (strstr($item->options, peerassess_MULTICHOICERATED_HIDENOSELECT)) {
+        if (strstr($item->options, PEERASSESS_MULTICHOICERATED_HIDENOSELECT)) {
             return true;
         }
         return false;

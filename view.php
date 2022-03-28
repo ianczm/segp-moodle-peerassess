@@ -112,6 +112,11 @@ if (has_capability('mod/peerassess:edititems', $context)) {
         echo $OUTPUT->heading(get_string("page_after_submit", "peerassess"), 3);
         echo $OUTPUT->box($pageaftersubmit, 'generalbox peerassess_after_submit');
     }
+
+    echo $OUTPUT->box_start('generalbox boxaligncenter');
+    $releasegradesurl = new moodle_url('/mod/peerassess/release_grades.php', ['id' => $cm->id]);
+    echo html_writer::div(html_writer::link($releasegradesurl, get_string("releaseallgradesforallgroups", 'peerassess'), array('class' => 'btn btn-secondary')));
+    echo $OUTPUT->box_end();
 }
 
 if (!has_capability('mod/peerassess:viewreports', $context) &&
@@ -134,7 +139,7 @@ if (has_capability('mod/peerassess:mapcourse', $context) && $peerassess->course 
 if ($peerassesscompletion->can_complete()) {
     echo $OUTPUT->box_start('generalbox boxaligncenter');
     if (!$peerassesscompletion->is_open()) {
-        // peerassess is not yet open or is already closed.
+        // Peerassess is not yet open or is already closed.
         echo $OUTPUT->notification(get_string('peerassess_is_not_open', 'peerassess'));
         echo $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
     } else if ($peerassesscompletion->can_submit()) {
@@ -149,7 +154,7 @@ if ($peerassesscompletion->can_complete()) {
         }
         echo html_writer::div(html_writer::link($completeurl, $label, array('class' => 'btn btn-secondary')), 'complete-peerassess');
     } else {
-        // peerassess was already submitted.
+        // Peerassess was already submitted.
         echo $OUTPUT->notification(get_string('this_peerassess_is_already_submitted', 'peerassess'));
         $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
     }

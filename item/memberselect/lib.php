@@ -17,18 +17,18 @@
 defined('MOODLE_INTERNAL') OR die('not allowed');
 require_once($CFG->dirroot.'/mod/peerassess/item/peerassess_item_class.php');
 
-define('PEERASSESS_MULTICHOICE_TYPE_SEP', '>>>>>');
-define('PEERASSESS_MULTICHOICE_LINE_SEP', '|');
-define('PEERASSESS_MULTICHOICE_ADJUST_SEP', '<<<<<');
-define('PEERASSESS_MULTICHOICE_IGNOREEMPTY', 'i');
-define('PEERASSESS_MULTICHOICE_HIDENOSELECT', 'h');
+define('PEERASSESS_MEMBERSELECT_TYPE_SEP', '>>>>>');
+define('PEERASSESS_MEMBERSELECT_LINE_SEP', '|');
+define('PEERASSESS_MEMBERSELECT_ADJUST_SEP', '<<<<<');
+define('PEERASSESS_MEMBERSELECT_IGNOREEMPTY', 'i');
+define('PEERASSESS_MEMBERSELECT_HIDENOSELECT', 'h');
 
-class peerassess_item_multichoice extends peerassess_item_base {
-    protected $type = "multichoice";
+class peerassess_item_memberselect extends peerassess_item_base {
+    protected $type = "memberselect";
 
     public function build_editform($item, $peerassess, $cm) {
         global $DB, $CFG;
-        require_once('multichoice_form.php');
+        require_once('memberselect_form.php');
 
         //get the lastposition number of the peerassess_items
         $position = $item->position;
@@ -65,7 +65,7 @@ class peerassess_item_multichoice extends peerassess_item_base {
                             'position' => $position,
                             'info' => $info);
 
-        $this->item_form = new peerassess_multichoice_form('edit_item.php', $customdata);
+        $this->item_form = new peerassess_memberselect_form('edit_item.php', $customdata);
     }
 
     public function save_item() {
@@ -115,7 +115,7 @@ class peerassess_item_multichoice extends peerassess_item_base {
 
         //get the possible answers
         $answers = null;
-        $answers = explode (PEERASSESS_MULTICHOICE_LINE_SEP, $info->presentation);
+        $answers = explode (PEERASSESS_MEMBERSELECT_LINE_SEP, $info->presentation);
         if (!is_array($answers)) {
             return null;
         }
@@ -136,7 +136,7 @@ class peerassess_item_multichoice extends peerassess_item_base {
                 $ans->answercount = 0;
                 foreach ($values as $value) {
                     //ist die Antwort gleich dem index der Antworten + 1?
-                    $vallist = explode(PEERASSESS_MULTICHOICE_LINE_SEP, $value->value);
+                    $vallist = explode(PEERASSESS_MEMBERSELECT_LINE_SEP, $value->value);
                     foreach ($vallist as $val) {
                         if ($val == $i) {
                             $ans->answercount++;
@@ -175,10 +175,10 @@ class peerassess_item_multichoice extends peerassess_item_base {
             return $printval;
         }
 
-        $presentation = explode (PEERASSESS_MULTICHOICE_LINE_SEP, $info->presentation);
+        $presentation = explode (PEERASSESS_MEMBERSELECT_LINE_SEP, $info->presentation);
 
         if ($info->subtype == 'c') {
-            $vallist = array_values(explode (PEERASSESS_MULTICHOICE_LINE_SEP, $value->value));
+            $vallist = array_values(explode (PEERASSESS_MEMBERSELECT_LINE_SEP, $value->value));
             $sizeofvallist = count($vallist);
             $sizeofpresentation = count($presentation);
             for ($i = 0; $i < $sizeofvallist; $i++) {
@@ -282,13 +282,13 @@ class peerassess_item_multichoice extends peerassess_item_base {
     }
 
     /**
-     * Options for the multichoice element
+     * Options for the memberselect element
      * @param stdClass $item
      * @return array
      */
     protected function get_options($item) {
         $info = $this->get_info($item);
-        $presentation = explode (PEERASSESS_MULTICHOICE_LINE_SEP, $info->presentation);
+        $presentation = explode (PEERASSESS_MEMBERSELECT_LINE_SEP, $info->presentation);
         $options = array();
         foreach ($presentation as $idx => $optiontext) {
             $options[$idx + 1] = format_text($optiontext, FORMAT_HTML, array('noclean' => true, 'para' => false));
@@ -310,11 +310,39 @@ class peerassess_item_multichoice extends peerassess_item_base {
      * @param mod_peerassess_complete_form $form
      */
     public function complete_form_element($item, $form) {
+        global $USER, $COURSE, $DB;
+
         $info = $this->get_info($item);
         $name = $this->get_display_name($item);
-        $class = 'multichoice-' . $info->subtype;
+        $class = 'memberselect-' . $info->subtype;
         $inputname = $item->typ . '_' . $item->id;
-        $options = $this->get_options($item);
+
+        // Get course group via SQL
+        $sql = "SELECT u.id, u.firstname, u.lastname
+                FROM {user} as u, {groups_members} as gm
+                WHERE gm.groupid = (
+                    SELECT gm.groupid
+                    FROM {user} as u, {groups_members} as gm
+                    WHERE u.id = ?
+                    AND gm.userid = u.id
+                    )
+                AND gm.userid = u.id
+                AND gm.userid != ?;";
+        $members = $DB->get_records_sql($sql, Array($USER->id, $USER->id));
+        
+        // Change returned object type into array
+        $members = array_values((array) $members);
+
+        // Convert elements of members into strings and append to array
+        $memberslist = [];
+        foreach ($members as $member) {
+            $fullname = $member->firstname . '&nbsp' . $member->lastname;
+            array_push($memberslist, $fullname);
+        }
+
+        // Empty line is to prevent default selection in user view
+        $options = array_merge([''], $memberslist);
+
         $separator = !empty($info->horizontal) ? ' ' : '<br>';
         $tmpvalue = $form->get_item_value($item) ?? 0; // Used for element defaults, so must be a valid value (not null).
 
@@ -325,20 +353,20 @@ class peerassess_item_multichoice extends peerassess_item_base {
         if ($info->subtype === 'd' || ($info->subtype === 'r' && $form->is_frozen())) {
             // Display as a dropdown in the complete form or a single value in the response view.
             $element = $form->add_form_element($item,
-                    ['select', $inputname, $name, array(0 => '') + $options, array('class' => $class)],
+                    ['select', $inputname, $name, $options, array('class' => $class)],
                     false, false);
             $form->set_element_default($inputname, $tmpvalue);
             $form->set_element_type($inputname, PARAM_INT);
         } else if ($info->subtype === 'c' && $form->is_frozen()) {
             // Display list of checkbox values in the response view.
             $objs = [];
-            foreach (explode(PEERASSESS_MULTICHOICE_LINE_SEP, $form->get_item_value($item)) as $v) {
+            foreach (explode(PEERASSESS_MEMBERSELECT_LINE_SEP, $form->get_item_value($item)) as $v) {
                 $objs[] = ['static', $inputname."[$v]", '', isset($options[$v]) ? $options[$v] : ''];
             }
             $element = $form->add_form_group_element($item, 'group_'.$inputname, $name, $objs, $separator, $class);
         } else {
             // Display group or radio or checkbox elements.
-            $class .= ' multichoice-' . ($info->horizontal ? 'horizontal' : 'vertical');
+            $class .= ' memberselect-' . ($info->horizontal ? 'horizontal' : 'vertical');
             $objs = [];
             if ($info->subtype === 'c') {
                 // Checkboxes.
@@ -352,7 +380,7 @@ class peerassess_item_multichoice extends peerassess_item_base {
                 $objs[] = ['static', '', '', html_writer::span('', '', ['id' => 'peerassess_item_' . $item->id])];
                 $element = $form->add_form_group_element($item, 'group_'.$inputname, $name, $objs, $separator, $class);
                 if ($tmpvalue) {
-                    foreach (explode(PEERASSESS_MULTICHOICE_LINE_SEP, $tmpvalue) as $v) {
+                    foreach (explode(PEERASSESS_MEMBERSELECT_LINE_SEP, $tmpvalue) as $v) {
                         $form->set_element_default($inputname.'['.$v.']', $v);
                     }
                 }
@@ -390,11 +418,11 @@ class peerassess_item_multichoice extends peerassess_item_base {
      * @return string
      */
     public function create_value($value) {
-        // Could be an array (multichoice checkbox) or single value (multichoice radio or dropdown).
+        // Could be an array (memberselect checkbox) or single value (memberselect radio or dropdown).
         $value = is_array($value) ? $value : [$value];
 
         $value = array_unique(array_filter($value));
-        return join(PEERASSESS_MULTICHOICE_LINE_SEP, $value);
+        return join(PEERASSESS_MEMBERSELECT_LINE_SEP, $value);
     }
 
     /**
@@ -409,11 +437,11 @@ class peerassess_item_multichoice extends peerassess_item_base {
         if (is_array($dbvalue)) {
             $dbvalues = $dbvalue;
         } else {
-            $dbvalues = explode(PEERASSESS_MULTICHOICE_LINE_SEP, $dbvalue);
+            $dbvalues = explode(PEERASSESS_MEMBERSELECT_LINE_SEP, $dbvalue);
         }
 
         $info = $this->get_info($item);
-        $presentation = explode (PEERASSESS_MULTICHOICE_LINE_SEP, $info->presentation);
+        $presentation = explode (PEERASSESS_MEMBERSELECT_LINE_SEP, $info->presentation);
         $index = 1;
         foreach ($presentation as $pres) {
             foreach ($dbvalues as $dbval) {
@@ -430,20 +458,20 @@ class peerassess_item_multichoice extends peerassess_item_base {
         $presentation = empty($item->presentation) ? '' : $item->presentation;
 
         $info = new stdClass();
-        //check the subtype of the multichoice
+        //check the subtype of the memberselect
         //it can be check(c), radio(r) or dropdown(d)
         $info->subtype = '';
         $info->presentation = '';
         $info->horizontal = false;
 
-        $parts = explode(PEERASSESS_MULTICHOICE_TYPE_SEP, $item->presentation);
+        $parts = explode(PEERASSESS_MEMBERSELECT_TYPE_SEP, $item->presentation);
         @list($info->subtype, $info->presentation) = $parts;
         if (!isset($info->subtype)) {
             $info->subtype = 'r';
         }
 
         if ($info->subtype != 'd') {
-            $parts = explode(PEERASSESS_MULTICHOICE_ADJUST_SEP, $info->presentation);
+            $parts = explode(PEERASSESS_MEMBERSELECT_ADJUST_SEP, $info->presentation);
             @list($info->presentation, $info->horizontal) = $parts;
             if (isset($info->horizontal) AND $info->horizontal == 1) {
                 $info->horizontal = true;
@@ -455,28 +483,28 @@ class peerassess_item_multichoice extends peerassess_item_base {
     }
 
     public function set_ignoreempty($item, $ignoreempty=true) {
-        $item->options = str_replace(PEERASSESS_MULTICHOICE_IGNOREEMPTY, '', $item->options);
+        $item->options = str_replace(PEERASSESS_MEMBERSELECT_IGNOREEMPTY, '', $item->options);
         if ($ignoreempty) {
-            $item->options .= PEERASSESS_MULTICHOICE_IGNOREEMPTY;
+            $item->options .= PEERASSESS_MEMBERSELECT_IGNOREEMPTY;
         }
     }
 
     public function ignoreempty($item) {
-        if (strstr($item->options, PEERASSESS_MULTICHOICE_IGNOREEMPTY)) {
+        if (strstr($item->options, PEERASSESS_MEMBERSELECT_IGNOREEMPTY)) {
             return true;
         }
         return false;
     }
 
     public function set_hidenoselect($item, $hidenoselect=true) {
-        $item->options = str_replace(PEERASSESS_MULTICHOICE_HIDENOSELECT, '', $item->options);
+        $item->options = str_replace(PEERASSESS_MEMBERSELECT_HIDENOSELECT, '', $item->options);
         if ($hidenoselect) {
-            $item->options .= PEERASSESS_MULTICHOICE_HIDENOSELECT;
+            $item->options .= PEERASSESS_MEMBERSELECT_HIDENOSELECT;
         }
     }
 
     public function hidenoselect($item) {
-        if (strstr($item->options, PEERASSESS_MULTICHOICE_HIDENOSELECT)) {
+        if (strstr($item->options, PEERASSESS_MEMBERSELECT_HIDENOSELECT)) {
             return true;
         }
         return false;

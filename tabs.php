@@ -71,12 +71,17 @@ if (has_capability('mod/peerassess:viewreports', $context)) {
     }
     $row[] = new tabobject('analysis', $analysisurl->out(), get_string('analysis', 'peerassess'));
 
+    $breakdownurl = new moodle_url('/mod/peerassess/breakdown_per_group.php', $urlparams);
+    $row[] = new tabobject('breakdown_per_group',
+                            $breakdownurl->out(),
+                            get_string('breakdown_per_group', 'peerassess'));
+
     $reporturl = new moodle_url('/mod/peerassess/show_entries.php', $urlparams);
     $row[] = new tabobject('showentries',
                             $reporturl->out(),
                             get_string('show_entries', 'peerassess'));
 
-    if ($peerassess->anonymous == peerassess_ANONYMOUS_NO AND $peerassess->course != SITEID) {
+    if ($peerassess->anonymous == PEERASSESS_ANONYMOUS_NO AND $peerassess->course != SITEID) {
         $nonrespondenturl = new moodle_url('/mod/peerassess/show_nonrespondents.php', $urlparams);
         $row[] = new tabobject('nonrespondents',
                                 $nonrespondenturl->out(),

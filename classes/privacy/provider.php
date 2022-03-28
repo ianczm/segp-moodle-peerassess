@@ -190,7 +190,7 @@ class provider implements
             if (!isset($data->submissions[$id])) {
                 $data->submissions[$id] = [
                     'inprogress' => transform::yesno($record->istmp),
-                    'anonymousresponse' => transform::yesno($record->anonymousresponse == peerassess_ANONYMOUS_YES),
+                    'anonymousresponse' => transform::yesno($record->anonymousresponse == PEERASSESS_ANONYMOUS_YES),
                     'timemodified' => transform::datetime($record->timemodified),
                     'answers' => []
                 ];

@@ -1,5 +1,5 @@
 @mod @mod_peerassess
-Feature: peerassess with no calendar capabilites
+Feature: Peerassess with no calendar capabilites
   In order to allow work effectively
   As a teacher
   I need to be able to create peerassesss even when I cannot edit calendar events

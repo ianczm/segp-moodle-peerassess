@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * peerassess external functions and service definitions.
+ * Peerassess external functions and service definitions.
  *
  * @package    mod_peerassess
  * @category   external

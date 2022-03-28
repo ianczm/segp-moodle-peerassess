@@ -188,9 +188,9 @@ class behat_mod_peerassess extends behat_base {
      */
     protected function compare_exports($expected, $actual) {
         $dataexpected = xmlize($expected, 1, 'UTF-8');
-        $dataexpected = $dataexpected['peerassess']['#']['ITEMS'][0]['#']['ITEM'];
+        $dataexpected = $dataexpected['PEERASSESS']['#']['ITEMS'][0]['#']['ITEM'];
         $dataactual = xmlize($actual, 1, 'UTF-8');
-        $dataactual = $dataactual['peerassess']['#']['ITEMS'][0]['#']['ITEM'];
+        $dataactual = $dataactual['PEERASSESS']['#']['ITEMS'][0]['#']['ITEM'];
 
         if (count($dataexpected) != count($dataactual)) {
             throw new ExpectationException('Expected ' . count($dataexpected) .

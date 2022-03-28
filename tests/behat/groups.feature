@@ -1,5 +1,5 @@
 @mod @mod_peerassess
-Feature: peerassesss in courses with groups
+Feature: Peerassesss in courses with groups
   In order to collect peerassesss per group
   As an teacher
   I need to be able to filter peerassess replies by groups
