@@ -88,6 +88,9 @@ require('tabs.php');
 
 // Show description.
 echo $OUTPUT->box_start('generalbox peerassess_description');
+add(get_string('show_nonrespondents', 'feedback'),
+new moodle_url('/mod/feedback/show_nonrespondents.php',
+                array('id' => $PAGE->cm->id)));
 $options = (object)array('noclean' => true);
 echo format_module_intro('peerassess', $peerassess, $cm->id);
 echo $OUTPUT->box_end();
