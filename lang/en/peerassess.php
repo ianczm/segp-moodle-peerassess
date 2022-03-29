@@ -179,6 +179,7 @@ $string['maximal'] = 'Maximum';
 $string['messageprovider:message'] = 'Peerassess reminder';
 $string['messageprovider:grade_released'] = 'Final grade published';
 $string['messageprovider:submission'] = 'Peerassess notifications';
+$string['members_in_current_group'] = 'Members in current group ({$a})';
 $string['mode'] = 'Mode';
 $string['modulename'] = 'Peerassess';
 $string['modulename_help'] = 'The peerassess activity enables a teacher to create a custom survey for collecting peerassess from participants using a variety of question types including multiple choice, yes/no or text input.
