@@ -143,11 +143,30 @@ class mod_peerassess_complete_form extends moodleform {
         $hasnextpage = $gopage < count($pages) - 1; // Until we complete this page we can not trust get_next_page().
         $hasprevpage = $gopage && ($this->structure->get_previous_page($gopage, false) !== null);
 
+        global $DB, $USER;
+
         // Add elements.
+        // [!] Repeated for the number of students found in group
+
+        // Number of students acquired through SQL
+        // $sql = "SELECT COUNT(u.id) as membercount
+        //         FROM {user} as u, {groups_members} as gm
+        //         WHERE gm.groupid = (
+        //             SELECT gm.groupid
+        //             FROM {user} as u, {groups_members} as gm
+        //             WHERE u.id = ?
+        //             AND gm.userid = u.id
+        //             )
+        //         AND gm.userid = u.id
+        //         AND gm.userid != ?;";
+        // $membercount = $DB->get_record_sql($sql, Array($USER->id, $USER->id))->membercount;
+
+        // for ($i = 0; $i < $membercount; $i++) {
         foreach ($pageitems as $item) {
             $itemobj = peerassess_get_item_class($item->typ);
             $itemobj->complete_form_element($item, $this);
         }
+        // }
 
         // Remove invalid buttons (for example, no "previous page" if we are on the first page).
         if (!$hasprevpage) {

@@ -318,7 +318,7 @@ class peerassess_item_memberselect extends peerassess_item_base {
         $inputname = $item->typ . '_' . $item->id;
 
         // Get course group via SQL
-        $sql = "SELECT u.id, u.firstname, u.lastname
+        $sql = "SELECT u.id, CONCAT(u.firstname, ' ', u.lastname)
                 FROM {user} as u, {groups_members} as gm
                 WHERE gm.groupid = (
                     SELECT gm.groupid
@@ -328,20 +328,7 @@ class peerassess_item_memberselect extends peerassess_item_base {
                     )
                 AND gm.userid = u.id
                 AND gm.userid != ?;";
-        $members = $DB->get_records_sql($sql, Array($USER->id, $USER->id));
-        
-        // Change returned object type into array
-        $members = array_values((array) $members);
-
-        // Convert elements of members into strings and append to array
-        $memberslist = [];
-        foreach ($members as $member) {
-            $fullname = $member->firstname . '&nbsp' . $member->lastname;
-            array_push($memberslist, $fullname);
-        }
-
-        // Empty line is to prevent default selection in user view
-        $options = array_merge([''], $memberslist);
+        $options = $DB->get_records_sql_menu($sql, Array($USER->id, $USER->id));
 
         $separator = !empty($info->horizontal) ? ' ' : '<br>';
         $tmpvalue = $form->get_item_value($item) ?? 0; // Used for element defaults, so must be a valid value (not null).

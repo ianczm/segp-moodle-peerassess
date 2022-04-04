@@ -119,6 +119,12 @@ function peerassess_add_instance($peerassess) {
     }
     $DB->update_record('peerassess', $peerassess);
 
+    // update peerassess_assignment records
+
+    foreach ($peerassess->assignments as $assign) {
+        $DB->insert_record("peerassess_assignments", array("peerassessid"=>$peerassessid, "assignmentid"=>$assign));
+    }
+
     return $peerassessid;
 }
 
