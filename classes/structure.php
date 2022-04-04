@@ -289,7 +289,7 @@ class mod_peerassess_structure {
         )";
         $submittedcount = $DB->get_record_sql($submittedsql, Array($this->peerassess->id, $this->userid, $this->peerassess->id))->submittedcount;
 
-        print_object(array($membercount, $submittedcount));
+        // print_object(array($membercount, $submittedcount));
 
         if ($membercount == $submittedcount) {
             // is already completed
