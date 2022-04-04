@@ -36,5 +36,11 @@ $PAGE->set_url('/mod/peerassess/release_grades.php', ['id' => $cm->id]);
 // Flag that final grades has been released
 $finalgradesreleased = true;
 
+// Grade release logic here
+// 1. Verify that peer factor calculations have been completed
+// 2. Verify that all final grades have already been calculated
+// 3. Display final grades on user dashboard
+// 4. Record final grades in gradebook
+
 redirect('view.php?id='.$id);
 exit;
