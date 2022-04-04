@@ -22,15 +22,102 @@
  * @package mod_peerassess
  */
 
-namespace peerassesscalculator_finalgradepa;
+require_once("../../config.php");
 
-defined('MOODLE_INTERNAL') || die();
 
-class peerassess extends \mod\peerassess\calculate_pa_grades {
-    
-    public function get_name() {
-        return get_string('finalgradepa', 'peerassesscalculator_finalgradepa');
+$PAGE->set_url(new moodle_url('/mod/peerassess/calculate_pa_grades.php'));
+$PAGE->set_context(\context_system::instance());
+$PAGE->set_title('Grades: PA Calculation');
+
+echo $OUTPUT->header();
+
+echo '<h1>Calculating PA Grades</h1>';
+
+echo $OUTPUT->footer();
+
+
+/*global $DB;
+
+$PAGE ->set_url(new moodle_url())
+
+function get_name() {
+    return get_string('assignment_submissions:grade', 'assignment');
+}
+
+function calculate ($grades, $groupmark, $paweighting =1, $selfgrade = false) {
+    $id = array_keys($grades);
+    $totalscores = [];
+    $fracscores = [];
+    $numsubmitted = 0;
+
+    // Calculate the sum of the scores
+    foreach ($id as $memberid) {
+        foreach ($finalgrade as $graderid => $gradesgiven) {
+            if (!isset($totalscores[$graderid])) {
+                $totalscores[$graderid] =[];
+            }
+
+            if (isset($gradesgiven[$memberid])) {
+                $sum = array_reduce($gradesgiven[$memberid], function($carry, $item){
+                    $carry += $item;
+                    return $carry;
+                });
+
+                $totalscores[$graderid][$memberid] = $sum;
+            }
+        }
     }
 
-    
+    // Calculate the fractional scores and ensure the scores are submitted correctly
+    foreach ($id as $memberid) {
+        $gradesgiven = $totalscores [$memberid];
+        $total = array_sum($gradesgiven);
+
+        $fracscores[$memberid] = array_reduce(array_keys($gradesgiven), function($carry, $peerid) use ($total, $gradesgiven) {
+            $grade = $gradesgiven[$peerid];
+            $carry[$peerid] = $total > 0 ? $grade / $total : 0;
+            return $carry;
+        }, []);
+
+        $numsubmitted += !empty($fracscores[$memberid]) ? 1 : 0;
+    }
+
+    // Initializing every student score at 0
+    $finalgradepa = array_reduce($id, function($carry, $memberid) {
+        $carry[$memberid] = 0;
+        return $carry;
+    }, []);
+
+    // Inspect every student's score and add all the scores
+    foreach ($fracscores as $gradesgiven) {
+        foreach ($gradesgiven as $memberid => $fraction) {
+            $finalgradepa[$memberid] += $fraction;
+        }
+    }
+
+    // Applying fudge factore
+    $nummembers = count($id);
+    $fudgefactor = $numsubmitted > 0 ? $nummembers / $numsubmitted : 1;
+    $finalgradepa = array_map(function($grade) use ($fudgefactor) {
+        return $grade * $fudgefactor;
+    }, $finalgradepa);
+
+    // Calculating the student's preliminary grade
+    $prelimgrades = array_map(function($score) use ($groupmark) {
+        return max(0, min(100, $score * $groupmak));
+    }, $finalgradepa);
+
+    // Calculate all the grades again
+    $grades = array_reduce ($id, function ($carry, $memberid) use ($finalgradepa, $groupmark, $paweighting) {
+        $score = $finalgradepa[$memberid];
+
+        $adjustedgroupmark = $groupmark * $paweighting;
+        $automaticgrade = $groupmark - $adjustedgroupmark;
+        $grade = max(0, min(100, $automaticgrade + ($score * $adjustedgroupmark)));
+
+        $carry[$memberid] = $grade;
+        return $carry;
+    }, []);
+
+    return new \mod_peerassess\calculate_pa_grades($fracscores, $finalgradepa, $prelimgrades, $grade);
 }
