@@ -187,7 +187,7 @@ if ($peerassesscompletion->can_complete()) {
         echo "</tr>";
         echo "<tr>";
         echo "<td width='30%'><b>Groupmates who have not submitted</b></td>";
-        echo "<td>" . "test" . "</td>";
+        echo "<td>" . "Waiting for Jun Yi" . "</td>";
         echo "</tr>";
         echo "</table>";
         echo "</div>";
