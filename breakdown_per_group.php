@@ -21,7 +21,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package mod_peerassess
  */
-//defined('MOODLE_INTERNAL') || die();
+
 global $CFG;
 global $DB;
 require_once("../../config.php");
@@ -109,21 +109,22 @@ $table = new flexible_table('peerassess-breakdownpergroup'.$course->id);
 $selectedGroup = $DB->get_field('groups', 'name', array('id' => $usedgroupid
 ), $strictness=IGNORE_MISSING);
 
-if ($table->is_downloading($download, 'Breakdown_Of_'.$selectedGroup,
-                    'Breakdown_Of_'.$selectedGroup)){
-                        //Remove user pic when download
-                        array_shift($tablecolumns);
-                        array_shift($tableheaders);
-                    }
+if ($table->is_downloading($download, 'Breakdown_Of_','Breakdown_Of_')) {
+
+}
 
 foreach ($itemNames as $itemName) {
     $tablecolumns[] = $itemName;
     $tableheaders[] = $itemName;
 }
 
+$tablecolumns[] = 'peerfactors';
+$tablecolumns[] = 'results';
+$tableheaders[] = 'Peer Factor';
+$tableheaders[] =  'Result';
 $table->define_columns($tablecolumns);
 $table->define_headers($tableheaders);
-$table->define_baseurl($breakdownbaseurl->out());
+$table->define_baseurl($breakdownbaseurl);
 
 $table->sortable(true, 'lastname', SORT_DESC);
 $table->set_attribute('cellspacing', '0');
@@ -165,6 +166,11 @@ $students = peerassess_get_all_users_records($cm, $usedgroupid, $sort, $startpag
 //print the list of students
 echo $OUTPUT->heading(get_string('members_in_current_group', 'peerassess', $matchcount), 4);
 echo isset($groupselect) ? $groupselect : '';
+echo $peerassess->id;
+echo $OUTPUT->container_start('form-buttons');
+$aurl = new moodle_url('/mod/peerassess/analysis_to_excel.php', ['sesskey' => sesskey(), 'id' => $id]);
+echo $OUTPUT->single_button($aurl, get_string('export_to_excel', 'peerassess'));
+echo $OUTPUT->container_end();
 echo '<div class="clearer"></div>';
 
 if (empty($students)) {
@@ -188,7 +194,8 @@ if (empty($students)) {
                 $data[] = $completed;
             }
         }
-
+        $data [] = '';
+        $data [] = '';
         $table->add_data($data);
     }
     $table->finish_output();
@@ -211,7 +218,8 @@ function get_item_name($peerassess){
     global $DB;
 
     $sql = "SELECT pi.name
-                FROM {peerassess_item} pi";
+                FROM {peerassess_item} pi
+                WHERE pi.peerassess = $peerassess->id";
     $itemNames = $DB->get_fieldset_sql($sql, array('peerassess'=> $peerassess->id));
     return $itemNames;
 
@@ -236,6 +244,7 @@ function peerassess_get_user_responses($peerassess, $studentid) {
 
 
 }
+
 
 // Finish the page.
 echo $OUTPUT->footer();
