@@ -247,6 +247,8 @@ class mod_peerassess_structure {
             return false;
         }
 
+        // [!] Need to check if all users in group has a submission tied to them
+
         $params = array('userid' => $this->userid, 'peerassess' => $this->peerassess->id);
         if (!$anycourseid && $this->courseid) {
             $params['courseid'] = $this->courseid;

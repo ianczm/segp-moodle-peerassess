@@ -733,6 +733,7 @@ class mod_peerassess_completion extends mod_peerassess_structure {
                     if (!$this->get_peerassess()->page_after_submit) {
                         \core\notification::success(get_string('entries_saved', 'peerassess'));
                     }
+                    // [!] need to check also if this is the final submission or if other teammates are still pending
                     $this->justcompleted = true;
                 }
             } else if (!empty($gopreviouspage)) {

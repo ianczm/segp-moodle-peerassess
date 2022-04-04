@@ -208,12 +208,6 @@ class mod_peerassess_mod_form extends moodleform_mod {
                 }
             }
         }
-
-        $assignarray = [];
-        foreach ($data->assignments as $assign) {
-            print_object($assign);
-            echo "Hello World";
-        }
     }
 
     /**
