@@ -140,6 +140,58 @@ if ($peerassesscompletion->can_complete()) {
         echo $OUTPUT->notification(get_string('peerassess_is_not_open', 'peerassess'));
         echo $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
     } else if ($peerassesscompletion->can_submit()) {
+        // Get remaining groupmates to assess
+
+        $toassess_sql = "SELECT u.id, CONCAT(u.firstname, ' ', u.lastname) as 'name'
+                FROM {user} as u, {groups_members} as gm
+                WHERE gm.groupid = (
+                    SELECT gm.groupid
+                    FROM {user} as u, {groups_members} as gm
+                    WHERE u.id = ?
+                    AND gm.userid = u.id
+                    )
+                AND gm.userid = u.id
+                AND gm.userid != ?
+                AND u.id NOT IN (
+                    SELECT v.value
+                    FROM {peerassess_value} as v
+                    WHERE v.completed IN (
+                        SELECT c.id as completedid
+                        FROM {peerassess_completed} as c
+                        WHERE c.peerassess = ?
+                        AND c.userid = ?
+                    )
+                    AND v.item IN (
+                        SELECT i.id
+                        FROM {peerassess_item} as i
+                        WHERE i.peerassess = ?
+                        AND i.typ = 'memberselect'
+                    )
+                );";
+        $toassess_db = $DB->get_records_sql($toassess_sql, [
+            $USER->id,
+            $USER->id,
+            $peerassess->id,
+            $USER->id,
+            $peerassess->id
+        ]);
+
+        $toassess = array_map(function ($item) { return $item->name; }, $toassess_db);
+
+        // Display user dashboard table
+        echo "<div>";
+        echo "<table class='generaltable'>";
+        echo "<tr>";
+        echo "<td width='30%'><b>Remaining groupmates to assess</b></td>";
+        echo "<td>" . join("<br>", $toassess) . "</td>";
+        echo "</tr>";
+        echo "<tr>";
+        echo "<td width='30%'><b>Groupmates who have not submitted</b></td>";
+        echo "<td>" . "test" . "</td>";
+        echo "</tr>";
+        echo "</table>";
+        echo "</div>";
+
         // Display a link to complete peerassess or resume.
         $completeurl = new moodle_url('/mod/peerassess/complete.php',
                 ['id' => $id, 'courseid' => $courseid]);
