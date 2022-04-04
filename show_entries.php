@@ -57,10 +57,10 @@ if ($deleteid) {
     $peerassessstructure = new mod_peerassess_completion($peerassess, $cm, 0, true, $deleteid);
     peerassess_delete_completed($peerassessstructure->get_completed(), $peerassess, $cm);
     redirect($baseurl);
-} /*else if ($showcompleted || $userid) {
+} else if ($showcompleted || $userid) {
     // Viewing individual response.
-$peerassessstructure = new mod_peerassess_completion($peerassess, $cm, 0, true, $showcompleted, $userid);
-} */else {
+    $peerassessstructure = new mod_peerassess_completion($peerassess, $cm, 0, true, $showcompleted, $userid);
+} else {
     // Viewing list of reponses.
     $peerassessstructure = new mod_peerassess_structure($peerassess, $cm, $courseid);
 }
