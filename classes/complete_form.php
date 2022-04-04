@@ -149,17 +149,17 @@ class mod_peerassess_complete_form extends moodleform {
         // [!] Repeated for the number of students found in group
 
         // Number of students acquired through SQL
-        $sql = "SELECT COUNT(u.id) as membercount
-                FROM {user} as u, {groups_members} as gm
-                WHERE gm.groupid = (
-                    SELECT gm.groupid
-                    FROM {user} as u, {groups_members} as gm
-                    WHERE u.id = ?
-                    AND gm.userid = u.id
-                    )
-                AND gm.userid = u.id
-                AND gm.userid != ?;";
-        $membercount = $DB->get_record_sql($sql, Array($USER->id, $USER->id))->membercount;
+        // $sql = "SELECT COUNT(u.id) as membercount
+        //         FROM {user} as u, {groups_members} as gm
+        //         WHERE gm.groupid = (
+        //             SELECT gm.groupid
+        //             FROM {user} as u, {groups_members} as gm
+        //             WHERE u.id = ?
+        //             AND gm.userid = u.id
+        //             )
+        //         AND gm.userid = u.id
+        //         AND gm.userid != ?;";
+        // $membercount = $DB->get_record_sql($sql, Array($USER->id, $USER->id))->membercount;
 
         // for ($i = 0; $i < $membercount; $i++) {
         foreach ($pageitems as $item) {

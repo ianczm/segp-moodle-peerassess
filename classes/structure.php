@@ -247,13 +247,59 @@ class mod_peerassess_structure {
             return false;
         }
 
-        // [!] Need to check if all users in group has a submission tied to them
+        // $params = array('userid' => $this->userid, 'peerassess' => $this->peerassess->id);
+        // if (!$anycourseid && $this->courseid) {
+        //     $params['courseid'] = $this->courseid;
+        // }
 
-        $params = array('userid' => $this->userid, 'peerassess' => $this->peerassess->id);
-        if (!$anycourseid && $this->courseid) {
-            $params['courseid'] = $this->courseid;
+        // [!] Need to check if all users in group has a submission tied to them
+        // 1. get all unique group members except self
+        // 2. get all unique members submitted for by self
+        // 3. if num of submitted < total group members, can still submit
+        // 4. else, is already submitted
+
+        // 1. Get count of all unique group members except self
+        $membersql = "SELECT COUNT(u.id) as membercount
+                FROM {user} as u, {groups_members} as gm
+                WHERE gm.groupid = (
+                    SELECT gm.groupid
+                    FROM {user} as u, {groups_members} as gm
+                    WHERE u.id = ?
+                    AND gm.userid = u.id
+                    )
+                AND gm.userid = u.id
+                AND gm.userid != ?;";
+        $membercount = $DB->get_record_sql($membersql, Array($USER->id, $USER->id))->membercount;
+
+        // 2. Get all unique members submitted for by self in current peerassess
+        // [!] how to deal with duplicate submissions for the same member?
+        $submittedsql = "SELECT COUNT(v.value) as submittedcount
+        FROM {peerassess_value} as v
+        WHERE v.completed IN (
+            SELECT c.id as completedid
+            FROM {peerassess_completed} as c
+            WHERE c.peerassess = ?
+            AND c.userid = ?
+        )
+        AND v.item IN (
+            SELECT i.id
+            FROM {peerassess_item} as i
+            WHERE i.peerassess = ?
+            AND i.typ = 'memberselect'
+        )";
+        $submittedcount = $DB->get_record_sql($submittedsql, Array($this->peerassess->id, $this->userid, $this->peerassess->id))->submittedcount;
+
+        print_object(array($membercount, $submittedcount));
+
+        if ($membercount == $submittedcount) {
+            // is already completed
+            return true;
+        } else {
+            // has not completed
+            return false;
         }
-        return $DB->record_exists('peerassess_completed', $params);
+
+        // return $DB->record_exists('peerassess_completed', $params);
     }
 
     /**
