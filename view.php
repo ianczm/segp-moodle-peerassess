@@ -151,7 +151,7 @@ if ($peerassesscompletion->can_complete()) {
         }
         echo html_writer::div(html_writer::link($completeurl, $label, array('class' => 'btn btn-secondary')), 'complete-peerassess');
     } else {
-        // Peerassess was already submitted.
+        // [!] (Ideally all) Peerassess was already submitted.
         echo $OUTPUT->notification(get_string('this_peerassess_is_already_submitted', 'peerassess'));
         $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
     }

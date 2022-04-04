@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
 class mod_peerassess_mod_form extends moodleform_mod {
 
     public function definition() {
-        global $CFG, $DB;
+        global $CFG, $DB, $COURSE;
 
         $editoroptions = peerassess_get_editor_options();
 
@@ -40,13 +40,38 @@ class mod_peerassess_mod_form extends moodleform_mod {
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
-
+        
         $mform->addElement('text', 'name', get_string('name', 'peerassess'), array('size'=>'64'));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-
+        
         $this->standard_intro_elements(get_string('description', 'peerassess'));
+        
+        // [!] Refactor --> get list of assignments in course
+        $assignments_sql = 'SELECT
+                                -- cm.id AS cmid,
+                                -- cm.course,
+                                -- m.id AS mid,
+                                -- m.name,
+                                a.id AS aid,
+                                a.name AS assignment_name
+                            FROM {course_modules} cm
+                                INNER JOIN {modules} m
+                                ON cm.module = m.id
+                                INNER JOIN {assign} a
+                                ON cm.instance = a.id
+                            WHERE m.name = "assign"
+                                AND cm.course = ?';
+
+        $assignments_list = $DB->get_records_sql_menu($assignments_sql, array($COURSE->id));
+
+        $select = $mform->addElement('select', 'assignments', "Assignments", $assignments_list, array("size" => 8, "style" => 'width: 50%'));
+        $select->setMultiple(true);
+        // $mform->addHelpButton('assignments', 'assignments', 'peerassess');
+
+        // Note to lecturer that this question would be converted into a drop down menu
+        $mform->addElement('static', 'hint', '', 'Ctrl+Click to select the assignment(s) you would like to apply the peer factor on.', 'peerassess');
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'timinghdr', get_string('availability'));
@@ -156,7 +181,6 @@ class mod_peerassess_mod_form extends moodleform_mod {
             $default_values['page_after_submit_editor']['text'] = '';
             $default_values['page_after_submit_editor']['format'] = editors_get_preferred_format();
             $default_values['page_after_submit_editor']['itemid'] = $draftitemid;
-            echo "HelloWorld><br>";
         }
 
     }
