@@ -22,6 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['assignments'] = 'Assignments';
+$string['assignments_help'] = 'Help';
+
 $string['add_item'] = 'Add question';
 $string['add_pagebreak'] = 'Add a page break';
 $string['adjustment'] = 'Adjustment';
@@ -47,7 +50,7 @@ $string['captcha'] = 'Captcha';
 $string['captchanotset'] = 'Captcha hasn\'t been set.';
 $string['closebeforeopen'] = 'You have specified an end date before the start date.';
 $string['completed_peerassesss'] = 'Submitted answers';
-$string['complete_the_form'] = 'Answer the questions';
+$string['complete_the_form'] = 'Start a peer assessment';
 $string['completed'] = 'Completed';
 $string['completedon'] = 'Completed on {$a}';
 $string['completiondetail:submit'] = 'Submit peerassess';
@@ -111,6 +114,8 @@ $string['export_to_excel'] = 'Export to Excel';
 $string['eventresponsedeleted'] = 'Response deleted';
 $string['eventresponsesubmitted'] = 'Response submitted';
 $string['eventfinalgradesreleased'] = 'Final grades released';
+$string['finalgradeshasbeenreleased'] = 'The final grades has been released.';
+$string['finalgradeshasnotbeenreleased'] = 'The final grades has not been released yet.';
 $string['peerassesscompleted'] = '{$a->username} completed {$a->peerassessname}';
 $string['peerassess:addinstance'] = 'Add a new peerassess';
 $string['peerassessclose'] = 'Allow answers to';
@@ -163,6 +168,7 @@ $string['insufficient_responses'] = 'insufficient responses';
 $string['insufficient_responses_help'] = 'For the peerassess to be anonymous, there must be at least 2 responses.';
 $string['item_label'] = 'Label';
 $string['item_name'] = 'Question';
+$string['memberselect'] = 'Member Select';
 $string['label'] = 'Label';
 $string['labelcontents'] = 'Contents';
 $string['mapcourseinfo'] = 'This is a site-wide peerassess that is available to all courses using the peerassess block. You can however limit the courses to which it will appear by mapping them. Search the course and map it to this peerassess.';
@@ -200,7 +206,6 @@ $string['multichoicetype'] = 'Multiple choice type';
 $string['multichoice_values'] = 'Multiple choice values';
 $string['multiplesubmit'] = 'Allow multiple submissions';
 $string['multiplesubmit_help'] = 'If enabled for anonymous surveys, users can submit peerassess an unlimited number of times.';
-$string['myfinalgrade'] = 'My final grade';
 $string['name'] = 'Name';
 $string['name_required'] = 'Name required';
 $string['nameandlabelformat'] = '({$a->label}) {$a->name}';
@@ -305,3 +310,4 @@ $string['use_one_line_for_each_value'] = 'Use one line for each answer!';
 $string['use_this_template'] = 'Use this template';
 $string['using_templates'] = 'Use a template';
 $string['vertical'] = 'Vertical';
+$string['your_final_grade_is'] = 'Your final grade: {$a}';

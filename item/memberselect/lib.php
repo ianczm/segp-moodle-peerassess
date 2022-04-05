@@ -30,6 +30,8 @@ class peerassess_item_memberselect extends peerassess_item_base {
         global $DB, $CFG;
         require_once('memberselect_form.php');
 
+        $this->peerassessid = $peerassess->id;
+
         //get the lastposition number of the peerassess_items
         $position = $item->position;
         $lastposition = $DB->count_records('peerassess_item', array('peerassess'=>$peerassess->id));
@@ -310,15 +312,30 @@ class peerassess_item_memberselect extends peerassess_item_base {
      * @param mod_peerassess_complete_form $form
      */
     public function complete_form_element($item, $form) {
-        global $USER, $COURSE, $DB;
+        global $USER, $COURSE, $DB, $PAGE;
 
         $info = $this->get_info($item);
         $name = $this->get_display_name($item);
         $class = 'memberselect-' . $info->subtype;
         $inputname = $item->typ . '_' . $item->id;
 
+        $peerassessid_sql = "SELECT cm.instance as id
+                            FROM mdl_course_modules as cm
+                            WHERE cm.id = ?";
+        $peerassess = $DB->get_record_sql($peerassessid_sql, [$PAGE->cm->id]);
+
         // Get course group via SQL
-        $sql = "SELECT u.id, u.firstname, u.lastname
+        // $sql = "SELECT u.id, CONCAT(u.firstname, ' ', u.lastname)
+        //         FROM {user} as u, {groups_members} as gm
+        //         WHERE gm.groupid = (
+        //             SELECT gm.groupid
+        //             FROM {user} as u, {groups_members} as gm
+        //             WHERE u.id = ?
+        //             AND gm.userid = u.id
+        //             )
+        //         AND gm.userid = u.id
+        //         AND gm.userid != ?;";
+        $sql = "SELECT u.id, CONCAT(u.firstname, ' ', u.lastname) as 'name'
                 FROM {user} as u, {groups_members} as gm
                 WHERE gm.groupid = (
                     SELECT gm.groupid
@@ -327,21 +344,30 @@ class peerassess_item_memberselect extends peerassess_item_base {
                     AND gm.userid = u.id
                     )
                 AND gm.userid = u.id
-                AND gm.userid != ?;";
-        $members = $DB->get_records_sql($sql, Array($USER->id, $USER->id));
-        
-        // Change returned object type into array
-        $members = array_values((array) $members);
-
-        // Convert elements of members into strings and append to array
-        $memberslist = [];
-        foreach ($members as $member) {
-            $fullname = $member->firstname . '&nbsp' . $member->lastname;
-            array_push($memberslist, $fullname);
-        }
-
-        // Empty line is to prevent default selection in user view
-        $options = array_merge([''], $memberslist);
+                AND gm.userid != ?
+                AND u.id NOT IN (
+                    SELECT v.value
+                    FROM {peerassess_value} as v
+                    WHERE v.completed IN (
+                        SELECT c.id as completedid
+                        FROM {peerassess_completed} as c
+                        WHERE c.peerassess = ?
+                        AND c.userid = ?
+                    )
+                    AND v.item IN (
+                        SELECT i.id
+                        FROM {peerassess_item} as i
+                        WHERE i.peerassess = ?
+                        AND i.typ = 'memberselect'
+                    )
+                );";
+        $options = $DB->get_records_sql_menu($sql, [
+            $USER->id,
+            $USER->id,
+            $peerassess->id,
+            $USER->id,
+            $peerassess->id
+        ]);
 
         $separator = !empty($info->horizontal) ? ' ' : '<br>';
         $tmpvalue = $form->get_item_value($item) ?? 0; // Used for element defaults, so must be a valid value (not null).
