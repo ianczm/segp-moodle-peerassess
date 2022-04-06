@@ -92,6 +92,9 @@ $options = (object)array('noclean' => true);
 echo format_module_intro('peerassess', $peerassess, $cm->id);
 echo $OUTPUT->box_end();
 
+// Get flag of grade released status
+// $finalgradesreleased = get_grades_release_status();
+
 //show some infos to the peerassess
 if (has_capability('mod/peerassess:edititems', $context)) {
 
@@ -111,8 +114,15 @@ if (has_capability('mod/peerassess:edititems', $context)) {
     }
 
     echo $OUTPUT->box_start('generalbox boxaligncenter');
-    $releasegradesurl = new moodle_url('/mod/peerassess/release_grades.php', ['id' => $cm->id]);
-    echo html_writer::div(html_writer::link($releasegradesurl, get_string("releaseallgradesforallgroups", 'peerassess'), array('class' => 'btn btn-secondary')));
+    // Button to release final grades for all students
+    if($finalgradesreleased == false){
+        $releasegradesurl = new moodle_url('/mod/peerassess/release_grades.php', ['id' => $cm->id]);
+        echo html_writer::div(html_writer::link($releasegradesurl, get_string("releaseallgradesforallgroups", 'peerassess'), array('class' => 'btn btn-secondary')));
+    }
+    // Final grades are already released
+    else {
+        echo $OUTPUT->notification(get_string('finalgradeshasbeenreleased', 'peerassess'));
+    }
     echo $OUTPUT->box_end();
 }
 
@@ -140,6 +150,58 @@ if ($peerassesscompletion->can_complete()) {
         echo $OUTPUT->notification(get_string('peerassess_is_not_open', 'peerassess'));
         echo $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
     } else if ($peerassesscompletion->can_submit()) {
+        // Get remaining groupmates to assess
+
+        $toassess_sql = "SELECT u.id, CONCAT(u.firstname, ' ', u.lastname) as 'name'
+                FROM {user} as u, {groups_members} as gm
+                WHERE gm.groupid = (
+                    SELECT gm.groupid
+                    FROM {user} as u, {groups_members} as gm
+                    WHERE u.id = ?
+                    AND gm.userid = u.id
+                    )
+                AND gm.userid = u.id
+                AND gm.userid != ?
+                AND u.id NOT IN (
+                    SELECT v.value
+                    FROM {peerassess_value} as v
+                    WHERE v.completed IN (
+                        SELECT c.id as completedid
+                        FROM {peerassess_completed} as c
+                        WHERE c.peerassess = ?
+                        AND c.userid = ?
+                    )
+                    AND v.item IN (
+                        SELECT i.id
+                        FROM {peerassess_item} as i
+                        WHERE i.peerassess = ?
+                        AND i.typ = 'memberselect'
+                    )
+                );";
+        $toassess_db = $DB->get_records_sql($toassess_sql, [
+            $USER->id,
+            $USER->id,
+            $peerassess->id,
+            $USER->id,
+            $peerassess->id
+        ]);
+
+        $toassess = array_map(function ($item) { return $item->name; }, $toassess_db);
+
+        // Display user dashboard table
+        echo "<div>";
+        echo "<table class='generaltable'>";
+        echo "<tr>";
+        echo "<td width='30%'><b>Remaining groupmates to assess</b></td>";
+        echo "<td>" . join("<br>", $toassess) . "</td>";
+        echo "</tr>";
+        echo "<tr>";
+        echo "<td width='30%'><b>Groupmates who have not submitted</b></td>";
+        echo "<td>" . "Waiting for Jun Yi" . "</td>";
+        echo "</tr>";
+        echo "</table>";
+        echo "</div>";
+
         // Display a link to complete peerassess or resume.
         $completeurl = new moodle_url('/mod/peerassess/complete.php',
                 ['id' => $id, 'courseid' => $courseid]);
@@ -153,6 +215,13 @@ if ($peerassesscompletion->can_complete()) {
     } else {
         // [!] (Ideally all) Peerassess was already submitted.
         echo $OUTPUT->notification(get_string('this_peerassess_is_already_submitted', 'peerassess'));
+        // Release status of final grades to students.
+        if ($finalgradesreleased == true){
+            echo get_string('your_final_grade_is', 'peerassess', $finalgrades);
+        }
+        else {
+            echo get_string('finalgradeshasnotbeenreleased', 'peerassess');
+        }
         $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
     }
     echo $OUTPUT->box_end();

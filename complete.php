@@ -125,7 +125,9 @@ if ($peerassesscompletion->is_empty()) {
         if ($peerassess->site_after_submit) {
             $url = peerassess_encode_target_url($peerassess->site_after_submit);
         } else {
-            $url = course_get_url($courseid ?: $course->id);
+            // $url = course_get_url($courseid ?: $course->id);
+            // Redirect back to view.php to submit again
+            $url = $CFG->wwwroot . '/mod/peerassess/view.php?id=' . $PAGE->cm->id;
         }
         echo $OUTPUT->continue_button($url);
     } else {
