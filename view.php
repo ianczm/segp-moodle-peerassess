@@ -215,6 +215,20 @@ if ($peerassesscompletion->can_complete()) {
     } else {
         // [!] (Ideally all) Peerassess was already submitted.
         echo $OUTPUT->notification(get_string('this_peerassess_is_already_submitted', 'peerassess'));
+        // [!] Refactoring needed
+        // Display user dashboard table
+        echo "<div>";
+        echo "<table class='generaltable'>";
+        echo "<tr>";
+        echo "<td width='30%'><b>Remaining groupmates to assess</b></td>";
+        echo "<td>No group members left to assess.</td>";
+        echo "</tr>";
+        echo "<tr>";
+        echo "<td width='30%'><b>Groupmates who have not submitted</b></td>";
+        echo "<td>" . "Waiting for Jun Yi" . "</td>";
+        echo "</tr>";
+        echo "</table>";
+        echo "</div>";
         // Release status of final grades to students.
         if ($finalgradesreleased == true){
             echo get_string('your_final_grade_is', 'peerassess', $finalgrades);

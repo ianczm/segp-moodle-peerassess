@@ -610,15 +610,20 @@ class mod_peerassess_completion extends mod_peerassess_structure {
             // Not possible to retrieve completed anonymous peerassess.
             return false;
         }
-        $params = array('peerassess' => $this->peerassess->id,
-            'userid' => $this->userid,
-            'anonymous_response' => PEERASSESS_ANONYMOUS_NO
-        );
-        if ($this->get_courseid()) {
-            $params['courseid'] = $this->get_courseid();
-        }
-        $this->completed = $DB->get_record('peerassess_completed', $params);
-        return $this->completed;
+        // [!] this should always return false regardless
+        return false;
+        // $params = array('peerassess' => $this->peerassess->id,
+        //     'userid' => $this->userid,
+        //     'anonymous_response' => PEERASSESS_ANONYMOUS_NO
+        // );
+        // if ($this->get_courseid()) {
+        //     $params['courseid'] = $this->get_courseid();
+        // }
+
+        // // [!] should implement user/recipient pair checking to find last completed
+        // // but actually not necessary since users cannot submit for multiple same group members
+        // $this->completed = $DB->get_record('peerassess_completed', $params);
+        // return $this->completed;
     }
 
     /**

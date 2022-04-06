@@ -92,6 +92,7 @@ class mod_peerassess_mod_form extends moodleform_mod {
                            'anonymous',
                            get_string('anonymous_edit', 'peerassess'),
                            $options);
+        $mform->setDefault('anonymous', 2);
 
         // check if there is existing responses to this peerassess
         if (is_numeric($this->_instance) AND
@@ -123,6 +124,9 @@ class mod_peerassess_mod_form extends moodleform_mod {
 
             $mform->addHelpButton('multiple_submit', 'multiplesubmit', 'peerassess');
         }
+
+        // Note to lecturer that this question would be converted into a drop down menu
+        $mform->addElement('static', 'hint_submission_settings', '', 'Default behavior is to record user names and only allow them to submit only once for each group member.', 'peerassess');
 
         $mform->addElement('selectyesno', 'email_notification', get_string('email_notification', 'peerassess'));
         $mform->addHelpButton('email_notification', 'email_notification', 'peerassess');
