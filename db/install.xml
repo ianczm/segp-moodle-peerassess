@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/peerassess/db" VERSION="20220321" COMMENT="XMLDB file for Moodle mod/peerassess"
+<XMLDB PATH="mod/peerassess/db" VERSION="20220406" COMMENT="XMLDB file for Moodle mod/peerassess"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -164,6 +164,22 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="peerassessid" TYPE="foreign" FIELDS="peerassessid" REFTABLE="peerassess" REFFIELDS="id"/>
         <KEY NAME="assignmentid" TYPE="foreign" FIELDS="assignmentid" REFTABLE="assign" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="peerassess_finalgrades" COMMENT="Store calculated assignment grades">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="peerassess_peerfactors" COMMENT="Store peer factor data from peerassess">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>
