@@ -101,6 +101,26 @@ $breakdownbaseurl->params(array('id'=>$id, 'showall'=>$showall));
 $peerassess = $PAGE->activityrecord;
 $itemNames = get_item_name($peerassess);
 
+if(NULL == ($matchcount = $DB->count_records('groups_members', array('groupid'=>$mygroupid)))){
+    //get all user who can complete this peerassess
+    $cap = 'mod/peerassess:complete';
+    $userfieldsapi = \core_user\fields::for_name();
+    $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+    $fields = 'u.id, ' . $allnames . ', u.picture, u.email, u.imagealt';
+    if (!$allusers = get_users_by_capability($context,
+                                            $cap,
+                                            $fields,
+                                            '',
+                                            '',
+                                            '',
+                                            '',
+                                            '',
+                                            true)) {
+        return false;
+    }
+    $matchcount = count($allusers);
+}
+
 $tablecolumns = array('userpic', 'fullname',  'status');
 $tableheaders = array(get_string('userpic'), get_string('fullnameuser'), get_string('status'));
 
@@ -112,9 +132,18 @@ foreach ($itemNames as $itemName) {
 }
 
 $tablecolumns[] = 'peerfactors';
-$tablecolumns[] = 'results';
 $tableheaders[] = 'Peer Factor';
-$tableheaders[] =  'Result';
+
+
+//Get each assignment'grade
+$assignmentGrades = $DB->get_fieldset_sql('SELECT psa.assignmentid
+                                                FROM  {peerassess_assignments} psa'
+                                                ,array('peerassessid'=>$peerassess->id));
+foreach($assignmentGrades as $assignmentGrade){
+    $tablecolumns[] = 'Assignment'.$assignmentGrade;
+    $tableheaders[] = 'Assignment '.$assignmentGrade.'grade';
+}
+
 $table->define_columns($tablecolumns);
 $table->define_headers($tableheaders);
 $table->define_baseurl($breakdownbaseurl);
@@ -141,7 +170,6 @@ if ($table->get_sql_sort()) {
     $sort = '';
 }
 
-$matchcount = peerassess_count_incomplete_users($cm, $usedgroupid) + peerassess_count_complete_users($cm, $usedgroupid);
 $table->initialbars(false);
 
 if ($showall) {
@@ -155,11 +183,13 @@ if ($showall) {
 
 // Return students record including if they started or not the peerassess.
 $students = peerassess_get_all_users_records($cm, $usedgroupid, $sort, $startpage, $pagecount, true);
+
+
 //####### viewreports-start
 //print the list of students
 echo $OUTPUT->heading(get_string('members_in_current_group', 'peerassess', $matchcount), 4);
 echo isset($groupselect) ? $groupselect : '';
-//echo"$completedscount";
+//echo"$peerassess->id";
 echo $OUTPUT->container_start('form-buttons');
 $aurl = new moodle_url('/mod/peerassess/breakdown_to_excel.php', ['sesskey' => sesskey(), 'id' => $id]);
 echo $OUTPUT->single_button($aurl, get_string('export_to_excel', 'peerassess'));
@@ -193,8 +223,14 @@ if (empty($students)) {
                 $data[] = $completed;
             }
         }
+        
+        //data for peerfactor
         $data [] = '';
-        $data [] = '';
+
+        //data for assignments grade
+        foreach($assignmentGrades as $assignmentGrade){
+            $data [] = '';
+        }
         $table->add_data($data);
     }
     $table->finish_output();
