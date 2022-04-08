@@ -75,7 +75,7 @@ if ($groupmode > 0) {
     $usedgroupid = false;
 }
 
-$groupName = $DB->get_field('groups', 'name', array('id'=>$mygroupid, 'courseid'=>3), $strictness=IGNORE_MISSING);
+$groupName = $DB->get_field('groups', 'name', array('id'=>$mygroupid, 'courseid'=>$course->id), $strictness=IGNORE_MISSING);
 // Creating a workbook.
 $filename = "Breakdown_" .clean_filename($groupName). ".xls";
 $workbook = new MoodleExcelWorkbook($filename);
