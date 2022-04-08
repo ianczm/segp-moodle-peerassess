@@ -93,6 +93,8 @@ if ($groupmode > 0) {
     $usedgroupid = false;
 }
 
+
+/////////////////////////////////
 // preparing the table for output
 $breakdownbaseurl = new moodle_url('/mod/peerassess/breakdown_per_group.php');
 $breakdownbaseurl->params(array('id'=>$id, 'showall'=>$showall));
@@ -121,7 +123,7 @@ if(NULL == ($matchcount = $DB->count_records('groups_members', array('groupid'=>
     $matchcount = count($allusers);
 }
 
-$tablecolumns = array('userpic', 'fullname',  'status');
+$tablecolumns = array('userpic', 'fullname', 'status');
 $tableheaders = array(get_string('userpic'), get_string('fullnameuser'), get_string('status'));
 
 $table = new flexible_table('peerassess-breakdownpergroup'.$course->id);
@@ -141,7 +143,7 @@ $assignmentGrades = $DB->get_fieldset_sql('SELECT psa.assignmentid
                                                 ,array('peerassessid'=>$peerassess->id));
 foreach($assignmentGrades as $assignmentGrade){
     $tablecolumns[] = 'Assignment'.$assignmentGrade;
-    $tableheaders[] = 'Assignment '.$assignmentGrade.'grade';
+    $tableheaders[] = 'Assignment'.$assignmentGrade.'grade';
 }
 
 $table->define_columns($tablecolumns);
@@ -190,6 +192,8 @@ $students = peerassess_get_all_users_records($cm, $usedgroupid, $sort, $startpag
 echo $OUTPUT->heading(get_string('members_in_current_group', 'peerassess', $matchcount), 4);
 echo isset($groupselect) ? $groupselect : '';
 //echo"$peerassess->id";
+
+//print export to excel button
 echo $OUTPUT->container_start('form-buttons');
 $aurl = new moodle_url('/mod/peerassess/breakdown_to_excel.php', ['sesskey' => sesskey(), 'id' => $id]);
 echo $OUTPUT->single_button($aurl, get_string('export_to_excel', 'peerassess'));
@@ -223,13 +227,13 @@ if (empty($students)) {
                 $data[] = $completed;
             }
         }
-        
+
         //data for peerfactor
-        $data [] = '';
+        $data[] = '';
 
         //data for assignments grade
         foreach($assignmentGrades as $assignmentGrade){
-            $data [] = '';
+            $data[] = '';
         }
         $table->add_data($data);
     }
