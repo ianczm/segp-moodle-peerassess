@@ -1061,6 +1061,9 @@ function peerassess_get_all_users_records(cm_info $cm,
 
     $allusers = array_keys($allusersrecords);
 
+    //now get all completeds
+    $params = array('peerassess'=>$cm->instance);
+    $completedusers = $DB->get_records_menu('peerassess_completed', $params, '', 'id, userid');
     //for paging I use array_slice()
     if ($startpage !== false AND $pagecount !== false) {
         $allusers = array_slice($allusers, $startpage, $pagecount);
@@ -1074,6 +1077,7 @@ function peerassess_get_all_users_records(cm_info $cm,
         foreach ($allusers as $userid) {
             $allusersrecords[$userid]->peerassessstarted = isset($startedusers[$userid]);
             $userrecords[] = $allusersrecords[$userid];
+
         }
         return $userrecords;
     } else {    // Return just user ids.

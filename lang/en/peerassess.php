@@ -291,6 +291,7 @@ $string['started'] = 'Started';
 $string['startedon'] = 'Started on {$a}';
 $string['studentfinalgrade'] = 'Student final grade';
 $string['studentfinalweightedgrade'] = 'Student final weighted grade';
+$string['studentname'] = 'Student\'s name';
 $string['subject'] = 'Subject';
 $string['switch_item_to_not_required'] = 'Set as not required';
 $string['switch_item_to_required'] = 'Set as required';
