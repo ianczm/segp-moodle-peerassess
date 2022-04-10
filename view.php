@@ -86,9 +86,11 @@ echo $OUTPUT->activity_information($cm, $completiondetails, $activitydates);
 // Print the tabs.
 require('tabs.php');
 
-// [!] Jun Yi's part
+
 // // Show description.
-// echo $OUTPUT->box_start('generalbox peerassess_description');
+echo $OUTPUT->box_start('generalbox peerassess_description');
+
+// [!] Jun Yi's part
 // echo "hello world";
 // $output->add(get_string('show_nonrespondents', 'peerassess'),
 //                         new moodle_url('/mod/peerassess/show_nonrespondents.php',
@@ -131,9 +133,6 @@ if (has_capability('mod/peerassess:edititems', $context)) {
     echo html_writer::div(html_writer::link($releasegradesurl, get_string("releaseallgradesforallgroups", 'peerassess'), array('class' => 'btn btn-secondary')));
     echo $OUTPUT->box_end();
 
-
-
-   
 }
 
 if (!has_capability('mod/peerassess:viewreports', $context) &&
