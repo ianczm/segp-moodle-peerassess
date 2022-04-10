@@ -119,16 +119,20 @@ if (has_capability('mod/peerassess:edititems', $context)) {
     }
 
     echo $OUTPUT->box_start('generalbox boxaligncenter');
-    // Button to release final grades for all students
-    if($finalgradesreleased == false){
-        $releasegradesurl = new moodle_url('/mod/peerassess/release_grades.php', ['id' => $cm->id]);
-        echo html_writer::div(html_writer::link($releasegradesurl, get_string("releaseallgradesforallgroups", 'peerassess'), array('class' => 'btn btn-secondary')));
-    }
-    // Final grades are already released
-    else {
-        echo $OUTPUT->notification(get_string('finalgradeshasbeenreleased', 'peerassess'));
-    }
+    $finalgradewithpaurl = new moodle_url('/mod/peerassess/calculate_pa_grades.php', ['id' => $cm->id]);
+    echo html_writer::div(html_writer::link($finalgradewithpaurl, get_string("myfinalgradewithpa", 'peerassess'), array('class' => 'btn btn-secondary')));
     echo $OUTPUT->box_end();
+
+    echo 'Assignment Grade: ';
+
+    echo $OUTPUT->box_start('generalbox boxaligncenter');
+    $releasegradesurl = new moodle_url('/mod/peerassess/release_grades.php', ['id' => $cm->id]);
+    echo html_writer::div(html_writer::link($releasegradesurl, get_string("releaseallgradesforallgroups", 'peerassess'), array('class' => 'btn btn-secondary')));
+    echo $OUTPUT->box_end();
+
+
+
+   
 }
 
 if (!has_capability('mod/peerassess:viewreports', $context) &&
