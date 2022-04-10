@@ -42,6 +42,7 @@ $string['autonumbering_help'] = 'Enables or disables automated numbers for each 
 $string['average'] = 'Average';
 $string['bold'] = 'Bold';
 $string['breakdown_per_group'] = 'Breakdown Per Group';
+$string['breakdown'] = 'Breakdown Per Group';
 $string['calendarend'] = '{$a} closes';
 $string['calendarstart'] = '{$a} opens';
 $string['cannotaccess'] = 'You can only access this peerassess from a course';
