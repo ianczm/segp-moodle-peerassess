@@ -89,9 +89,7 @@ require('tabs.php');
 // Show description.
 echo $OUTPUT->box_start('generalbox peerassess_description');
 echo "hello world";
-$output->add(get_string('show_nonrespondents', 'peerassess'),
-                        new moodle_url('/mod/peerassess/show_nonrespondents.php',
-                                        array('id' => $PAGE->cm->id)));
+
 
 $options = (object)array('noclean' => true);
 echo format_module_intro('peerassess', $peerassess, $cm->id);
@@ -193,6 +191,38 @@ if ($peerassesscompletion->can_complete()) {
 
         $toassess = array_map(function ($item) { return $item->name; }, $toassess_db);
 
+
+//get non respodent in group
+
+        $non_respondent_sql = "SELECT u.id, CONCAT(u.firstname, ' ', u.lastname) as 'name'
+                FROM {user} as u, {groups_members} as gm
+                WHERE gm.groupid = (
+                    SELECT gm.groupid
+                    FROM {user} as u, {groups_members} as gm
+                    WHERE u.id = ?
+                    AND gm.userid = u.id
+                    )
+                AND gm.userid = u.id
+                AND (
+                    COUNT({user}.id) !=
+                    (SELECT count(pc.userid)-1
+                    FROM {peerassess_completed} as pc
+                    WHERE pc.id = ?))
+        );";
+
+        $nonrespondent_db = $DB->get_records_sql($non_respondent_sql, [
+            $USER->id,
+            $USER->id,
+            $USER->id,
+        ]);
+
+        $non_respondent = array_map(function ($item) { return $item->name; }, $non_respondent_db);
+
+
+
+
+
+
         // Display user dashboard table
         echo "<div>";
         echo "<table class='generaltable'>";
@@ -202,7 +232,7 @@ if ($peerassesscompletion->can_complete()) {
         echo "</tr>";
         echo "<tr>";
         echo "<td width='30%'><b>Groupmates who have not submitted</b></td>";
-        echo "<td>" . "Waiting for Jun Yi" . "</td>";
+        echo "<td>" . join("<br>", asd) . "</td>";
         echo "</tr>";
         echo "</table>";
         echo "</div>";
