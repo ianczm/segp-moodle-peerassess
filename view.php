@@ -90,12 +90,6 @@ require('tabs.php');
 // // Show description.
 echo $OUTPUT->box_start('generalbox peerassess_description');
 
-// [!] Jun Yi's part
-// echo "hello world";
-// $output->add(get_string('show_nonrespondents', 'peerassess'),
-//                         new moodle_url('/mod/peerassess/show_nonrespondents.php',
-//                                         array('id' => $PAGE->cm->id)));
-
 $options = (object)array('noclean' => true);
 echo format_module_intro('peerassess', $peerassess, $cm->id);
 echo $OUTPUT->box_end();
@@ -165,9 +159,11 @@ if ($peerassesscompletion->can_complete()) {
                 FROM {user} as u, {groups_members} as gm
                 WHERE gm.groupid = (
                     SELECT gm.groupid
-                    FROM {user} as u, {groups_members} as gm
-                    WHERE u.id = ?
-                    AND gm.userid = u.id
+                    FROM mdl_groups_members AS gm
+                    INNER JOIN mdl_groups AS g
+                        ON g.id = gm.groupid
+                    WHERE gm.userid = ?
+                    AND g.courseid = ?
                     )
                 AND gm.userid = u.id
                 AND gm.userid != ?
@@ -189,6 +185,7 @@ if ($peerassesscompletion->can_complete()) {
                 );";
         $toassess_db = $DB->get_records_sql($toassess_sql, [
             $USER->id,
+            $COURSE->id,
             $USER->id,
             $peerassess->id,
             $USER->id,
