@@ -194,16 +194,55 @@ if ($peerassesscompletion->can_complete()) {
 
         $toassess = array_map(function ($item) { return $item->name; }, $toassess_db);
 
+        $remaining_sql = "SELECT
+                    u.id AS 'userid',
+                    CONCAT(u.firstname, ' ', u.lastname) AS 'name',
+                    gm.groupid,
+                    COALESCE(sc.submission_count, 0) AS 'final_submission_count',
+                    mc.member_count
+                FROM mdl_user AS u
+                INNER JOIN mdl_groups_members AS gm
+                    ON u.id = gm.userid
+                LEFT OUTER JOIN (
+                    SELECT c.userid, COUNT(c.userid) AS 'submission_count'
+                    FROM mdl_peerassess_completed AS c
+                    WHERE c.peerassess = ?
+                    GROUP BY c.userid
+                ) AS sc
+                    ON u.id = sc.userid
+                INNER JOIN (
+                    SELECT gm.groupid, COUNT(gm.groupid) AS 'member_count'
+                    FROM mdl_groups_members AS gm
+                    GROUP BY gm.groupid
+                ) AS mc
+                    ON gm.groupid = mc.groupid
+                WHERE gm.groupid = (
+                    SELECT gm.groupid
+                    FROM mdl_groups_members AS gm
+                    INNER JOIN mdl_groups AS g
+                        ON g.id = gm.groupid
+                    WHERE gm.userid = ?
+                    AND g.courseid = ?
+                )
+                AND 'final_submission_count' < mc.member_count - 1;";
+        $remaining_db = $DB->get_records_sql($remaining_sql, [
+            $peerassess->id,
+            $USER->id,
+            $COURSE->id
+        ]);
+
+        $remaining = array_map(function ($item) { return $item->name; }, $remaining_db);
+
         // Display user dashboard table
         echo "<div>";
         echo "<table class='generaltable'>";
         echo "<tr>";
-        echo "<td width='30%'><b>Remaining groupmates to assess</b></td>";
-        echo "<td>" . join("<br>", $toassess) . "</td>";
+        echo "<td style='width: 30%;'><b>Remaining groupmates to assess:</b></td>";
+        echo "<td>" . join(",<br>", $toassess) . "</td>";
         echo "</tr>";
         echo "<tr>";
-        echo "<td width='30%'><b>Groupmates who have not submitted</b></td>";
-        echo "<td>" . "Waiting for Jun Yi" . "</td>";
+        echo "<td style='width: 30%;'><b>Groupmates who have not completed peer assessment:</b></td>";
+        echo "<td>" . join(",<br>", $remaining) . "</td>";
         echo "</tr>";
         echo "</table>";
         echo "</div>";
@@ -231,7 +270,7 @@ if ($peerassesscompletion->can_complete()) {
         echo "</tr>";
         echo "<tr>";
         echo "<td width='30%'><b>Groupmates who have not submitted</b></td>";
-        echo "<td>" . "Waiting for Jun Yi" . "</td>";
+        echo "<td>" . join(",<br>", $remaining) . "</td>";
         echo "</tr>";
         echo "</table>";
         echo "</div>";
