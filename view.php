@@ -120,13 +120,115 @@ if (has_capability('mod/peerassess:edititems', $context)) {
     echo html_writer::div(html_writer::link($finalgradewithpaurl, get_string("myfinalgradewithpa", 'peerassess'), array('class' => 'btn btn-secondary')));
     echo $OUTPUT->box_end();
 
-    echo 'Assignment Grade: ';
+    // Print assignment grade
+
+    echo '<b>Assignment Grade:</b> ';
+
+    if ($finalgradesreleased == true){
+        echo get_string('your_final_grade_is', 'peerassess', $finalgrades);
+    }
+    else {
+        echo get_string('finalgradeshasnotbeenreleased', 'peerassess');
+    }
 
     echo $OUTPUT->box_start('generalbox boxaligncenter');
     $releasegradesurl = new moodle_url('/mod/peerassess/release_grades.php', ['id' => $cm->id]);
     echo html_writer::div(html_writer::link($releasegradesurl, get_string("releaseallgradesforallgroups", 'peerassess'), array('class' => 'btn btn-secondary')));
     echo $OUTPUT->box_end();
 
+    // Get remaining groupmates to assess
+    $toassess_sql = "SELECT u.id, CONCAT(u.firstname, ' ', u.lastname) as 'name'
+    FROM {user} as u, {groups_members} as gm
+    WHERE gm.groupid = (
+        SELECT gm.groupid
+        FROM mdl_groups_members AS gm
+        INNER JOIN mdl_groups AS g
+            ON g.id = gm.groupid
+        WHERE gm.userid = ?
+        AND g.courseid = ?
+        )
+    AND gm.userid = u.id
+    AND gm.userid != ?
+    AND u.id NOT IN (
+        SELECT v.value
+        FROM {peerassess_value} as v
+        WHERE v.completed IN (
+            SELECT c.id as completedid
+            FROM {peerassess_completed} as c
+            WHERE c.peerassess = ?
+            AND c.userid = ?
+        )
+        AND v.item IN (
+            SELECT i.id
+            FROM {peerassess_item} as i
+            WHERE i.peerassess = ?
+            AND i.typ = 'memberselect'
+        )
+    );";
+    $toassess_db = $DB->get_records_sql($toassess_sql, [
+    $USER->id,
+    $COURSE->id,
+    $USER->id,
+    $peerassess->id,
+    $USER->id,
+    $peerassess->id
+    ]);
+
+    $toassess = array_map(function ($item) { return $item->name; }, $toassess_db);
+
+    // Get groupmates who have not completed the peerassess
+    $remaining_sql = "SELECT
+        u.id AS 'userid',
+        CONCAT(u.firstname, ' ', u.lastname) AS 'name',
+        gm.groupid,
+        COALESCE(sc.submission_count, 0) AS 'final_submission_count',
+        mc.member_count
+    FROM mdl_user AS u
+    INNER JOIN mdl_groups_members AS gm
+        ON u.id = gm.userid
+    LEFT OUTER JOIN (
+        SELECT c.userid, COUNT(c.userid) AS 'submission_count'
+        FROM mdl_peerassess_completed AS c
+        WHERE c.peerassess = ?
+        GROUP BY c.userid
+    ) AS sc
+        ON u.id = sc.userid
+    INNER JOIN (
+        SELECT gm.groupid, COUNT(gm.groupid) AS 'member_count'
+        FROM mdl_groups_members AS gm
+        GROUP BY gm.groupid
+    ) AS mc
+        ON gm.groupid = mc.groupid
+    WHERE gm.groupid = (
+        SELECT gm.groupid
+        FROM mdl_groups_members AS gm
+        INNER JOIN mdl_groups AS g
+            ON g.id = gm.groupid
+        WHERE gm.userid = ?
+        AND g.courseid = ?
+    )
+    AND 'final_submission_count' < mc.member_count - 1;";
+    $remaining_db = $DB->get_records_sql($remaining_sql, [
+    $peerassess->id,
+    $USER->id,
+    $COURSE->id
+    ]);
+
+    $remaining = array_map(function ($item) { return $item->name; }, $remaining_db);
+
+    // Display user dashboard table
+    echo "<div>";
+    echo "<table class='generaltable'>";
+    echo "<tr>";
+    echo "<td style='width: 30%;'><b>Remaining groupmates to assess:</b></td>";
+    echo "<td>" . (empty($toassess) ? "You have completed the peer assessment." : join(",<br>", $toassess)) . "</td>";
+    echo "</tr>";
+    echo "<tr>";
+    echo "<td style='width: 30%;'><b>Groupmates who have not completed peer assessment:</b></td>";
+    echo "<td>" . (empty($remainig) ? "All groupmates have completed their peer assessment." : join(",<br>", $remaining)) . "</td>";
+    echo "</tr>";
+    echo "</table>";
+    echo "</div>";
 }
 
 if (!has_capability('mod/peerassess:viewreports', $context) &&
@@ -146,100 +248,6 @@ if (has_capability('mod/peerassess:mapcourse', $context) && $peerassess->course 
     echo $OUTPUT->box_end();
 }
 
-// Get remaining groupmates to assess
-$toassess_sql = "SELECT u.id, CONCAT(u.firstname, ' ', u.lastname) as 'name'
-        FROM {user} as u, {groups_members} as gm
-        WHERE gm.groupid = (
-            SELECT gm.groupid
-            FROM mdl_groups_members AS gm
-            INNER JOIN mdl_groups AS g
-                ON g.id = gm.groupid
-            WHERE gm.userid = ?
-            AND g.courseid = ?
-            )
-        AND gm.userid = u.id
-        AND gm.userid != ?
-        AND u.id NOT IN (
-            SELECT v.value
-            FROM {peerassess_value} as v
-            WHERE v.completed IN (
-                SELECT c.id as completedid
-                FROM {peerassess_completed} as c
-                WHERE c.peerassess = ?
-                AND c.userid = ?
-            )
-            AND v.item IN (
-                SELECT i.id
-                FROM {peerassess_item} as i
-                WHERE i.peerassess = ?
-                AND i.typ = 'memberselect'
-            )
-        );";
-$toassess_db = $DB->get_records_sql($toassess_sql, [
-    $USER->id,
-    $COURSE->id,
-    $USER->id,
-    $peerassess->id,
-    $USER->id,
-    $peerassess->id
-]);
-
-$toassess = array_map(function ($item) { return $item->name; }, $toassess_db);
-
-// Get groupmates who have not completed the peerassess
-$remaining_sql = "SELECT
-            u.id AS 'userid',
-            CONCAT(u.firstname, ' ', u.lastname) AS 'name',
-            gm.groupid,
-            COALESCE(sc.submission_count, 0) AS 'final_submission_count',
-            mc.member_count
-        FROM mdl_user AS u
-        INNER JOIN mdl_groups_members AS gm
-            ON u.id = gm.userid
-        LEFT OUTER JOIN (
-            SELECT c.userid, COUNT(c.userid) AS 'submission_count'
-            FROM mdl_peerassess_completed AS c
-            WHERE c.peerassess = ?
-            GROUP BY c.userid
-        ) AS sc
-            ON u.id = sc.userid
-        INNER JOIN (
-            SELECT gm.groupid, COUNT(gm.groupid) AS 'member_count'
-            FROM mdl_groups_members AS gm
-            GROUP BY gm.groupid
-        ) AS mc
-            ON gm.groupid = mc.groupid
-        WHERE gm.groupid = (
-            SELECT gm.groupid
-            FROM mdl_groups_members AS gm
-            INNER JOIN mdl_groups AS g
-                ON g.id = gm.groupid
-            WHERE gm.userid = ?
-            AND g.courseid = ?
-        )
-        AND 'final_submission_count' < mc.member_count - 1;";
-$remaining_db = $DB->get_records_sql($remaining_sql, [
-    $peerassess->id,
-    $USER->id,
-    $COURSE->id
-]);
-
-$remaining = array_map(function ($item) { return $item->name; }, $remaining_db);
-
-// Display user dashboard table
-echo "<div>";
-echo "<table class='generaltable'>";
-echo "<tr>";
-echo "<td style='width: 30%;'><b>Remaining groupmates to assess:</b></td>";
-echo "<td>" . (empty($toassess) ? "You have completed the peer assessment." : join(",<br>", $toassess)) . "</td>";
-echo "</tr>";
-echo "<tr>";
-echo "<td style='width: 30%;'><b>Groupmates who have not completed peer assessment:</b></td>";
-echo "<td>" . (empty($remainig) ? "All groupmates have completed their peer assessment." : join(",<br>", $remaining)) . "</td>";
-echo "</tr>";
-echo "</table>";
-echo "</div>";
-
 if ($peerassesscompletion->can_complete()) {
     echo $OUTPUT->box_start('generalbox boxaligncenter');
     if (!$peerassesscompletion->is_open()) {
@@ -258,15 +266,6 @@ if ($peerassesscompletion->can_complete()) {
         }
         echo html_writer::div(html_writer::link($completeurl, $label, array('class' => 'btn btn-secondary')), 'complete-peerassess');
     } else {
-        // [!] (Ideally all) Peerassess was already submitted.
-        // echo $OUTPUT->notification(get_string('this_peerassess_is_already_submitted', 'peerassess'));
-        // Release status of final grades to students.
-        if ($finalgradesreleased == true){
-            echo get_string('your_final_grade_is', 'peerassess', $finalgrades);
-        }
-        else {
-            echo get_string('finalgradeshasnotbeenreleased', 'peerassess');
-        }
         $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
     }
     echo $OUTPUT->box_end();
