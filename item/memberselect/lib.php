@@ -30,6 +30,8 @@ class peerassess_item_memberselect extends peerassess_item_base {
         global $DB, $CFG;
         require_once('memberselect_form.php');
 
+        $this->peerassessid = $peerassess->id;
+
         //get the lastposition number of the peerassess_items
         $position = $item->position;
         $lastposition = $DB->count_records('peerassess_item', array('peerassess'=>$peerassess->id));
@@ -167,38 +169,45 @@ class peerassess_item_memberselect extends peerassess_item_base {
     }
 
     public function get_printval($item, $value) {
+        global $DB;
+
         $info = $this->get_info($item);
 
         $printval = '';
 
-        if (!isset($value->value)) {
-            return $printval;
-        }
+        $conditions = ["id" => $value->value];
+        $userdata = $DB->get_record('user', $conditions);
 
-        $presentation = explode (PEERASSESS_MEMBERSELECT_LINE_SEP, $info->presentation);
+        $printval = $userdata->firstname . ' ' . $userdata->lastname;
 
-        if ($info->subtype == 'c') {
-            $vallist = array_values(explode (PEERASSESS_MEMBERSELECT_LINE_SEP, $value->value));
-            $sizeofvallist = count($vallist);
-            $sizeofpresentation = count($presentation);
-            for ($i = 0; $i < $sizeofvallist; $i++) {
-                for ($k = 0; $k < $sizeofpresentation; $k++) {
-                    if ($vallist[$i] == ($k + 1)) {//Die Werte beginnen bei 1, das Array aber mit 0
-                        $printval .= trim(format_string($presentation[$k])) . chr(10);
-                        break;
-                    }
-                }
-            }
-        } else {
-            $index = 1;
-            foreach ($presentation as $pres) {
-                if ($value->value == $index) {
-                    $printval = format_string($pres);
-                    break;
-                }
-                $index++;
-            }
-        }
+        // if (!isset($value->value)) {
+        //     return $printval;
+        // }
+
+        // $presentation = explode (PEERASSESS_MEMBERSELECT_LINE_SEP, $info->presentation);
+
+        // if ($info->subtype == 'c') {
+        //     $vallist = array_values(explode (PEERASSESS_MEMBERSELECT_LINE_SEP, $value->value));
+        //     $sizeofvallist = count($vallist);
+        //     $sizeofpresentation = count($presentation);
+        //     for ($i = 0; $i < $sizeofvallist; $i++) {
+        //         for ($k = 0; $k < $sizeofpresentation; $k++) {
+        //             if ($vallist[$i] == ($k + 1)) {//Die Werte beginnen bei 1, das Array aber mit 0
+        //                 $printval .= trim(format_string($presentation[$k])) . chr(10);
+        //                 break;
+        //             }
+        //         }
+        //     }
+        // } else {
+        //     $index = 1;
+        //     foreach ($presentation as $pres) {
+        //         if ($value->value == $index) {
+        //             $printval = format_string($pres);
+        //             break;
+        //         }
+        //         $index++;
+        //     }
+        // }
         return $printval;
     }
 
@@ -310,15 +319,30 @@ class peerassess_item_memberselect extends peerassess_item_base {
      * @param mod_peerassess_complete_form $form
      */
     public function complete_form_element($item, $form) {
-        global $USER, $COURSE, $DB;
+        global $USER, $COURSE, $DB, $PAGE;
 
         $info = $this->get_info($item);
         $name = $this->get_display_name($item);
         $class = 'memberselect-' . $info->subtype;
         $inputname = $item->typ . '_' . $item->id;
 
+        $peerassessid_sql = "SELECT cm.instance as id
+                            FROM mdl_course_modules as cm
+                            WHERE cm.id = ?";
+        $peerassess = $DB->get_record_sql($peerassessid_sql, [$PAGE->cm->id]);
+
         // Get course group via SQL
-        $sql = "SELECT u.id, CONCAT(u.firstname, ' ', u.lastname)
+        // $sql = "SELECT u.id, CONCAT(u.firstname, ' ', u.lastname)
+        //         FROM {user} as u, {groups_members} as gm
+        //         WHERE gm.groupid = (
+        //             SELECT gm.groupid
+        //             FROM {user} as u, {groups_members} as gm
+        //             WHERE u.id = ?
+        //             AND gm.userid = u.id
+        //             )
+        //         AND gm.userid = u.id
+        //         AND gm.userid != ?;";
+        $sql = "SELECT u.id, CONCAT(u.firstname, ' ', u.lastname) as 'name'
                 FROM {user} as u, {groups_members} as gm
                 WHERE gm.groupid = (
                     SELECT gm.groupid
@@ -327,8 +351,30 @@ class peerassess_item_memberselect extends peerassess_item_base {
                     AND gm.userid = u.id
                     )
                 AND gm.userid = u.id
-                AND gm.userid != ?;";
-        $options = $DB->get_records_sql_menu($sql, Array($USER->id, $USER->id));
+                AND gm.userid != ?
+                AND u.id NOT IN (
+                    SELECT v.value
+                    FROM {peerassess_value} as v
+                    WHERE v.completed IN (
+                        SELECT c.id as completedid
+                        FROM {peerassess_completed} as c
+                        WHERE c.peerassess = ?
+                        AND c.userid = ?
+                    )
+                    AND v.item IN (
+                        SELECT i.id
+                        FROM {peerassess_item} as i
+                        WHERE i.peerassess = ?
+                        AND i.typ = 'memberselect'
+                    )
+                );";
+        $options = $DB->get_records_sql_menu($sql, [
+            $USER->id,
+            $USER->id,
+            $peerassess->id,
+            $USER->id,
+            $peerassess->id
+        ]);
 
         $separator = !empty($info->horizontal) ? ' ' : '<br>';
         $tmpvalue = $form->get_item_value($item) ?? 0; // Used for element defaults, so must be a valid value (not null).

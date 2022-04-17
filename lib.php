@@ -2852,6 +2852,10 @@ function peerassess_extend_settings_navigation(settings_navigation $settings,
                                     array('id' => $PAGE->cm->id)));
         }
 
+        $peerassessnode->add(get_string('breakdown_per_group', 'peerassess'),
+                    new moodle_url('/mod/peerassess/breakdown_per_group.php',
+                                    array('id' => $PAGE->cm->id)));
+
         $peerassessnode->add(get_string('show_entries', 'peerassess'),
                     new moodle_url('/mod/peerassess/show_entries.php',
                                     array('id' => $PAGE->cm->id)));

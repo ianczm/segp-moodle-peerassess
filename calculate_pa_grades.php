@@ -37,7 +37,7 @@ $PAGE->set_title('PA Calculation');
 echo $OUTPUT->header();
 $pascores = $DB->get_records_sql('SELECT value FROM mdl_peerassess_value');
 print_object($pascores);
-/*
+
 
 function calculate ($id, $pascores, $peerassessmark, $paweighting =1) {
     
@@ -52,7 +52,7 @@ function calculate ($id, $pascores, $peerassessmark, $paweighting =1) {
     $tablefg = 'mdl_peerassess_finalgrades';
     $tablepa = 'mdl_peerassess_peerfactor';
 
-    // Calculate the sum of the scores
+    // Calculate the sum of the peer scores
     foreach ($id as $memberid) {
         foreach ($pascores as $graderid => $gradesgiven) {
             if (!isset($totalscores[$graderid])) {
@@ -71,8 +71,7 @@ function calculate ($id, $pascores, $peerassessmark, $paweighting =1) {
         }
     }
 
-    print_object($sum);
-/*
+
     // Calculate the peer scores and ensure the scores are submitted correctly
     foreach ($id as $memberid) {
         $gradesgiven = $totalscores [$memberid];
@@ -114,22 +113,11 @@ function calculate ($id, $pascores, $peerassessmark, $paweighting =1) {
         return max(0, min(100, $score * $groupmak));
     }, $finalgradepa);
 
-    // Calculate all the grades again
-    $grades = array_reduce ($id, function ($carry, $memberid) use ($finalgradepa, $groupmark, $paweighting) {
-        $score = $finalgradepa[$memberid];
 
-        $adjustedgroupmark = $groupmark * $paweighting;
-        $automaticgrade = $groupmark - $adjustedgroupmark;
-        $grade = max(0, min(100, $automaticgrade + ($score * $adjustedgroupmark)));
-
-        $carry[$memberid] = $grade;
-        return $carry;
-    }, []);
-
-    $resfg = $DB->insert_record($tablefg,'$userid', '$itemid', 'finalgradewithpa', 'peerassessid');
+    $resfg = $DB->insert_record($tablefg,'userid', 'itemid', 'finalgradewithpa', 'peerassessid');
     return new \mod_peerassess\calculate_pa_grades($fracscores, $finalgradepa, $prelimgrades, $grade);
 }
-*/
+
 
 //End the page
 echo $OUTPUT->footer();
