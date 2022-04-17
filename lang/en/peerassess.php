@@ -208,8 +208,16 @@ $string['multichoicetype'] = 'Multiple choice type';
 $string['multichoice_values'] = 'Multiple choice values';
 $string['multiplesubmit'] = 'Allow multiple submissions';
 $string['multiplesubmit_help'] = 'If enabled for anonymous surveys, users can submit peerassess an unlimited number of times.';
+<<<<<<< HEAD
 $string['member_in_current_group'] = 'Members in current group';
 $string['myfinalgrade'] = 'My final grade';
+=======
+<<<<<<< HEAD
+=======
+$string['myfinalgrade'] = 'My final grade';
+$string['myfinalgradewithpa'] = 'Calculate Final Grade with PA';
+>>>>>>> origin/finalgrade_peerassess
+>>>>>>> origin/dev
 $string['name'] = 'Name';
 $string['name_required'] = 'Name required';
 $string['nameandlabelformat'] = '({$a->label}) {$a->name}';
@@ -243,6 +251,7 @@ $string['pluginadministration'] = 'Peerassess administration';
 $string['pluginname'] = 'Peerassess';
 $string['position'] = 'Position';
 $string['previous_page'] = 'Previous page';
+$string['privacy:metadata:peerfactor'] = 'Displaying Final Grade with PA';
 $string['privacy:metadata:completed'] = 'A record of the submissions to the peerassess';
 $string['privacy:metadata:completed:anonymousresponse'] = 'Whether the submission is to be used anonymously.';
 $string['privacy:metadata:completed:timemodified'] = 'The time when the submission was last modified.';
@@ -252,6 +261,7 @@ $string['privacy:metadata:peers:grade'] = 'The final grade given to a group memb
 $string['privacy:metadata:value'] = 'A record of the answer to a question.';
 $string['privacy:metadata:value:value'] = 'The chosen answer.';
 $string['privacy:metadata:valuetmp'] = 'A record of the answer to a question in a submission in progress.';
+$string['finalgradepa'] = 'Final Grade with PA';
 $string['public'] = 'Public';
 $string['question'] = 'Question';
 $string['questionandsubmission'] = 'Question and submission settings';
