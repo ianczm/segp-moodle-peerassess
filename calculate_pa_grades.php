@@ -41,6 +41,37 @@ $PAGE->set_title('PA Calculation');
 
 echo $OUTPUT->header();
 
+function pa_get_question_count($peerassessid, $DB) {
+	$question_count = $DB->get_record_sql("SELECT COUNT(i.id) AS 'question_count'
+			FROM {peerassess_item} AS i
+			WHERE i.peerassess = ?
+			AND i.typ = 'multichoice'", [
+				$peerassessid
+			])->question_count;
+    
+    return $question_count;
+}
+
+function pa_get_question_max_score($peerassessid, $DB) {
+	$presentations = $DB->get_records_sql("SELECT i.id, i.presentation
+			FROM {peerassess_item} AS i
+			WHERE i.peerassess = ?
+			AND i.typ = 'multichoice'", [
+				$peerassessid
+			]);
+
+	// get the last character of each presentation string as an integer
+	// e.g. input element is "r>>>>>1 |2 |3 |4 |5"
+	// then output element is 5
+	$question_scores = array_map(function ($presentation) {return intval($presentation->presentation[-1]);}, $presentations);
+
+    // print_object($question_scores);
+
+	// add up the max score of each question found to get QuestionMaxScore
+	return array_sum($question_scores);
+}
+
+
 function pa_get_userids($peerassessid, $DB) {
     $userids = $DB->get_records_sql("SELECT DISTINCT v.value AS 'userid'
         FROM {peerassess_value} AS v
@@ -60,85 +91,129 @@ function pa_get_userids($peerassessid, $DB) {
     return $userids;
 }
 
+function pa_get_num_received($peerassessid, $userid, $DB) {
+    $num_received = $DB->get_record_sql("SELECT COUNT(DISTINCT v.completed) AS 'received_count'
+            FROM {peerassess_value} AS v
+            WHERE v.item = (
+                SELECT i.id
+                FROM {peerassess_item} AS i
+                WHERE i.typ = 'memberselect'
+                AND i.peerassess = ?
+            )
+            AND v.value = ?;", [
+                $peerassessid,
+                $userid
+    ]);
+
+    return $num_received->received_count;
+}
+
 function pa_get_scores_from_userid($peerassessid, $userid, $DB) {
-    $pascores = $DB->get_records_sql("SELECT ROW_NUMBER() OVER() AS 'question',
+    $pascores = $DB->get_records_sql("SELECT ROW_NUMBER() OVER() AS 'pa_id',
+                i.id AS 'itemid',
                 v.value AS 'pa_score'
             FROM {peerassess_value} AS v
             INNER JOIN {peerassess_item} AS i
                 ON v.item = i.id
-            WHERE v.completed = (
+            WHERE v.completed IN (
                 SELECT v.completed
                 FROM {peerassess_value} AS v
                 INNER JOIN {peerassess_item} AS i
                     ON v.item = i.id
                 WHERE i.peerassess = ?
+                AND i.typ = 'memberselect'
                 AND v.value = ?
             )
             AND i.typ != 'memberselect';", [
                 $peerassessid,
                 $userid
-            ]);
+    ]);
 
     $pascores = array_map(function ($item) { return $item->pa_score; }, $pascores);
 
-    
-    
+    print_object($pascores);
     return $pascores;
 }
 
-function pa_calculate ($userids, $pascores, $peerassessid) {
+function pa_calculate_all ($userids, $pascores, $peerassessid, $groupmark) {
     
     $totalscores = [];
-    $fracscores = [];
+    $interscores = [];
     $numsubmitted = 0;
     global $DB;
 
     $tablefg = 'mdl_peerassess_finalgrades';
     $tablepa = 'mdl_peerassess_peerfactor';
 
-    // Calculate the sum of the peer scores
+    // Calculate the sum of the peer scores for each student
 
     $userids = pa_get_userids($peerassessid, $DB);
 
     foreach ($userids as $memberid) {
+
+        // returns an array of scores for each question for the recipient (memberid)
         $pascores = pa_get_scores_from_userid($peerassessid, $memberid, $DB);
 
-        foreach ($pascores as $graderid => $gradesgiven) { 
-            if (!isset($totalscores[$graderid])) {
-                $totalscores[$graderid] =[];
-            }
-
-            if (isset($gradesgiven[$memberid])) {
-                $sum = array_reduce($gradesgiven[$memberid], function($carry, $item){
-                    $carry += $item;
-                    return $carry;
-                });
-
-                $totalscores[$graderid][$memberid] = $sum;
-                
-            }
+        // create an array that stores the sum of pa scores for each recipient
+        if (!isset($totalscores)) {
+            $totalscores =[];
         }
+        
+        // returns the sum of pa scores or each recipient and stores it inside totalscores
+        $totalscores[$memberid] = array_sum($pascores);
     }
 
-    // Calculate the peer scores and ensure the scores are submitted correctly
-    foreach ($userids as $memberid) {
-        $gradesgiven = $totalscores [$memberid];
-        $total = array_sum($gradesgiven);
+    $maxscore = pa_get_question_max_score($peerassessid, $DB);
+    $questioncount = pa_get_question_count($peerassessid, $DB);
 
-        $fracscores[$memberid] = array_reduce(array_keys($gradesgiven), function($carry, $peerid) use ($total, $gradesgiven) {
-            $grade = $gradesgiven[$peerid];
-            $carry[$peerid] = $total > 0 ? $grade / $total : 0;
-            return $carry;
-        }, []);
+    // // Calculate the fracscores and ensure the scores are submitted correctly
+    // foreach ($userids as $memberid) {
+    //     $gradesgiven = $totalscores[$memberid];
+    //     $total = array_sum($gradesgiven);
 
-        $numsubmitted += !empty($fracscores[$memberid]) ? 1 : 0;
-        $respa = $DB->insert_record($tablepa,'$userid', 'peerassessid', 'peerfactor');
+    //     $fracscores[$memberid] = array_reduce(array_keys($gradesgiven), function($carry, $peerassessid) use ($total, $gradesgiven) {
+    //         $grade = $gradesgiven[$peerassesssid];
+    //         $carry[$peerassessid] = $total > 0 ? $grade / $total : 0;
+    //         return $carry;
+    //     }, []);
+
+    //     $numsubmitted += !empty($fracscores[$memberid]) ? 1 : 0;
         
-    }
-        return($fracscores);
+    // }
+
+    // function pa_get_rmax () {
+    //     $mform = $this->_form;
+    //     $mform->addElement('number', 'pamaxrange', get_string('pamaxrange'));
+    //     $mform->setType('pamaxrange', PARAM_NOTAGS);
+    //     $mform->setDefault('pamaxrange', 'Please enter peer factor maximum range');
+    // }
+
+    $averagescores = array_map(function($totalscore, $memberid) use ($peerassessid, $DB) {
+        $numreceived = pa_get_num_received($peerassessid, $memberid, $DB);
+        return ($totalscore / $numreceived);
+    }, $totalscores, $userids);
+
+    $smax = max($averagescores);
+    $smin = min($averagescores);
+    
+    $maxscore = pa_get_question_max_score($peerassessid, $DB);
+    $questioncount = pa_get_question_count($peerassessid, $DB);
+
+    //effectiverange (Smax - Smin) / questions * (interval input by lecturer)
+    $rmax = 0.2;
+    $effectiverange = (($smax - $smin) / ($maxscore - $questioncount) )* $rmax;
+
+    print_object($totalscores);
+    print_object($averagescores);
+    print_object($effectiverange);
+
+        // foreach ($userids as $memberid) {
+            
+        // }
+
         
-//     // Initializing every student score at 0
-//     $finalgradepa = array_reduce($id, function($carry, $memberid) {
+//    // Initializing every student score at 0
+//     $studentscores = array_reduce($userids, function($carry, $memberid) {
 //         $carry[$memberid] = 0;
 //         return $carry;
 //     }, []);
@@ -146,32 +221,33 @@ function pa_calculate ($userids, $pascores, $peerassessid) {
 //     // Inspect every student's score and add all the scores
 //     foreach ($fracscores as $gradesgiven) {
 //         foreach ($gradesgiven as $memberid => $fraction) {
-//             $finalgradepa[$memberid] += $fraction;
+//             $studentscores[$memberid] += $fraction;
 //         }
 //     }
 
 //     // Applying peer factor
-//     $nummembers = count($id);
+//     $nummembers =  count($userids);
 //     $peerfactor = $numsubmitted > 0 ? $nummembers / $numsubmitted : 1;
-//     $finalgradepa = array_map(function($grade) use ($peerfactor) {
+//     $studentscores = array_map(function($grade) use ($peerfactor) {
 //         return $grade * $peerfactor;
-//     }, $finalgradepa);
+//     }, $studentscores);
 
-//     // Calculating the student's preliminary grade
-//     $prelimgrades = array_map(function($score) use ($groupmark) {
-//         return max(0, min(100, $score * $groupmak));
-//     }, $finalgradepa);
+//     print_object($studentscores);
+//     return($studentscores);
+    //$tablepa = $DB->insert_record($tablepa, $userids, $peerassessid, $peerfactor);
+
+    // // Calculating the student's final grade with pa
+    // $finalgradewithpa = array_map(function($score) use ($groupmark) {
+    //     return max(0, min(100, $score * $groupmark));
+    // }, $studentscores);
 
 
-//     $resfg = $DB->insert_record($tablefg,'userid', 'itemid', 'finalgradewithpa', 'peerassessid');
-//     return new \mod_peerassess\calculate_pa_grades($fracscores, $finalgradepa, $prelimgrades, $grade);
-// }
+    //$tablefg = $DB->insert_record($tablefg, $userids, 'itemid', $finalgradewithpa, $peerassessid);
 
-    print_object($totalscores);
-    return $totalscores;
 }
 //End the page
 
-pa_calculate($userids, $pascores, $peerassessid);
+pa_calculate_all($userids, $pascores, $peerassessid, $groupmark);
 
 echo $OUTPUT->footer();
+
