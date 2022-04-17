@@ -209,9 +209,9 @@ if (has_capability('mod/peerassess:edititems', $context)) {
     )
     AND COALESCE(sc.submission_count, 0) < mc.member_count - 1;";
     $remaining_db = $DB->get_records_sql($remaining_sql, [
-    $peerassess->id,
-    $USER->id,
-    $COURSE->id
+        $peerassess->id,
+        $USER->id,
+        $COURSE->id
     ]);
 
     $remaining = array_map(function ($item) { return $item->name; }, $remaining_db);
