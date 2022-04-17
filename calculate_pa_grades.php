@@ -28,41 +28,33 @@ $id = required_param('id', PARAM_INT);
 $grades = optional_param('grades', false, PARAM_INT);
 $assignmentid = optional_param('assignmentid', false, PARAM_INT);
 
-list($course, $cm) = get_course_and_cm_from_cmid($id, 'peerassess');
-$finalgradewithpaurl = new moodle_url('/mod/peerassess/calculate_pa_grades.php', ['id' => $cm->id]);
 
-$PAGE->set_url(new moodle_url($finalgradewithpaurl, array('id' => $id, 'grades' => $grades,
-        'assignmentid' => $assignmentid)));
+$finalgradewithpaurl = new moodle_url('/mod/peerassess/calculate_pa_grades.php');
+$PAGE->set_url(new moodle_url($finalgradewithpaurl));
+$PAGE->set_context(\context_system::instance());
+$PAGE->set_title('PA Calculation');
 
-$context = context_module::instance($cm->id);
-require_login($course, true, $cm);
-$peerassess = $PAGE->activityrecord;
+echo $OUTPUT->header();
+$pascores = $DB->get_records_sql('SELECT value FROM mdl_peerassess_value');
+print_object($pascores);
+/*
 
-require_capability('mod/peerassess:viewreports', $context);
-
-global $DB;
-
-
-
-function get_name() {
-    return get_string('assignment_submissions:grade', 'assignment');
-}
-
-function calculate ($grades, $peerassessmark, $paweighting =1) {
+function calculate ($id, $pascores, $peerassessmark, $paweighting =1) {
     
-    $id = array_keys($grades);
+    $id = array_keys($pascores);
     $totalscores = [];
     $fracscores = [];
     $numsubmitted = 0;
+    global $DB;
 
     $id = $DB->get_records_sql('SELECT userid FROM mdl_assign_grades');
-    $grades = $DB->get_records_sql('SELECT grade FROM mdl_assign_grades');
+    $pascores = $DB->get_records_sql('SELECT value FROM mdl_peerassess_value');
     $tablefg = 'mdl_peerassess_finalgrades';
     $tablepa = 'mdl_peerassess_peerfactor';
 
     // Calculate the sum of the scores
     foreach ($id as $memberid) {
-        foreach ($grades as $graderid => $gradesgiven) {
+        foreach ($pascores as $graderid => $gradesgiven) {
             if (!isset($totalscores[$graderid])) {
                 $totalscores[$graderid] =[];
             }
@@ -74,10 +66,13 @@ function calculate ($grades, $peerassessmark, $paweighting =1) {
                 });
 
                 $totalscores[$graderid][$memberid] = $sum;
+                
             }
         }
     }
 
+    print_object($sum);
+/*
     // Calculate the peer scores and ensure the scores are submitted correctly
     foreach ($id as $memberid) {
         $gradesgiven = $totalscores [$memberid];
@@ -134,3 +129,7 @@ function calculate ($grades, $peerassessmark, $paweighting =1) {
     $resfg = $DB->insert_record($tablefg,'$userid', '$itemid', 'finalgradewithpa', 'peerassessid');
     return new \mod_peerassess\calculate_pa_grades($fracscores, $finalgradepa, $prelimgrades, $grade);
 }
+*/
+
+//End the page
+echo $OUTPUT->footer();
