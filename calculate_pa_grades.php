@@ -52,6 +52,41 @@ function pa_get_question_count($peerassessid, $DB) {
     return $question_count;
 }
 
+// Input peerassess id
+// Return: Assignments = [1, 2, 3]
+function get_assignment_ids($peerassessid, $DB) {
+	$assignments = $DB->get_records_sql("SELECT a.assignmentid
+			FROM {peerassess_assignments} AS a
+			WHERE a.peerassessid = ?", [
+				$peerassessid
+			]);
+
+	return array_map(function ($assignment) {return $assignment->assignmentid;}, $assignments);
+}
+
+// Input assingment id and member id
+// Return: Assignment Grades {[1] => 96, [2] => 60, [3] => 40]}
+function get_assignment_grades($assignment_ids, $userid, $DB) {
+	$assignment_grades = [];
+	foreach ($assignment_ids as $assignment_id) {
+		$assignment_grade = $DB->get_record_sql("SELECT
+					ag.id,
+					ag.assignment,
+					ag.userid,
+					ag.grader,
+					ag.grade
+				FROM {assign_grades} AS ag
+				WHERE ag.assignment = ?
+				AND ag.userid = ?", [
+					$assignment_id,
+					$userid
+				]);
+		$assignment_grades[$assignment_id] = $assignment_grade->grade;
+	}
+
+	return $assignment_grades;
+}
+
 function pa_get_question_max_score($peerassessid, $DB) {
 	$presentations = $DB->get_records_sql("SELECT i.id, i.presentation
 			FROM {peerassess_item} AS i
@@ -219,46 +254,50 @@ function pa_calculate_all ($userids, $pascores, $peerassessid, $groupmark) {
             $DB->insert_record($tablepa, $peerfactorobject);
         }  
     }
+
+    foreach ($userids as $memberid) {
+        // an array of final grades [97, 94, 93]
+        // for assignment 3, unweighted grade is = assigngrades[3]
+        // finalgradewithpas[3] stores the weighted grade of assignment 3 for memberid
+
+        $assignmentids = get_assignment_ids($peerassessid, $DB);
+
+        // this is indexed by assignment id
+        $assigngrades = get_assignment_grades($assignmentids, $memberid, $DB);
         
-
-        // foreach ($userids as $memberid) {
-        //     $finalgradewithpa = array_map(function($))
-        // }
-
-//    // Initializing every student score at 0
-//     $studentscores = array_reduce($userids, function($carry, $memberid) {
-//         $carry[$memberid] = 0;
-//         return $carry;
-//     }, []);
-
-//     // Inspect every student's score and add all the scores
-//     foreach ($fracscores as $gradesgiven) {
-//         foreach ($gradesgiven as $memberid => $fraction) {
-//             $studentscores[$memberid] += $fraction;
-//         }
-//     }
-
-//     // Applying peer factor
-//     $nummembers =  count($userids);
-//     $peerfactor = $numsubmitted > 0 ? $nummembers / $numsubmitted : 1;
-//     $studentscores = array_map(function($grade) use ($peerfactor) {
-//         return $grade * $peerfactor;
-//     }, $studentscores);
-
-//     print_object($studentscores);
-//     return($studentscores);
-    //$tablepa = $DB->insert_record($tablepa, $userids, $peerassessid, $peerfactor);
-
-    // // Calculating the student's final grade with pa
-    // $finalgradewithpa = array_map(function($score) use ($groupmark) {
-    //     return max(0, min(100, $score * $groupmark));
-    // }, $studentscores);
+        
+        $finalgradewithpas = array_map(function($assigngrade) use ($peerfactor) {
+            $finalgradewithpf = $assigngrade * $peerfactor;
+            return $finalgradewithpf > 100 ? 100 : $finalgradewithpf;
+        }, $assigngrades);
 
 
-    //$tablefg = $DB->insert_record($tablefg, $userids, 'itemid', $finalgradewithpa, $peerassessid);
 
+        foreach ($assignmentids as $assignmentid) {
+            $finalgradewithpaobject = (object) [
+                "userid" => $memberid,
+                "itemid" => $assignmentid,
+                "peerassessid" => $peerassessid,
+                "finalgradewithpa" => $finalgradewithpas[$assignmentid]
+            ];
+
+            print_object($finalgradewithpaobject);
+
+            $record = $DB->get_record($tablefg, [
+                "userid" => $memberid,
+                "itemid" => $assignmentid,
+                "peerassessid" => $peerassessid
+            ]);
+
+            if ($record) {
+                $finalgradewithpaobject->id = $record->id;
+                $DB->update_record($tablefg, $finalgradewithpaobject);
+            } else {
+                $DB->insert_record($tablefg, $finalgradewithpaobject);
+            }
+        }
+    }
 }
-//End the page
 
 pa_calculate_all($userids, $pascores, $peerassessid, $groupmark);
 
