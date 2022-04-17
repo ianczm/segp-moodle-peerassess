@@ -138,12 +138,12 @@ function pa_get_scores_from_userid($peerassessid, $userid, $DB) {
 function pa_calculate_all ($userids, $pascores, $peerassessid, $groupmark) {
     
     $totalscores = [];
-    $interscores = [];
+    $averagescores = [];
     $numsubmitted = 0;
     global $DB;
 
-    $tablefg = 'mdl_peerassess_finalgrades';
-    $tablepa = 'mdl_peerassess_peerfactor';
+    $tablefg = 'peerassess_finalgrades';
+    $tablepa = 'peerassess_peerfactors';
 
     // Calculate the sum of the peer scores for each student
 
@@ -166,21 +166,6 @@ function pa_calculate_all ($userids, $pascores, $peerassessid, $groupmark) {
     $maxscore = pa_get_question_max_score($peerassessid, $DB);
     $questioncount = pa_get_question_count($peerassessid, $DB);
 
-    // // Calculate the fracscores and ensure the scores are submitted correctly
-    // foreach ($userids as $memberid) {
-    //     $gradesgiven = $totalscores[$memberid];
-    //     $total = array_sum($gradesgiven);
-
-    //     $fracscores[$memberid] = array_reduce(array_keys($gradesgiven), function($carry, $peerassessid) use ($total, $gradesgiven) {
-    //         $grade = $gradesgiven[$peerassesssid];
-    //         $carry[$peerassessid] = $total > 0 ? $grade / $total : 0;
-    //         return $carry;
-    //     }, []);
-
-    //     $numsubmitted += !empty($fracscores[$memberid]) ? 1 : 0;
-        
-    // }
-
     // function pa_get_rmax () {
     //     $mform = $this->_form;
     //     $mform->addElement('number', 'pamaxrange', get_string('pamaxrange'));
@@ -188,10 +173,14 @@ function pa_calculate_all ($userids, $pascores, $peerassessid, $groupmark) {
     //     $mform->setDefault('pamaxrange', 'Please enter peer factor maximum range');
     // }
 
-    $averagescores = array_map(function($totalscore, $memberid) use ($peerassessid, $DB) {
+    foreach ($userids as $memberid) {
+        if (!isset($averagescores)) {
+            $averagescores = [];
+        }
+        $totalscore = $totalscores[$memberid];
         $numreceived = pa_get_num_received($peerassessid, $memberid, $DB);
-        return ($totalscore / $numreceived);
-    }, $totalscores, $userids);
+        $averagescores[$memberid] = ($totalscore / $numreceived);
+    }
 
     $smax = max($averagescores);
     $smin = min($averagescores);
@@ -199,7 +188,7 @@ function pa_calculate_all ($userids, $pascores, $peerassessid, $groupmark) {
     $maxscore = pa_get_question_max_score($peerassessid, $DB);
     $questioncount = pa_get_question_count($peerassessid, $DB);
 
-    //effectiverange (Smax - Smin) / questions * (interval input by lecturer)
+    //effectiverange = (Smax - Smin) / questions * (interval input by lecturer)
     $rmax = 0.2;
     $effectiverange = (($smax - $smin) / ($maxscore - $questioncount) )* $rmax;
 
@@ -207,11 +196,35 @@ function pa_calculate_all ($userids, $pascores, $peerassessid, $groupmark) {
     print_object($averagescores);
     print_object($effectiverange);
 
+
+    foreach ($userids as $memberid) {
+        if (!isset($peerfactors)) {
+            $peerfactors = [];
+        } 
+        $avgstudscore = $averagescores[$memberid];
+        $peerfactor = (($avgstudscore - $smin) / ($smax - $smin)) * 2 * $effectiverange + (1 - $effectiverange);
+        
+        $peerfactors[$memberid] = $peerfactor;
+
+        $peerfactorobject = (object) ["userid" => $memberid, "peerassessid" => $peerassessid, "peerfactor" => $peerfactor];
+
+        print_object($peerfactorobject);
+
+        $record = $DB->get_record($tablepa, ["userid" => $memberid, "peerassessid" => $peerassessid]);
+
+        if ($record) {
+            $peerfactorobject->id = $record->id;
+            $DB->update_record($tablepa, $peerfactorobject);
+        } else {
+            $DB->insert_record($tablepa, $peerfactorobject);
+        }  
+    }
+        
+
         // foreach ($userids as $memberid) {
-            
+        //     $finalgradewithpa = array_map(function($))
         // }
 
-        
 //    // Initializing every student score at 0
 //     $studentscores = array_reduce($userids, function($carry, $memberid) {
 //         $carry[$memberid] = 0;
