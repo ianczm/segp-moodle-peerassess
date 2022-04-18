@@ -25,7 +25,7 @@
 require_once("../../config.php");
 
 $id = required_param('id', PARAM_INT);
-$grades = optional_param('grades', false, PARAM_INT);
+$pascores = optional_param('grades', false, PARAM_INT);
 $assignmentid = optional_param('assignmentid', false, PARAM_INT);
 
 
@@ -35,10 +35,14 @@ $PAGE->set_context(\context_system::instance());
 $PAGE->set_title('PA Calculation');
 
 echo $OUTPUT->header();
-$pascores = $DB->get_records_sql('SELECT value FROM mdl_peerassess_value');
-print_object($pascores);
-
-
+$id = $DB->get_records_sql('SELECT DISTINCT v.value AS "userid" FROM {peerassess_value} AS v
+                            WHERE v.item = (
+                                SELECT i.id
+                                FROM {peerassess_item} AS i
+                                WHERE i.typ = "memberselect"
+                                AND i.peerassess = ?', [$peerassess->id]);
+print_object($id);
+/*
 function calculate ($id, $pascores, $peerassessmark, $paweighting =1) {
     
     $id = array_keys($pascores);
@@ -47,7 +51,7 @@ function calculate ($id, $pascores, $peerassessmark, $paweighting =1) {
     $numsubmitted = 0;
     global $DB;
 
-    $id = $DB->get_records_sql('SELECT userid FROM mdl_assign_grades');
+    $id = $DB->get_records_sql('SELECT userid FROM mdl_peerassess_value');
     $pascores = $DB->get_records_sql('SELECT value FROM mdl_peerassess_value');
     $tablefg = 'mdl_peerassess_finalgrades';
     $tablepa = 'mdl_peerassess_peerfactor';
@@ -70,8 +74,8 @@ function calculate ($id, $pascores, $peerassessmark, $paweighting =1) {
             }
         }
     }
-
-
+    
+/*
     // Calculate the peer scores and ensure the scores are submitted correctly
     foreach ($id as $memberid) {
         $gradesgiven = $totalscores [$memberid];
@@ -116,7 +120,8 @@ function calculate ($id, $pascores, $peerassessmark, $paweighting =1) {
 
     $resfg = $DB->insert_record($tablefg,'userid', 'itemid', 'finalgradewithpa', 'peerassessid');
     return new \mod_peerassess\calculate_pa_grades($fracscores, $finalgradepa, $prelimgrades, $grade);
-}
+    */
+
 
 
 //End the page

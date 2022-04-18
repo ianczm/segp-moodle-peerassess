@@ -207,11 +207,8 @@ $string['multichoicetype'] = 'Multiple choice type';
 $string['multichoice_values'] = 'Multiple choice values';
 $string['multiplesubmit'] = 'Allow multiple submissions';
 $string['multiplesubmit_help'] = 'If enabled for anonymous surveys, users can submit peerassess an unlimited number of times.';
-<<<<<<< HEAD
-=======
 $string['myfinalgrade'] = 'My final grade';
 $string['myfinalgradewithpa'] = 'Calculate Final Grade with PA';
->>>>>>> origin/finalgrade_peerassess
 $string['name'] = 'Name';
 $string['name_required'] = 'Name required';
 $string['nameandlabelformat'] = '({$a->label}) {$a->name}';
