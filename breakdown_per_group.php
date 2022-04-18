@@ -139,7 +139,8 @@ $tableheaders[] = 'Peer Factor';
 
 //Get each assignment'grade
 $assignmentGrades = $DB->get_fieldset_sql('SELECT psa.assignmentid
-                                                FROM  {peerassess_assignments} psa'
+                                                FROM  {peerassess_assignments} psa
+                                                WHERE psa.peerassessid = '.$peerassess->id
                                                 ,array('peerassessid'=>$peerassess->id));
 foreach($assignmentGrades as $assignmentGrade){
     $tablecolumns[] = 'Assignment'.$assignmentGrade;
@@ -192,6 +193,7 @@ $students = peerassess_get_all_users_records($cm, $usedgroupid, $sort, $startpag
 echo $OUTPUT->heading(get_string('members_in_current_group', 'peerassess', $matchcount), 4);
 echo isset($groupselect) ? $groupselect : '';
 //echo"$peerassess->id";
+//print_r($assignmentGrades);
 
 //print export to excel button
 echo $OUTPUT->container_start('form-buttons');
