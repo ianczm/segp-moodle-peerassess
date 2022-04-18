@@ -17,7 +17,7 @@
 /**
  * shows an analysed view of peerassess
  *
- * @copyright Andreas Grabs
+ * @copyright segp-group 10a
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package mod_peerassess
  */
@@ -54,7 +54,7 @@ function pa_get_question_count($peerassessid, $DB) {
 
 // Input peerassess id
 // Return: Assignments = [1, 2, 3]
-function get_assignment_ids($peerassessid, $DB) {
+function pa_get_assignment_ids($peerassessid, $DB) {
 	$assignments = $DB->get_records_sql("SELECT a.assignmentid
 			FROM {peerassess_assignments} AS a
 			WHERE a.peerassessid = ?", [
@@ -66,7 +66,7 @@ function get_assignment_ids($peerassessid, $DB) {
 
 // Input assingment id and member id
 // Return: Assignment Grades {[1] => 96, [2] => 60, [3] => 40]}
-function get_assignment_grades($assignment_ids, $userid, $DB) {
+function pa_get_assignment_grades($assignment_ids, $userid, $DB) {
 	$assignment_grades = [];
 	foreach ($assignment_ids as $assignment_id) {
 		$assignment_grade = $DB->get_record_sql("SELECT
@@ -87,7 +87,7 @@ function get_assignment_grades($assignment_ids, $userid, $DB) {
 	return $assignment_grades;
 }
 
-function pa_get_question_max_score($peerassessid, $DB) {
+function pa_get_all_questions_max_score($peerassessid, $DB) {
 	$presentations = $DB->get_records_sql("SELECT i.id, i.presentation
 			FROM {peerassess_item} AS i
 			WHERE i.peerassess = ?
@@ -107,7 +107,7 @@ function pa_get_question_max_score($peerassessid, $DB) {
 }
 
 
-function pa_get_userids($peerassessid, $DB) {
+function pa_get_recipient_userids($peerassessid, $DB) {
     $userids = $DB->get_records_sql("SELECT DISTINCT v.value AS 'userid'
         FROM {peerassess_value} AS v
         WHERE v.item = (
@@ -182,7 +182,7 @@ function pa_calculate_all ($userids, $pascores, $peerassessid, $groupmark) {
 
     // Calculate the sum of the peer scores for each student
 
-    $userids = pa_get_userids($peerassessid, $DB);
+    $userids = pa_get_recipient_userids($peerassessid, $DB);
 
     foreach ($userids as $memberid) {
 
@@ -198,7 +198,7 @@ function pa_calculate_all ($userids, $pascores, $peerassessid, $groupmark) {
         $totalscores[$memberid] = array_sum($pascores);
     }
 
-    $maxscore = pa_get_question_max_score($peerassessid, $DB);
+    $maxscore = pa_get_all_questions_max_score($peerassessid, $DB);
     $questioncount = pa_get_question_count($peerassessid, $DB);
 
     // function pa_get_rmax () {
@@ -220,7 +220,7 @@ function pa_calculate_all ($userids, $pascores, $peerassessid, $groupmark) {
     $smax = max($averagescores);
     $smin = min($averagescores);
     
-    $maxscore = pa_get_question_max_score($peerassessid, $DB);
+    $maxscore = pa_get_all_questions_max_score($peerassessid, $DB);
     $questioncount = pa_get_question_count($peerassessid, $DB);
 
     //effectiverange = (Smax - Smin) / questions * (interval input by lecturer)
@@ -260,10 +260,10 @@ function pa_calculate_all ($userids, $pascores, $peerassessid, $groupmark) {
         // for assignment 3, unweighted grade is = assigngrades[3]
         // finalgradewithpas[3] stores the weighted grade of assignment 3 for memberid
 
-        $assignmentids = get_assignment_ids($peerassessid, $DB);
+        $assignmentids = pa_get_assignment_ids($peerassessid, $DB);
 
         // this is indexed by assignment id
-        $assigngrades = get_assignment_grades($assignmentids, $memberid, $DB);
+        $assigngrades = pa_get_assignment_grades($assignmentids, $memberid, $DB);
         
         
         $finalgradewithpas = array_map(function($assigngrade) use ($peerfactor) {
