@@ -192,8 +192,6 @@ $students = peerassess_get_all_users_records($cm, $usedgroupid, $sort, $startpag
 //print the list of students
 echo $OUTPUT->heading(get_string('members_in_current_group', 'peerassess', $matchcount), 4);
 echo isset($groupselect) ? $groupselect : '';
-//echo"$peerassess->id";
-//print_r($assignmentGrades);
 
 //print export to excel button
 echo $OUTPUT->container_start('form-buttons');
@@ -231,11 +229,22 @@ if (empty($students)) {
         }
 
         //data for peerfactor
-        $data[] = '';
+        $peerfactor = $DB->get_field('peerassess_peerfactors','peerfactor', array(
+                                            'userid' => $student->id, 'peerassessid' => $peerassess->id));
+        $data[] = $peerfactor;
 
         //data for assignments grade
-        foreach($assignmentGrades as $assignmentGrade){
-            $data[] = '';
+        if(empty($assignmentresults = $DB->get_fieldset_sql('SELECT pfg.finalgradewithpa
+                                                                FROM  {peerassess_finalgrades} pfg
+                                                                WHERE pfg.peerassessid = '.$peerassess->id.' AND pfg.userid = '.$student->id
+                                                                ,array('peerassessid'=>$peerassess->id)))){
+            foreach($assignmentGrades as $assignmentgrade){
+                $data[] = '';
+            }
+        }else{
+            foreach($assignmentresults as $assignmentresult){
+                $data[] = $assignmentresult;
+            }
         }
         $table->add_data($data);
     }
