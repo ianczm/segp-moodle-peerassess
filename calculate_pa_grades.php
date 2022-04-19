@@ -25,7 +25,6 @@
 require_once("../../config.php");
 
 $cmid = required_param('id', PARAM_INT);
-$grades = optional_param('grades', false, PARAM_INT);
 $assignmentid = optional_param('assignmentid', false, PARAM_INT);
 
 $peerassessid = $DB->get_record_sql("SELECT cm.instance
@@ -170,11 +169,10 @@ function pa_get_scores_from_userid($peerassessid, $userid, $DB) {
     return $pascores;
 }
 
-function pa_calculate_all ($userids, $pascores, $peerassessid, $groupmark) {
+function pa_calculate_all ($userids, $pascores, $peerassessid) {
     
     $totalscores = [];
     $averagescores = [];
-    $numsubmitted = 0;
     global $DB;
 
     $tablefg = 'peerassess_finalgrades';
@@ -223,8 +221,16 @@ function pa_calculate_all ($userids, $pascores, $peerassessid, $groupmark) {
     $maxscore = pa_get_all_questions_max_score($peerassessid, $DB);
     $questioncount = pa_get_question_count($peerassessid, $DB);
 
+
+    // $rmax = pa_input_pf_maxrange($pf_maxrange);
+    function pa_input_pf_maxrange($pf_maxrange) {
+        
+        return $pf_maxrange;
+    }
+    
+    $rmax = pa_input_pf_maxrange($pf_maxrange);
+    
     //effectiverange = (Smax - Smin) / questions * (interval input by lecturer)
-    $rmax = 0.2;
     $effectiverange = (($smax - $smin) / ($maxscore - $questioncount) )* $rmax;
 
     print_object($totalscores);
@@ -250,9 +256,15 @@ function pa_calculate_all ($userids, $pascores, $peerassessid, $groupmark) {
         if ($record) {
             $peerfactorobject->id = $record->id;
             $DB->update_record($tablepa, $peerfactorobject);
+            redirect('/calculate_pa_grades.php', 'Successful Calculating Peer Factor', null, \core\output\notification::NOTIFY_SUCCESS);
         } else {
             $DB->insert_record($tablepa, $peerfactorobject);
+            redirect('/calculate_pa_grades.php', 'Successful Calculating Peer Factor', null, \core\output\notification::NOTIFY_SUCCESS);
         }  
+
+        if (!isset($peerfactorobject)) {
+            redirect('/calculate_pa_grades.php', 'Failure Calculating Peer Factor', null, \core\output\notification::NOTIFY_ERROR);
+        }
     }
 
     foreach ($userids as $memberid) {
@@ -292,14 +304,22 @@ function pa_calculate_all ($userids, $pascores, $peerassessid, $groupmark) {
             if ($record) {
                 $finalgradewithpaobject->id = $record->id;
                 $DB->update_record($tablefg, $finalgradewithpaobject);
+                redirect('/calculate_pa_grades.php', 'Success Calculating Final Grades with PA', null, \core\output\notification::NOTIFY_SUCCESS);
             } else {
                 $DB->insert_record($tablefg, $finalgradewithpaobject);
+                redirect('/calculate_pa_grades.php', 'Success Calculating Final Grades with PA', null, \core\output\notification::NOTIFY_SUCCESS);
             }
         }
     }
+
+    if (!isset($finalgradewithpaobject)) {
+        redirect('/calculate_pa_grades.php', 'Failure Calculating Final Grades with PA', null, \core\output\notification::NOTIFY_ERROR);
+    }
+
+
 }
 
-pa_calculate_all($userids, $pascores, $peerassessid, $groupmark);
+pa_calculate_all($userids, $pascores, $peerassessid);
 
 echo $OUTPUT->footer();
 

@@ -213,6 +213,10 @@ if (has_capability('mod/peerassess:edititems', $context)) {
         echo $OUTPUT->box($pageaftersubmit, 'generalbox peerassess_after_submit');
     }
 
+    // [!] might want to include form in another file instead
+    // $pf_maxrange = $mform->addElement('float', 'pf_maxrange', get_string('pf_maxrange'));
+    // $mform->addHelpButton('pf_maxrange', 'pf_maxrange');
+
     echo $OUTPUT->box_start('generalbox boxaligncenter');
     $finalgradewithpaurl = new moodle_url('/mod/peerassess/calculate_pa_grades.php', ['id' => $cm->id]);
     echo html_writer::div(html_writer::link($finalgradewithpaurl, get_string("myfinalgradewithpa", 'peerassess'), array('class' => 'btn btn-secondary')));
