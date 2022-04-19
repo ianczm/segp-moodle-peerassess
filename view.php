@@ -116,21 +116,28 @@ if (has_capability('mod/peerassess:edititems', $context)) {
     }
 
     echo $OUTPUT->box_start('generalbox boxaligncenter');
-    $finalgradewithpaurl = new moodle_url('/mod/peerassess/calculate_pa_grades.php', ['id' => $cm->id]);
+    $finalgradewithpaurl = new moodle_url('/mod/peerassess/calculate_pa_grades.php', ['id' => $cm->id, 'peerassess' => $peerassess->id]);
     echo html_writer::div(html_writer::link($finalgradewithpaurl, get_string("myfinalgradewithpa", 'peerassess'), array('class' => 'btn btn-secondary')));
     echo $OUTPUT->box_end();
 
     echo $OUTPUT->box_start('generalbox boxaligncenter');
-    $releasegradesurl = new moodle_url('/mod/peerassess/release_grades.php', ['id' => $cm->id]);
+    $releasegradesurl = new moodle_url('/mod/peerassess/release_grades.php', ['id' => $cm->id, 'peerassess' => $peerassess->id]);
     echo html_writer::div(html_writer::link($releasegradesurl, get_string("releaseallgradesforallgroups", 'peerassess'), array('class' => 'btn btn-secondary')));
     echo $OUTPUT->box_end();
 }
 
 // Get and format final grades
+$showfinalgrades = pa_get_showfinalgrades_flag($peerassess->id, $DB);
 $finalgrades = pa_get_user_finalgrades($USER->id, $peerassess->id, $DB);
-$finalgrades = array_map(function($finalgrade) {
-    return "<b>" . $finalgrade->name . ":</b> " . number_format($finalgrade->grade, 2);
-}, $finalgrades);
+if (!empty($finalgrades)) {
+    // If final grades exist
+    $finalgrades = array_map(function($finalgrade) {
+        return "<b>" . $finalgrade->name . ":</b> " . number_format($finalgrade->grade, 2);
+    }, $finalgrades);
+} else {
+    // If final grades do not exist
+    $finalgrades = ["Peer factor cannot be applied on your grades, please contact the administrator."];
+}
 
 // Get remaining groupmates to assess
 
@@ -147,7 +154,7 @@ echo "<div>";
 echo "<table class='generaltable'>";
 echo "<tr>";
 echo "<td style='width: 30%;'><b>Assignment Grades:</b></td>";
-echo "<td>" . (true ? join("<br>", $finalgrades) : get_string('finalgradeshasnotbeenreleased', 'peerassess')) . "</td>";
+echo "<td>" . ($showfinalgrades ? join("<br>", $finalgrades) : get_string('finalgradeshasnotbeenreleased', 'peerassess')) . "</td>";
 echo "<tr>";
 echo "<td style='width: 30%;'><b>Remaining groupmates to assess:</b></td>";
 echo "<td>" . (empty($toassess) ? "You have completed the peer assessment." : join(",<br>", $toassess)) . "</td>";
@@ -200,6 +207,11 @@ if ($peerassesscompletion->can_complete()) {
 }
 
 echo $OUTPUT->footer();
+
+function pa_get_showfinalgrades_flag($peerassessid, $DB) {
+    $res = $DB->get_record('peerassess', ['id' => $peerassessid], 'showfinalgrades');
+    return $res->showfinalgrades;
+}
 
 function pa_get_members_to_assess($userid, $courseid, $peerassessid, $DB) {
     $toassess_sql =
