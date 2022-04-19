@@ -94,6 +94,8 @@ $options = (object)array('noclean' => true);
 echo format_module_intro('peerassess', $peerassess, $cm->id);
 echo $OUTPUT->box_end();
 
+echo $OUTPUT->heading(get_string('overview', 'peerassess'), 3);
+
 // Get flag of grade released status
 // $finalgradesreleased = get_grades_release_status();
 
@@ -177,28 +179,8 @@ $remaining_db = $DB->get_records_sql($remaining_sql, [
 
 $remaining = array_map(function ($item) { return $item->name; }, $remaining_db);
 
-// Display user dashboard table
-
-echo "<div>";
-echo "<table class='generaltable'>";
-echo "<tr>";
-echo "<td style='width: 30%;'><b>Assignment Grades:</b></td>";
-echo "<td>" . ($finalgradesreleased ? get_string('your_final_grade_is', 'peerassess', $finalgrades) : get_string('finalgradeshasnotbeenreleased', 'peerassess')) . "</td>";
-echo "<tr>";
-echo "<td style='width: 30%;'><b>Remaining groupmates to assess:</b></td>";
-echo "<td>" . (empty($toassess) ? "You have completed the peer assessment." : join(",<br>", $toassess)) . "</td>";
-echo "</tr>";
-echo "<tr>";
-echo "<td style='width: 30%;'><b>Groupmates who have not completed peer assessment:</b></td>";
-echo "<td>" . (empty($remaining) ? "All groupmates have completed their peer assessment." : join(",<br>", $remaining)) . "</td>";
-echo "</tr>";
-echo "</table>";
-echo "</div>";
-
 //show some infos to the peerassess
 if (has_capability('mod/peerassess:edititems', $context)) {
-
-    echo $OUTPUT->heading(get_string('overview', 'peerassess'), 3);
 
     //get the groupid
     $groupselect = groups_print_activity_menu($cm, $CFG->wwwroot.'/mod/peerassess/view.php?id='.$cm->id, true);
@@ -223,6 +205,24 @@ if (has_capability('mod/peerassess:edititems', $context)) {
     echo html_writer::div(html_writer::link($releasegradesurl, get_string("releaseallgradesforallgroups", 'peerassess'), array('class' => 'btn btn-secondary')));
     echo $OUTPUT->box_end();
 }
+
+// Display user dashboard table
+
+echo "<div>";
+echo "<table class='generaltable'>";
+echo "<tr>";
+echo "<td style='width: 30%;'><b>Assignment Grades:</b></td>";
+echo "<td>" . ($finalgradesreleased ? get_string('your_final_grade_is', 'peerassess', $finalgrades) : get_string('finalgradeshasnotbeenreleased', 'peerassess')) . "</td>";
+echo "<tr>";
+echo "<td style='width: 30%;'><b>Remaining groupmates to assess:</b></td>";
+echo "<td>" . (empty($toassess) ? "You have completed the peer assessment." : join(",<br>", $toassess)) . "</td>";
+echo "</tr>";
+echo "<tr>";
+echo "<td style='width: 30%;'><b>Groupmates who have not completed peer assessment:</b></td>";
+echo "<td>" . (empty($remaining) ? "All groupmates have completed their peer assessment." : join(",<br>", $remaining)) . "</td>";
+echo "</tr>";
+echo "</table>";
+echo "</div>";
 
 if (!has_capability('mod/peerassess:viewreports', $context) &&
         $peerassesscompletion->can_view_analysis()) {
