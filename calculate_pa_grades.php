@@ -256,14 +256,14 @@ function pa_calculate_all ($userids, $pascores, $peerassessid) {
         if ($record) {
             $peerfactorobject->id = $record->id;
             $DB->update_record($tablepa, $peerfactorobject);
-            redirect('/calculate_pa_grades.php', 'Successful Calculating Peer Factor', null, \core\output\notification::NOTIFY_SUCCESS);
+            redirect('/calculate_pa_grades.php', 'Peer Factor : SUCCESS', null, \core\output\notification::NOTIFY_SUCCESS);
         } else {
             $DB->insert_record($tablepa, $peerfactorobject);
-            redirect('/calculate_pa_grades.php', 'Successful Calculating Peer Factor', null, \core\output\notification::NOTIFY_SUCCESS);
+            redirect('/calculate_pa_grades.php', 'Peer Factor : SUCCESS', null, \core\output\notification::NOTIFY_SUCCESS);
         }  
 
         if (!isset($peerfactorobject)) {
-            redirect('/calculate_pa_grades.php', 'Failure Calculating Peer Factor', null, \core\output\notification::NOTIFY_ERROR);
+            redirect('/calculate_pa_grades.php', 'Peer Factor : FAIL', null, \core\output\notification::NOTIFY_ERROR);
         }
     }
 
@@ -304,17 +304,18 @@ function pa_calculate_all ($userids, $pascores, $peerassessid) {
             if ($record) {
                 $finalgradewithpaobject->id = $record->id;
                 $DB->update_record($tablefg, $finalgradewithpaobject);
-                redirect('/calculate_pa_grades.php', 'Success Calculating Final Grades with PA', null, \core\output\notification::NOTIFY_SUCCESS);
+                redirect('/calculate_pa_grades.php', 'Final Grades with PA : SUCCESS', null, \core\output\notification::NOTIFY_SUCCESS);
             } else {
                 $DB->insert_record($tablefg, $finalgradewithpaobject);
-                redirect('/calculate_pa_grades.php', 'Success Calculating Final Grades with PA', null, \core\output\notification::NOTIFY_SUCCESS);
+                redirect('/calculate_pa_grades.php', 'Final Grades with PA : SUCCESS', null, \core\output\notification::NOTIFY_SUCCESS);
+            }
+
+            if (!isset($finalgradewithpaobject)) {
+                redirect('/calculate_pa_grades.php', 'Final Grades with PA : FAIL', null, \core\output\notification::NOTIFY_ERROR);
             }
         }
     }
 
-    if (!isset($finalgradewithpaobject)) {
-        redirect('/calculate_pa_grades.php', 'Failure Calculating Final Grades with PA', null, \core\output\notification::NOTIFY_ERROR);
-    }
 
 
 }
