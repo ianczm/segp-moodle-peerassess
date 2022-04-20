@@ -131,11 +131,12 @@ $table = new flexible_table('peerassess-breakdownpergroup'.$course->id);
 foreach ($itemNames as $itemName) {
     $tablecolumns[] = $itemName;
     $tableheaders[] = $itemName;
+    $table->no_sorting($itemName);
 }
 
 $tablecolumns[] = 'peerfactors';
 $tableheaders[] = 'Peer Factor';
-
+$table->no_sorting('peerfactors');
 
 //Get each assignment'grade
 $assignmentGrades = $DB->get_fieldset_sql('SELECT psa.assignmentid
@@ -145,6 +146,7 @@ $assignmentGrades = $DB->get_fieldset_sql('SELECT psa.assignmentid
 foreach($assignmentGrades as $assignmentGrade){
     $tablecolumns[] = 'Assignment'.$assignmentGrade;
     $tableheaders[] = 'Assignment'.$assignmentGrade.'grade';
+    $table->no_sorting('Assignment'.$assignmentGrade);
 }
 
 $table->define_columns($tablecolumns);

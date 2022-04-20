@@ -112,6 +112,21 @@ foreach ($itemNames as $itemName) {
     $i++;
 }
 
+$worksheet1->write_string($rowoffset1, $i,'Peerfactor', $xlsformats->head1);
+$i++;
+
+//Get each assignment'grade
+$assignmentGrades = $DB->get_fieldset_sql('SELECT psa.assignmentid
+                                                FROM  {peerassess_assignments} psa
+                                                WHERE psa.peerassessid = '.$peerassess->id
+                                                ,array('peerassessid'=>$peerassess->id));
+foreach($assignmentGrades as $assignmentGrade){
+    $worksheet1->write_string($rowoffset1, $i,'Assignment'.$assignmentGrade.'grade', $xlsformats->head1);
+    $i++;
+
+}
+
+
 $students = peerassess_get_all_users_records($cm, $usedgroupid, '', false, false, true);
 if (empty($students)) {
     $rowoffset1++;
@@ -135,10 +150,29 @@ if (empty($students)) {
                 ++$j;
             }
         }
+
+        $peerfactor = $DB->get_field('peerassess_peerfactors','peerfactor', array(
+            'userid' => $student->id, 'peerassessid' => $peerassess->id));
+            $worksheet1->write_string($rowoffset1, $j,$peerfactor, $xlsformats->head1);
+            $j++;
+
+        //data for assignments grade
+        if(empty($assignmentresults = $DB->get_fieldset_sql('SELECT pfg.finalgradewithpa
+                                                                FROM  {peerassess_finalgrades} pfg
+                                                                WHERE pfg.peerassessid = '.$peerassess->id.' AND pfg.userid = '.$student->id
+                                                                ,array('peerassessid'=>$peerassess->id)))){
+            foreach($assignmentGrades as $assignmentgrade){
+                $worksheet1->write_string($rowoffset1, $j,'', $xlsformats->head1);
+                $j++;
+            }
+        }else{
+            foreach($assignmentresults as $assignmentresult){
+                $worksheet1->write_string($rowoffset1, $j,$assignmentresult, $xlsformats->head1);
+                $j++;
+            }
+        }
+
     }
-
-
-
 }
 
 function get_item_name($peerassess){
