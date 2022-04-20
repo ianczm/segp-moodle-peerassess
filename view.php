@@ -94,111 +94,13 @@ $options = (object)array('noclean' => true);
 echo format_module_intro('peerassess', $peerassess, $cm->id);
 echo $OUTPUT->box_end();
 
+echo $OUTPUT->heading(get_string('overview', 'peerassess'), 3);
+
 // Get flag of grade released status
 // $finalgradesreleased = get_grades_release_status();
 
-// Get remaining groupmates to assess
-$toassess_sql = "SELECT u.id, CONCAT(u.firstname, ' ', u.lastname) as 'name'
-        FROM {user} as u, {groups_members} as gm
-        WHERE gm.groupid = (
-            SELECT gm.groupid
-            FROM mdl_groups_members AS gm
-            INNER JOIN mdl_groups AS g
-                ON g.id = gm.groupid
-            WHERE gm.userid = ?
-            AND g.courseid = ?
-            )
-        AND gm.userid = u.id
-        AND gm.userid != ?
-        AND u.id NOT IN (
-            SELECT v.value
-            FROM {peerassess_value} as v
-            WHERE v.completed IN (
-                SELECT c.id as completedid
-                FROM {peerassess_completed} as c
-                WHERE c.peerassess = ?
-                AND c.userid = ?
-            )
-            AND v.item IN (
-                SELECT i.id
-                FROM {peerassess_item} as i
-                WHERE i.peerassess = ?
-                AND i.typ = 'memberselect'
-            )
-        );";
-$toassess_db = $DB->get_records_sql($toassess_sql, [
-    $USER->id,
-    $COURSE->id,
-    $USER->id,
-    $peerassess->id,
-    $USER->id,
-    $peerassess->id
-]);
-
-$toassess = array_map(function ($item) { return $item->name; }, $toassess_db);
-
-// Get groupmates who have not completed the peerassess
-$remaining_sql = "SELECT
-    u.id AS 'userid',
-    CONCAT(u.firstname, ' ', u.lastname) AS 'name',
-    gm.groupid,
-    COALESCE(sc.submission_count, 0) AS 'final_submission_count',
-    mc.member_count
-FROM {user} AS u
-INNER JOIN {groups_members} AS gm
-    ON u.id = gm.userid
-LEFT OUTER JOIN (
-    SELECT c.userid, COUNT(c.userid) AS 'submission_count'
-    FROM {peerassess_completed} AS c
-    WHERE c.peerassess = ?
-    GROUP BY c.userid
-) AS sc
-    ON u.id = sc.userid
-INNER JOIN (
-    SELECT gm.groupid, COUNT(gm.groupid) AS 'member_count'
-    FROM {groups_members} AS gm
-    GROUP BY gm.groupid
-) AS mc
-    ON gm.groupid = mc.groupid
-WHERE gm.groupid = (
-    SELECT gm.groupid
-    FROM {groups_members} AS gm
-    INNER JOIN {groups} AS g
-        ON g.id = gm.groupid
-    WHERE gm.userid = ?
-    AND g.courseid = ?
-)
-AND COALESCE(sc.submission_count, 0) < mc.member_count - 1;";
-$remaining_db = $DB->get_records_sql($remaining_sql, [
-    $peerassess->id,
-    $USER->id,
-    $COURSE->id
-]);
-
-$remaining = array_map(function ($item) { return $item->name; }, $remaining_db);
-
-// Display user dashboard table
-
-echo "<div>";
-echo "<table class='generaltable'>";
-echo "<tr>";
-echo "<td style='width: 30%;'><b>Assignment Grades:</b></td>";
-echo "<td>" . ($finalgradesreleased ? get_string('your_final_grade_is', 'peerassess', $finalgrades) : get_string('finalgradeshasnotbeenreleased', 'peerassess')) . "</td>";
-echo "<tr>";
-echo "<td style='width: 30%;'><b>Remaining groupmates to assess:</b></td>";
-echo "<td>" . (empty($toassess) ? "You have completed the peer assessment." : join(",<br>", $toassess)) . "</td>";
-echo "</tr>";
-echo "<tr>";
-echo "<td style='width: 30%;'><b>Groupmates who have not completed peer assessment:</b></td>";
-echo "<td>" . (empty($remaining) ? "All groupmates have completed their peer assessment." : join(",<br>", $remaining)) . "</td>";
-echo "</tr>";
-echo "</table>";
-echo "</div>";
-
 //show some infos to the peerassess
 if (has_capability('mod/peerassess:edititems', $context)) {
-
-    echo $OUTPUT->heading(get_string('overview', 'peerassess'), 3);
 
     //get the groupid
     $groupselect = groups_print_activity_menu($cm, $CFG->wwwroot.'/mod/peerassess/view.php?id='.$cm->id, true);
@@ -218,15 +120,55 @@ if (has_capability('mod/peerassess:edititems', $context)) {
     // $mform->addHelpButton('pf_maxrange', 'pf_maxrange');
 
     echo $OUTPUT->box_start('generalbox boxaligncenter');
-    $finalgradewithpaurl = new moodle_url('/mod/peerassess/calculate_pa_grades.php', ['id' => $cm->id]);
+    $finalgradewithpaurl = new moodle_url('/mod/peerassess/calculate_pa_grades.php', ['id' => $cm->id, 'peerassess' => $peerassess->id]);
     echo html_writer::div(html_writer::link($finalgradewithpaurl, get_string("myfinalgradewithpa", 'peerassess'), array('class' => 'btn btn-secondary')));
     echo $OUTPUT->box_end();
 
     echo $OUTPUT->box_start('generalbox boxaligncenter');
-    $releasegradesurl = new moodle_url('/mod/peerassess/release_grades.php', ['id' => $cm->id]);
+    $releasegradesurl = new moodle_url('/mod/peerassess/release_grades.php', ['id' => $cm->id, 'peerassess' => $peerassess->id]);
     echo html_writer::div(html_writer::link($releasegradesurl, get_string("releaseallgradesforallgroups", 'peerassess'), array('class' => 'btn btn-secondary')));
     echo $OUTPUT->box_end();
 }
+
+// Get and format final grades
+$showfinalgrades = pa_get_showfinalgrades_flag($peerassess->id, $DB);
+$finalgrades = pa_get_user_finalgrades($USER->id, $peerassess->id, $DB);
+if (!empty($finalgrades)) {
+    // If final grades exist
+    $finalgrades = array_map(function($finalgrade) {
+        return "<b>" . $finalgrade->name . ":</b> " . number_format($finalgrade->grade, 2);
+    }, $finalgrades);
+} else {
+    // If final grades do not exist
+    $finalgrades = ["Peer factor cannot be applied on your grades, please contact the administrator."];
+}
+
+// Get remaining groupmates to assess
+
+$toassess = pa_get_members_to_assess($USER->id, $COURSE->id, $peerassess->id, $DB);
+$toassess = array_map(function ($item) { return $item->name; }, $toassess);
+
+// Get groupmates who have not completed the peerassess
+$remaining = pa_get_non_complete_members($USER->id, $COURSE->id, $peerassess->id, $DB);
+$remaining = array_map(function ($item) { return $item->name; }, $remaining);
+
+// Display user dashboard table
+
+echo "<div>";
+echo "<table class='generaltable'>";
+echo "<tr>";
+echo "<td style='width: 30%;'><b>Assignment Grades:</b></td>";
+echo "<td>" . ($showfinalgrades ? join("<br>", $finalgrades) : get_string('finalgradeshasnotbeenreleased', 'peerassess')) . "</td>";
+echo "<tr>";
+echo "<td style='width: 30%;'><b>Remaining groupmates to assess:</b></td>";
+echo "<td>" . (empty($toassess) ? "You have completed the peer assessment." : join(",<br>", $toassess)) . "</td>";
+echo "</tr>";
+echo "<tr>";
+echo "<td style='width: 30%;'><b>Groupmates who have not completed peer assessment:</b></td>";
+echo "<td>" . (empty($remaining) ? "All groupmates have completed their peer assessment." : join(",<br>", $remaining)) . "</td>";
+echo "</tr>";
+echo "</table>";
+echo "</div>";
 
 if (!has_capability('mod/peerassess:viewreports', $context) &&
         $peerassesscompletion->can_view_analysis()) {
@@ -270,3 +212,112 @@ if ($peerassesscompletion->can_complete()) {
 
 echo $OUTPUT->footer();
 
+function pa_get_showfinalgrades_flag($peerassessid, $DB) {
+    $res = $DB->get_record('peerassess', ['id' => $peerassessid], 'showfinalgrades');
+    return $res->showfinalgrades;
+}
+
+function pa_get_members_to_assess($userid, $courseid, $peerassessid, $DB) {
+    $toassess_sql =
+        "SELECT u.id, CONCAT(u.firstname, ' ', u.lastname) as 'name'
+        FROM {user} as u, {groups_members} as gm
+        WHERE gm.groupid = (
+            SELECT gm.groupid
+            FROM mdl_groups_members AS gm
+            INNER JOIN mdl_groups AS g
+                ON g.id = gm.groupid
+            WHERE gm.userid = ?
+            AND g.courseid = ?
+            )
+        AND gm.userid = u.id
+        AND gm.userid != ?
+        AND u.id NOT IN (
+            SELECT v.value
+            FROM {peerassess_value} as v
+            WHERE v.completed IN (
+                SELECT c.id as completedid
+                FROM {peerassess_completed} as c
+                WHERE c.peerassess = ?
+                AND c.userid = ?
+            )
+            AND v.item IN (
+                SELECT i.id
+                FROM {peerassess_item} as i
+                WHERE i.peerassess = ?
+                AND i.typ = 'memberselect'
+            )
+        );";
+    
+    $toassess_db = $DB->get_records_sql($toassess_sql, [
+        $userid,
+        $courseid,
+        $userid,
+        $peerassessid,
+        $userid,
+        $peerassessid
+    ]);
+
+    return $toassess_db;
+}
+
+function pa_get_non_complete_members($userid, $courseid, $peerassessid, $DB) {
+    $remaining_sql =
+        "SELECT
+            u.id AS 'userid',
+            CONCAT(u.firstname, ' ', u.lastname) AS 'name',
+            gm.groupid,
+            COALESCE(sc.submission_count, 0) AS 'final_submission_count',
+            mc.member_count
+        FROM {user} AS u
+        INNER JOIN {groups_members} AS gm
+            ON u.id = gm.userid
+        LEFT OUTER JOIN (
+            SELECT c.userid, COUNT(c.userid) AS 'submission_count'
+            FROM {peerassess_completed} AS c
+            WHERE c.peerassess = ?
+            GROUP BY c.userid
+        ) AS sc
+            ON u.id = sc.userid
+        INNER JOIN (
+            SELECT gm.groupid, COUNT(gm.groupid) AS 'member_count'
+            FROM {groups_members} AS gm
+            GROUP BY gm.groupid
+        ) AS mc
+            ON gm.groupid = mc.groupid
+        WHERE gm.groupid = (
+            SELECT gm.groupid
+            FROM {groups_members} AS gm
+            INNER JOIN {groups} AS g
+                ON g.id = gm.groupid
+            WHERE gm.userid = ?
+            AND g.courseid = ?
+        )
+        AND COALESCE(sc.submission_count, 0) < mc.member_count - 1;";
+    
+    $remaining_db = $DB->get_records_sql($remaining_sql, [
+        $peerassessid,
+        $userid,
+        $courseid
+    ]);
+
+    return $remaining_db;
+}
+
+function pa_get_user_finalgrades($userid, $peerassessid, $DB) {
+    $sql =
+        "SELECT fg.itemid, a.name, fg.finalgradewithpa AS 'grade'
+        FROM moodle.mdl_peerassess_finalgrades AS fg
+        INNER JOIN moodle.mdl_assign AS a
+            ON fg.itemid = a.id
+        WHERE fg.peerassessid = ?
+        AND fg.userid = ?;";
+
+    $params = [
+        $peerassessid,
+        $userid
+    ];
+
+    $records = $DB->get_records_sql($sql, $params);
+
+    return $records;
+}
