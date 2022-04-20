@@ -36,8 +36,11 @@ $peerassessid = $DB->get_record_sql("SELECT cm.instance
 
 $finalgradewithpaurl = new moodle_url('/mod/peerassess/calculate_pa_grades.php');
 $PAGE->set_url(new moodle_url($finalgradewithpaurl));
+$context = context_module::instance($cmid);
 $PAGE->set_context(\context_system::instance());
 $PAGE->set_title('PA Calculation');
+
+require_login();
 
 echo $OUTPUT->header();
 
@@ -98,7 +101,10 @@ function pa_get_all_questions_max_score($peerassessid, $DB) {
 	// get the last character of each presentation string as an integer
 	// e.g. input element is "r>>>>>1 |2 |3 |4 |5"
 	// then output element is 5
-	$question_scores = array_map(function ($presentation) {return intval($presentation->presentation[-1]);}, $presentations);
+	$question_scores = array_map(function ($presentation) {
+        return intval(preg_filter("/<<<<<1/", "", $presentation->presentation)[-1]);
+    }, $presentations);
+    print_object($question_scores);
 
     // print_object($question_scores);
 
@@ -225,19 +231,25 @@ function pa_calculate_all ($userids, $pascores, $peerassessid, $groupmark) {
 
     //effectiverange = (Smax - Smin) / questions * (interval input by lecturer)
     $rmax = 0.2;
+    echo "test 1";
+    print_object($maxscore);
+    print_object($questioncount);
     $effectiverange = (($smax - $smin) / ($maxscore - $questioncount) )* $rmax;
-
+    echo "test 2";
+    
     print_object($totalscores);
     print_object($averagescores);
     print_object($effectiverange);
-
-
+    
+    
     foreach ($userids as $memberid) {
         if (!isset($peerfactors)) {
             $peerfactors = [];
         } 
         $avgstudscore = $averagescores[$memberid];
+        echo "test 3";
         $peerfactor = (($avgstudscore - $smin) / ($smax - $smin)) * 2 * $effectiverange + (1 - $effectiverange);
+        echo "test 4";
         
         $peerfactors[$memberid] = $peerfactor;
 
@@ -299,7 +311,10 @@ function pa_calculate_all ($userids, $pascores, $peerassessid, $groupmark) {
     }
 }
 
-pa_calculate_all($userids, $pascores, $peerassessid, $groupmark);
+
+if (has_capability('mod/peerassess:edititems', $context)) {
+    pa_calculate_all($userids, $pascores, $peerassessid, $groupmark);
+}
 
 echo $OUTPUT->footer();
 
