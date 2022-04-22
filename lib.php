@@ -962,7 +962,7 @@ function peerassess_get_incomplete_users(cm_info $cm,
                                        $pagecount = false,
                                        $includestatus = false) {
 
-    global $DB;
+    global $COURSE, $DB;
 
     $context = context_module::instance($cm->id);
 
@@ -988,9 +988,52 @@ function peerassess_get_incomplete_users(cm_info $cm,
 
     $allusers = array_keys($allusersrecords);
 
+    // get members who have not completed ALL peerassess, but may have a few submissions already
+    $peerassessid = $cm->instance;
+    $user_db_with_completed_count_sql =
+        "SELECT
+            u.id AS 'userid',
+            CONCAT(u.firstname, ' ', u.lastname) AS 'name',
+            gm.groupid,
+            COALESCE(sc.submission_count, 0) AS 'final_submission_count',
+            mc.member_count
+        FROM {user} AS u
+        INNER JOIN {groups_members} AS gm
+            ON u.id = gm.userid
+        LEFT OUTER JOIN (
+            SELECT c.userid, COUNT(c.userid) AS 'submission_count'
+            FROM {peerassess_completed} AS c
+            WHERE c.peerassess = ?
+            GROUP BY c.userid
+        ) AS sc
+            ON u.id = sc.userid
+        INNER JOIN (
+            SELECT gm.groupid, COUNT(gm.groupid) AS 'member_count'
+            FROM {groups_members} AS gm
+            GROUP BY gm.groupid
+        ) AS mc
+            ON gm.groupid = mc.groupid
+        WHERE gm.groupid IN (
+            SELECT gm.groupid
+            FROM {groups_members} AS gm
+            INNER JOIN {groups} AS g
+                ON g.id = gm.groupid
+            AND g.courseid = ?
+        );";
+    $user_db_with_completed_count = $DB->get_records_sql($user_db_with_completed_count_sql, [
+        $peerassessid,
+        $COURSE->id
+    ]);
+
+    // print_object($user_db_with_completed_count);
     //now get all completeds
-    $params = array('peerassess'=>$cm->instance);
-    if ($completedusers = $DB->get_records_menu('peerassess_completed', $params, '', 'id, userid')) {
+    $completedusers = [];
+    foreach ($user_db_with_completed_count as $user) {
+        if ($user->final_submission_count == $user->member_count - 1) {
+            $completedusers[] = $user->userid;
+        }
+    }
+    if ($completedusers) {
         // Now strike all completedusers from allusers.
         $allusers = array_diff($allusers, $completedusers);
     }
@@ -998,6 +1041,13 @@ function peerassess_get_incomplete_users(cm_info $cm,
     //for paging I use array_slice()
     if ($startpage !== false AND $pagecount !== false) {
         $allusers = array_slice($allusers, $startpage, $pagecount);
+    }
+
+    foreach ($allusers as $userid) {
+        $allusersrecords[$userid]->peerassessstarted = ($user_db_with_completed_count[$userid]->final_submission_count > 0);
+        $allusersrecords[$userid]->submission_count = $user_db_with_completed_count[$userid]->final_submission_count;
+        $allusersrecords[$userid]->member_count = $user_db_with_completed_count[$userid]->member_count;
+        $userrecords[] = $allusersrecords[$userid];
     }
 
     // Check if we should return the full users objects.
