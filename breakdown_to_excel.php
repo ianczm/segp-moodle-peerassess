@@ -190,8 +190,8 @@ function get_item_name($peerassess){
 function peerassess_get_user_responses($peerassess, $studentid) {
     global $DB;
 
-    $memberSelectItemID = get_member_select_item_id($peerassess);
-    $memberReceivedCompletedIDs = get_member_received_completed_ids($peerassess, $studentid);
+    $memberSelectItemID = get_selected_user($peerassess, $studentid);
+    $memberReceivedCompletedIDs = get_user_completedId($peerassess, $studentid);
     $total = array();
     $count = 0;
     foreach($memberReceivedCompletedIDs as $paScore){
