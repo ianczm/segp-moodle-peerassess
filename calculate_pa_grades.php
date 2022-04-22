@@ -234,7 +234,7 @@ function pa_calculate_all ($userids, $pascores, $peerassessid) {
         return $pf_maxrange;
     }
     
-    $rmax = pa_input_pf_maxrange($pf_maxrange);
+    $rmax = pa_input_pf_maxrange(0.2);
     
     //effectiverange = (Smax - Smin) / questions * (interval input by lecturer)
     $effectiverange = (($smax - $smin) / ($maxscore - $questioncount) )* $rmax;
@@ -265,15 +265,15 @@ function pa_calculate_all ($userids, $pascores, $peerassessid) {
         if ($record) {
             $peerfactorobject->id = $record->id;
             $DB->update_record($tablepa, $peerfactorobject);
-            redirect('/calculate_pa_grades.php', 'Successful Calculating Peer Factor', null, \core\output\notification::NOTIFY_SUCCESS);
+            // redirect('/calculate_pa_grades.php', 'Successful Calculating Peer Factor', null, \core\output\notification::NOTIFY_SUCCESS);
         } else {
             $DB->insert_record($tablepa, $peerfactorobject);
-            redirect('/calculate_pa_grades.php', 'Successful Calculating Peer Factor', null, \core\output\notification::NOTIFY_SUCCESS);
+            // redirect('/calculate_pa_grades.php', 'Successful Calculating Peer Factor', null, \core\output\notification::NOTIFY_SUCCESS);
         }  
 
-        if (!isset($peerfactorobject)) {
-            redirect('/calculate_pa_grades.php', 'Failure Calculating Peer Factor', null, \core\output\notification::NOTIFY_ERROR);
-        }
+        // if (!isset($peerfactorobject)) {
+        //     redirect('/calculate_pa_grades.php', 'Failure Calculating Peer Factor', null, \core\output\notification::NOTIFY_ERROR);
+        // }
     }
 
     foreach ($userids as $memberid) {
