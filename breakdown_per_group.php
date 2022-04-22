@@ -283,14 +283,14 @@ function peerassess_get_user_responses($peerassess, $studentid) {
     $memberSelectItemID = get_member_select_item_id($peerassess);
     $memberPaScores = get_member_received_pa_scores($peerassess, $studentid);
     $total = array();
-    foreach($memberPaScores as $record){
-        $params = array($record, $memberSelectItemID);
+    foreach($memberPaScores as $paScore){
+        $params = array($paScore, $memberSelectItemID);
         $sql = 'SELECT psv.value
                     FROM {peerassess_value} psv
                     WHERE psv.completed = ? AND psv.item != ?';
 
-        $recordFound = $DB->get_fieldset_sql($sql, $params);
-        $total += $recordFound;
+        $paScoreFound = $DB->get_fieldset_sql($sql, $params);
+        $total += $paScoreFound;
     }
 
     return $total;
