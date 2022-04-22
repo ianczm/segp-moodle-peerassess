@@ -144,9 +144,9 @@ $assignmentGrades = $DB->get_fieldset_sql('SELECT psa.assignmentid
                                                 WHERE psa.peerassessid = '.$peerassess->id
                                                 ,array('peerassessid'=>$peerassess->id));
 foreach($assignmentGrades as $assignmentGrade){
-    $tablecolumns[] = 'Assignment'.$assignmentGrade;
-    $tableheaders[] = 'Assignment'.$assignmentGrade.'grade';
-    $table->no_sorting('Assignment'.$assignmentGrade);
+    $tablecolumns[] = 'Assignment '.$assignmentGrade;
+    $tableheaders[] = 'Assignment '.$assignmentGrade.' Grade';
+    $table->no_sorting('Assignment '.$assignmentGrade);
 }
 
 $table->define_columns($tablecolumns);
