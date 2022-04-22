@@ -17,6 +17,7 @@
 /**
  * Release all final grades.
  *
+ * @author     SEGP Group 10A
  * @package    mod_peerassess
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
