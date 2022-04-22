@@ -271,9 +271,9 @@ function pa_calculate_all ($userids, $pascores, $peerassessid) {
             // redirect('/calculate_pa_grades.php', 'Successful Calculating Peer Factor', null, \core\output\notification::NOTIFY_SUCCESS);
         }  
 
-        // if (!isset($peerfactorobject)) {
-        //     redirect('/calculate_pa_grades.php', 'Failure Calculating Peer Factor', null, \core\output\notification::NOTIFY_ERROR);
-        // }
+        if (!isset($peerfactorobject)) {
+            redirect('/calculate_pa_grades.php', 'Failure Calculating Peer Factor', null, \core\output\notification::NOTIFY_ERROR);
+        }
     }
 
     foreach ($userids as $memberid) {
@@ -292,7 +292,7 @@ function pa_calculate_all ($userids, $pascores, $peerassessid) {
             return $finalgradewithpf > 100 ? 100 : $finalgradewithpf;
         }, $assigngrades);
 
-
+        // print_object($assignmentids);
 
         foreach ($assignmentids as $assignmentid) {
             $finalgradewithpaobject = (object) [
@@ -313,10 +313,10 @@ function pa_calculate_all ($userids, $pascores, $peerassessid) {
             if ($record) {
                 $finalgradewithpaobject->id = $record->id;
                 $DB->update_record($tablefg, $finalgradewithpaobject);
-                redirect('/calculate_pa_grades.php', 'Success Calculating Final Grades with PA', null, \core\output\notification::NOTIFY_SUCCESS);
+                // redirect('/calculate_pa_grades.php', 'Success Calculating Final Grades with PA', null, \core\output\notification::NOTIFY_SUCCESS);
             } else {
                 $DB->insert_record($tablefg, $finalgradewithpaobject);
-                redirect('/calculate_pa_grades.php', 'Success Calculating Final Grades with PA', null, \core\output\notification::NOTIFY_SUCCESS);
+                // redirect('/calculate_pa_grades.php', 'Success Calculating Final Grades with PA', null, \core\output\notification::NOTIFY_SUCCESS);
             }
         }
     }
