@@ -25,7 +25,7 @@
 require_once("../../config.php");
 
 $cmid = required_param('id', PARAM_INT);
-$assignmentid = optional_param('assignmentid', false, PARAM_INT);
+// $assignmentid = optional_param('assignmentid', false, PARAM_INT);
 
 $peerassessid = $DB->get_record_sql("SELECT cm.instance
         FROM {course_modules} AS cm
@@ -41,7 +41,7 @@ $PAGE->set_title('PA Calculation');
 
 require_login();
 
-echo $OUTPUT->header();
+// echo $OUTPUT->header();
 
 function pa_get_question_count($peerassessid, $DB) {
 	$question_count = $DB->get_record_sql("SELECT COUNT(i.id) AS 'question_count'
@@ -175,7 +175,7 @@ function pa_get_scores_from_userid($peerassessid, $userid, $DB) {
     return $pascores;
 }
 
-function pa_calculate_all ($userids, $pascores, $peerassessid) {
+function pa_calculate_all ($userids, $pascores, $peerassessid, $cmid) {
     
     $totalscores = [];
     $averagescores = [];
@@ -272,7 +272,7 @@ function pa_calculate_all ($userids, $pascores, $peerassessid) {
         }  
 
         if (!isset($peerfactorobject)) {
-            redirect('/calculate_pa_grades.php', 'Failure Calculating Peer Factor', null, \core\output\notification::NOTIFY_ERROR);
+            redirect('view.php?id='.$cmid, 'Failure Calculating Peer Factor', null, \core\output\notification::NOTIFY_ERROR);
         }
     }
 
@@ -322,7 +322,7 @@ function pa_calculate_all ($userids, $pascores, $peerassessid) {
     }
 
     if (!isset($finalgradewithpaobject)) {
-        redirect('/calculate_pa_grades.php', 'Failure Calculating Final Grades with PA', null, \core\output\notification::NOTIFY_ERROR);
+        redirect('view.php?id='.$cmid, 'Failure Calculating Peer Factor', null, \core\output\notification::NOTIFY_ERROR);
     }
 
 
@@ -330,8 +330,10 @@ function pa_calculate_all ($userids, $pascores, $peerassessid) {
 
 
 if (has_capability('mod/peerassess:edititems', $context)) {
-    pa_calculate_all($userids, $pascores, $peerassessid);
+    pa_calculate_all($userids, $pascores, $peerassessid, $cmid);
 }
 
-echo $OUTPUT->footer();
+redirect('breakdown_per_group.php?id='.$cmid, 'Success Calculating Final Grades with PA', null, \core\output\notification::NOTIFY_SUCCESS);
+exit;
+// echo $OUTPUT->footer();
 
