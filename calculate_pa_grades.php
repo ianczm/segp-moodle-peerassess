@@ -202,8 +202,8 @@ function pa_calculate_all ($userids, $pascores, $peerassessid, $cmid) {
         $totalscores[$memberid] = array_sum($pascores);
     }
 
-    $maxscore = pa_get_all_questions_max_score($peerassessid, $DB);
-    $questioncount = pa_get_question_count($peerassessid, $DB);
+    // $maxscore = pa_get_all_questions_max_score($peerassessid, $DB);
+    // $questioncount = pa_get_question_count($peerassessid, $DB);
 
     // function pa_get_rmax () {
     //     $mform = $this->_form;
