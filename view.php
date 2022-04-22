@@ -96,8 +96,8 @@ echo $OUTPUT->box_end();
 
 echo $OUTPUT->heading(get_string('overview', 'peerassess'), 3);
 
-// Get flag of grade released status
-// $finalgradesreleased = get_grades_release_status();
+// get final grade flag
+$showfinalgrades = pa_get_showfinalgrades_flag($peerassess->id, $DB);
 
 //show some infos to the peerassess
 if (has_capability('mod/peerassess:edititems', $context)) {
@@ -115,6 +115,10 @@ if (has_capability('mod/peerassess:edititems', $context)) {
         echo $OUTPUT->box($pageaftersubmit, 'generalbox peerassess_after_submit');
     }
 
+    // [!] might want to include form in another file instead
+    // $pf_maxrange = $mform->addElement('float', 'pf_maxrange', get_string('pf_maxrange'));
+    // $mform->addHelpButton('pf_maxrange', 'pf_maxrange');
+
     echo $OUTPUT->box_start('generalbox boxaligncenter');
     $finalgradewithpaurl = new moodle_url('/mod/peerassess/calculate_pa_grades.php', ['id' => $cm->id, 'peerassess' => $peerassess->id]);
     echo html_writer::div(html_writer::link($finalgradewithpaurl, get_string("myfinalgradewithpa", 'peerassess'), array('class' => 'btn btn-secondary')));
@@ -122,12 +126,12 @@ if (has_capability('mod/peerassess:edititems', $context)) {
 
     echo $OUTPUT->box_start('generalbox boxaligncenter');
     $releasegradesurl = new moodle_url('/mod/peerassess/release_grades.php', ['id' => $cm->id, 'peerassess' => $peerassess->id]);
-    echo html_writer::div(html_writer::link($releasegradesurl, get_string("releaseallgradesforallgroups", 'peerassess'), array('class' => 'btn btn-secondary')));
+    $releasegrades_buttonstring = !$showfinalgrades ? get_string("releaseallgradesforallgroups", 'peerassess') : "Hide all final grades for all groups";
+    echo html_writer::div(html_writer::link($releasegradesurl, $releasegrades_buttonstring, array('class' => 'btn btn-secondary')));
     echo $OUTPUT->box_end();
 }
 
 // Get and format final grades
-$showfinalgrades = pa_get_showfinalgrades_flag($peerassess->id, $DB);
 $finalgrades = pa_get_user_finalgrades($USER->id, $peerassess->id, $DB);
 if (!empty($finalgrades)) {
     // If final grades exist

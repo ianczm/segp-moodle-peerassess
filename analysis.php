@@ -87,8 +87,11 @@ if ($check_anonymously) {
     // Print the items in an analysed form.
     foreach ($items as $item) {
         $itemobj = peerassess_get_item_class($item->typ);
-        $printnr = ($peerassess->autonumbering && $item->itemnr) ? ($item->itemnr . '.') : '';
-        $itemobj->print_analysed($item, $printnr, $mygroupid);
+        // do not display memberselect items
+        if ($item->typ != 'memberselect') {
+            $printnr = ($peerassess->autonumbering && $item->itemnr) ? ($item->itemnr . '.') : '';
+            $itemobj->print_analysed($item, $printnr, $mygroupid);
+        }
     }
 } else {
     echo $OUTPUT->heading_with_help(get_string('insufficient_responses_for_this_group', 'peerassess'),

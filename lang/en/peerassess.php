@@ -134,6 +134,7 @@ $string['peerassess:receivemail'] = 'Receive email notification';
 $string['peerassess:view'] = 'View a peerassess';
 $string['peerassess:viewanalysepage'] = 'View the analysis page after submit';
 $string['peerassess:viewreports'] = 'View reports';
+$string['pf_maxrange'] = 'Peer Factor Maximum Range';
 $string['file'] = 'File';
 $string['filter_by_course'] = 'Filter by course';
 $string['finalweightedgrade'] = 'Final weighted grade';

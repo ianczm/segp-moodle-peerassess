@@ -162,8 +162,8 @@ $mygroupid = groups_get_activity_group($cm);
 $baseurl = new moodle_url('/mod/peerassess/show_nonrespondents.php');
 $baseurl->params(array('id'=>$id, 'showall'=>$showall));
 
-$tablecolumns = array('userpic', 'fullname', 'status');
-$tableheaders = array(get_string('userpic'), get_string('fullnameuser'), get_string('status'));
+$tablecolumns = array('userpic', 'fullname', 'submission_count', 'status');
+$tableheaders = array(get_string('userpic'), get_string('fullnameuser'), 'Submissions', get_string('status'));
 
 $table = new flexible_table('peerassess-shownonrespondents-'.$course->id);
 
@@ -182,6 +182,7 @@ $table->set_control_variables(array(
             TABLE_VAR_PAGE    => 'spage'
             ));
 
+$table->no_sorting('submission_count');
 $table->no_sorting('select');
 $table->no_sorting('status');
 
@@ -233,10 +234,13 @@ if (empty($students)) {
     }
 
     foreach ($students as $student) {
+
         //userpicture and link to the profilepage
         $profileurl = $CFG->wwwroot.'/user/view.php?id='.$student->id.'&amp;course='.$course->id;
         $profilelink = '<strong><a href="'.$profileurl.'">'.fullname($student).'</a></strong>';
         $data = array($OUTPUT->user_picture($student, array('courseid' => $course->id)), $profilelink);
+
+        $data[] = $student->submission_count . " of " . $student->member_count - 1;
 
         if ($student->peerassessstarted) {
             $data[] = get_string('started', 'peerassess');
