@@ -103,7 +103,7 @@ function pa_get_all_questions_max_score($peerassessid, $DB) {
 	$question_scores = array_map(function ($presentation) {
         return intval(preg_filter("/<<<<<1/", "", $presentation->presentation)[-1]);
     }, $presentations);
-    print_object($question_scores);
+    // print_object($question_scores);
 
     // print_object($question_scores);
 
@@ -171,7 +171,7 @@ function pa_get_scores_from_userid($peerassessid, $userid, $DB) {
 
     $pascores = array_map(function ($item) { return $item->pa_score; }, $pascores);
 
-    print_object($pascores);
+    // print_object($pascores);
     return $pascores;
 }
 
@@ -238,11 +238,11 @@ function pa_calculate_all ($userids, $pascores, $peerassessid) {
     
     //effectiverange = (Smax - Smin) / questions * (interval input by lecturer)
     $effectiverange = (($smax - $smin) / ($maxscore - $questioncount) )* $rmax;
-    echo "test 2";
+    // echo "test 2";
     
-    print_object($totalscores);
-    print_object($averagescores);
-    print_object($effectiverange);
+    // print_object($totalscores);
+    // print_object($averagescores);
+    // print_object($effectiverange);
     
     
     foreach ($userids as $memberid) {
@@ -250,15 +250,15 @@ function pa_calculate_all ($userids, $pascores, $peerassessid) {
             $peerfactors = [];
         } 
         $avgstudscore = $averagescores[$memberid];
-        echo "test 3";
+        // echo "test 3";
         $peerfactor = (($avgstudscore - $smin) / ($smax - $smin)) * 2 * $effectiverange + (1 - $effectiverange);
-        echo "test 4";
+        // echo "test 4";
         
         $peerfactors[$memberid] = $peerfactor;
 
         $peerfactorobject = (object) ["userid" => $memberid, "peerassessid" => $peerassessid, "peerfactor" => $peerfactor];
 
-        print_object($peerfactorobject);
+        // print_object($peerfactorobject);
 
         $record = $DB->get_record($tablepa, ["userid" => $memberid, "peerassessid" => $peerassessid]);
 
@@ -302,7 +302,7 @@ function pa_calculate_all ($userids, $pascores, $peerassessid) {
                 "finalgradewithpa" => $finalgradewithpas[$assignmentid]
             ];
 
-            print_object($finalgradewithpaobject);
+            // print_object($finalgradewithpaobject);
 
             $record = $DB->get_record($tablefg, [
                 "userid" => $memberid,
