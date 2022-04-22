@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Allows users to select their group members from a dropdown list
+ *
+ * @copyright SEGP Group 10A
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package mod_peerassess
+ */
+
 require_once($CFG->dirroot.'/mod/peerassess/item/peerassess_item_form_class.php');
 
 class peerassess_memberselect_form extends peerassess_item_form {

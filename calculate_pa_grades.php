@@ -17,7 +17,7 @@
 /**
  * shows an analysed view of peerassess
  *
- * @copyright segp-group 10a
+ * @copyright SEGP Group 10A
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package mod_peerassess
  */
