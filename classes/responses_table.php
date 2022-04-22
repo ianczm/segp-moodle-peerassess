@@ -90,10 +90,8 @@ class mod_peerassess_responses_table extends table_sql {
         parent::__construct('peerassess-showentry-list-' . $peerassessstructure->get_cm()->instance);
 
         $this->showall = optional_param($this->showallparamname, 0, PARAM_BOOL);
-        $this->define_baseurl(new moodle_url('/mod/peerassess/breakdown_per_group.php',
+        $this->define_baseurl(new moodle_url('/mod/peerassess/show_entries.php',
             ['id' => $this->peerassessstructure->get_cm()->id]));
-        //$this->define_baseurl(new moodle_url('/mod/peerassess/show_entries.php',
-            //['id' => $this->peerassessstructure->get_cm()->id]));
         if ($courseid = $this->peerassessstructure->get_courseid()) {
             $this->baseurl->param('courseid', $courseid);
         }

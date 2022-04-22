@@ -1016,6 +1016,77 @@ function peerassess_get_incomplete_users(cm_info $cm,
 }
 
 /**
+ * return all the user's record
+ *
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @param cm_info $cm Course-module object
+ * @param int $group single groupid
+ * @param string $sort
+ * @param int $startpage
+ * @param int $pagecount
+ * @param bool $includestatus to return if the user started or not the peerassess among the complete user record
+ * @return array array of user ids or user objects when $includestatus set to true
+ */
+function peerassess_get_all_users_records(cm_info $cm,
+                                       $group = false,
+                                       $sort = '',
+                                       $startpage = false,
+                                       $pagecount = false,
+                                       $includestatus = false) {
+
+    global $DB;
+
+    $context = context_module::instance($cm->id);
+
+    //first get all user who can complete this peerassess
+    $cap = 'mod/peerassess:complete';
+    $userfieldsapi = \core_user\fields::for_name();
+    $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+    $fields = 'u.id, ' . $allnames . ', u.picture, u.email, u.imagealt';
+    if (!$allusers = get_users_by_capability($context,
+                                            $cap,
+                                            $fields,
+                                            $sort,
+                                            '',
+                                            '',
+                                            $group,
+                                            '',
+                                            true)) {
+        return false;
+    }
+    // Filter users that are not in the correct group/grouping.
+    $info = new \core_availability\info_module($cm);
+    $allusersrecords = $info->filter_user_list($allusers);
+
+    $allusers = array_keys($allusersrecords);
+
+    //now get all completeds
+    $params = array('peerassess'=>$cm->instance);
+    $completedusers = $DB->get_records_menu('peerassess_completed', $params, '', 'id, userid');
+    //for paging I use array_slice()
+    if ($startpage !== false AND $pagecount !== false) {
+        $allusers = array_slice($allusers, $startpage, $pagecount);
+    }
+
+    // Check if we should return the full users objects.
+    if ($includestatus) {
+        $userrecords = [];
+        $startedusers = $DB->get_records_menu('peerassess_completedtmp', ['peerassess' => $cm->instance], '', 'id, userid');
+        $startedusers = array_flip($startedusers);
+        foreach ($allusers as $userid) {
+            $allusersrecords[$userid]->peerassessstarted = isset($startedusers[$userid]);
+            $userrecords[] = $allusersrecords[$userid];
+
+        }
+        return $userrecords;
+    } else {    // Return just user ids.
+        return $allusers;
+    }
+}
+
+
+/**
  * count users which have not completed the peerassess
  *
  * @global object
