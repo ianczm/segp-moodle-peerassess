@@ -281,9 +281,9 @@ function peerassess_get_user_responses($peerassess, $studentid) {
     global $DB;
 
     $memberSelectItemID = get_member_select_item_id($peerassess);
-    $memberPaScores = get_member_received_pa_scores($peerassess, $studentid);
+    $memberReceivedCompletedIDs = get_member_received_completed_ids($peerassess, $studentid);
     $total = array();
-    foreach($memberPaScores as $paScore){
+    foreach($memberReceivedCompletedIDs as $paScore){
         $params = array($paScore, $memberSelectItemID);
         $sql = 'SELECT psv.value
                     FROM {peerassess_value} psv
@@ -297,7 +297,7 @@ function peerassess_get_user_responses($peerassess, $studentid) {
 
 }
 
-function get_member_received_pa_scores($peerassess, $studentid) {
+function get_member_received_completed_ids($peerassess, $studentid) {
     global $DB;
 
     $params = array($peerassess->id);
