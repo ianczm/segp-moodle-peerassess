@@ -190,21 +190,23 @@ function get_item_name($peerassess){
 function peerassess_get_user_responses($peerassess, $studentid) {
     global $DB;
 
-    $selectedUser = get_selected_user($peerassess, $studentid);
-    $selectedRecord = get_user_completedId($peerassess, $studentid);
+    $memberSelectItemID = get_member_select_item_id($peerassess);
+    $memberReceivedCompletedIDs = get_member_received_completed_ids($peerassess, $studentid);
     $total = array();
-    foreach($selectedRecord as $record){
-        $params = array($record, $selectedUser);
+    $count = 0;
+    foreach($memberReceivedCompletedIDs as $paScore){
+        $params = array($paScore, $memberSelectItemID);
         $sql = 'SELECT psv.value
                     FROM {peerassess_value} psv
                     WHERE psv.completed = ? AND psv.item != ?';
 
-        $recordFound = $DB->get_fieldset_sql($sql, $params);
-
-        $total += $recordFound;
+        $paScoreFound = $DB->get_fieldset_sql($sql, $params);
+        $total = array_map(function($a, $b) {return $a + $b;}, $total, $paScoreFound);
+        $count++;
     }
 
-    return $total;
+    $finalresult = array_map(function($a) use ($count) {return $a / $count;}, $total);
+    return $finalresult;
 
 }
 
