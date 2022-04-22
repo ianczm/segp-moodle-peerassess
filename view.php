@@ -106,7 +106,7 @@ if (has_capability('mod/peerassess:edititems', $context)) {
     $groupselect = groups_print_activity_menu($cm, $CFG->wwwroot.'/mod/peerassess/view.php?id='.$cm->id, true);
     $mygroupid = groups_get_activity_group($cm);
 
-    echo $groupselect.'<div class="clearer">&nbsp;</div>';
+    //echo $groupselect.'<div class="clearer">&nbsp;</div>';
     $summary = new mod_peerassess\output\summary($peerassesscompletion, $mygroupid);
     echo $OUTPUT->render_from_template('mod_peerassess/summary', $summary->export_for_template($OUTPUT));
 
@@ -247,7 +247,7 @@ function pa_get_members_to_assess($userid, $courseid, $peerassessid, $DB) {
                 AND i.typ = 'memberselect'
             )
         );";
-    
+
     $toassess_db = $DB->get_records_sql($toassess_sql, [
         $userid,
         $courseid,
@@ -293,7 +293,7 @@ function pa_get_non_complete_members($userid, $courseid, $peerassessid, $DB) {
             AND g.courseid = ?
         )
         AND COALESCE(sc.submission_count, 0) < mc.member_count - 1;";
-    
+
     $remaining_db = $DB->get_records_sql($remaining_sql, [
         $peerassessid,
         $userid,
