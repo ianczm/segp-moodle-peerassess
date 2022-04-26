@@ -16,7 +16,7 @@ Method 2)
 Deploy the plugin manually at the server. The plugin folder should be copied to the server file system location where the activity modules and resources are, which is /path/to/moodle/mod/, and then head to Site administration > Notifications on Moodle to check for an installation message. 
 <br/>
 ### How to Run and Use it:
-As administrators, click on "Turn editing on" then "Add an activity or resource" on the module page they want to use it on. Moodle will then redirect the user to the peerassess plugin setup interface.
+As administrators, click on "Turn editing on" then "Add an activity or resource" on the module page they want to use it on. Upon selecting "peerassess", Moodle will  redirect the user to the plugin setup interface.
 ### Future Development:
 * Allow administrators to manually override peer and final grades. 
 * The ability to search for specific student records. 
