@@ -33,19 +33,39 @@ Develop a Moodle plugin to automatically record PAs, calculate scores and studen
 
 ---
 
+### Prerequisites
+
+In order to get the Moodle plugin to work, a Moodle instance running on a LAMP environment must first be set up.
+
+The following steps are:
+
+1.  Install Linux, Apache, MySQL and PHP
+2.  Install Moodle and its dependencies
+
+---
+
 ### Plugin Installation
 
 ##### Method 1)
 
-> Log in to Moodle as an admin, go to Administration > Site administration > Plugins > Install plugins, and upload the zip file in the Moodle Plugin Installer. If the plugin is not automatically detected, we will be prompted to add extra details in the ‘Show more’ section. Also, if the target directory is not writeable, a warning message will appear.
+Log in to Moodle as an admin, go to `Administration > Site administration > Plugins > Install plugins`, and upload the zip file in the Moodle Plugin Installer. If the plugin is not automatically detected, we will be prompted to add extra details in the ‘Show more’ section. Also, if the target directory is not writeable, a warning message will appear.
 
 ##### Method 2) 
 
-> Deploy the plugin manually at the server. The plugin folder should be copied to the server file system location where the activity modules and resources are, which is /path/to/moodle/mod/, and then head to Site administration > Notifications on Moodle to check for an installation message. 
+Deploy the plugin manually at the server. The plugin folder should be copied or cloned to the server file system location where the activity modules and resources are, which is `/path/to/moodle/mod/`, and then head to `Site administration > Notifications` on Moodle to check for an installation message.
+
+##### Confirmation of Installation
+
+The result should be a newly created directory.
+```
+/path/to/moodle/mod/peerassess
+```
+
+Upon starting Moodle and entering the `Site Administration` page, Moodle should perform dependency checks and automatically prompt you to `Upgrade Database`.
 
 ### How to Run and Use it
 
-> As administrators, click on "Turn editing on" then "Add an activity or resource" on the module page they want to use it on. Upon selecting "peerassess", Moodle will  redirect the user to the plugin setup interface.
+As administrators, click on `Turn editing on` then `Add an activity or resource` on the module page they want to use it on. Upon selecting `peerassess`, Moodle will redirect the user to the plugin setup interface.
 
 ---
 
