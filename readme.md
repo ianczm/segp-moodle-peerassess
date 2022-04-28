@@ -35,16 +35,17 @@ Develop a Moodle plugin to automatically record PAs, calculate scores and studen
 
 ### Plugin Installation
 
-##### Method 1) 
-Log in to Moodle as an admin, go to Administration > Site administration > Plugins > Install plugins, and upload the zip file in the Moodle Plugin Installer. If the plugin is not automatically detected, we will be prompted to add extra details in the ‘Show more’ section. Also, if the target directory is not writeable, a warning message will appear.
+##### Method 1)
+
+> Log in to Moodle as an admin, go to Administration > Site administration > Plugins > Install plugins, and upload the zip file in the Moodle Plugin Installer. If the plugin is not automatically detected, we will be prompted to add extra details in the ‘Show more’ section. Also, if the target directory is not writeable, a warning message will appear.
 
 ##### Method 2) 
 
-Deploy the plugin manually at the server. The plugin folder should be copied to the server file system location where the activity modules and resources are, which is /path/to/moodle/mod/, and then head to Site administration > Notifications on Moodle to check for an installation message. 
+> Deploy the plugin manually at the server. The plugin folder should be copied to the server file system location where the activity modules and resources are, which is /path/to/moodle/mod/, and then head to Site administration > Notifications on Moodle to check for an installation message. 
 
 ### How to Run and Use it
 
-As administrators, click on "Turn editing on" then "Add an activity or resource" on the module page they want to use it on. Upon selecting "peerassess", Moodle will  redirect the user to the plugin setup interface.
+> As administrators, click on "Turn editing on" then "Add an activity or resource" on the module page they want to use it on. Upon selecting "peerassess", Moodle will  redirect the user to the plugin setup interface.
 
 ---
 
