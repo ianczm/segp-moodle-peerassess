@@ -1,7 +1,7 @@
 # G52GRP Source Code
 
 ### COMP 2019 Software Engineering Group Project
-##### Moodle Plugin for Peer Assessment
+#### Moodle Plugin for Peer Assessment
 
 | Item | Detail |
 | - | - |
@@ -46,23 +46,25 @@ Please ensure the following steps have been completed before proceeding.
 
 ### Plugin Installation
 
-##### Method 1 – Moodle Plugin Installer
+#### Method 1 – Moodle Plugin Installer (Easiest)
 
 Log in to Moodle as an admin, go to `Administration > Site administration > Plugins > Install plugins`, and upload the zip file in the Moodle Plugin Installer. If the plugin is not automatically detected, we will be prompted to add extra details in the ‘Show more’ section. Also, if the target directory is not writeable, a warning message will appear.
 
-##### Method 2 – Manual Deployment
+#### Method 2 – Manual Deployment
 
 The plugin folder should be copied or cloned to the server activity modules folder at `/path/to/moodle/mod/` **and with the folder renamed to `peerassess`**. Then, head to `Site administration > Notifications` on Moodle to check for an installation message.
 
-##### Confirmation of Installation
+#### Confirmation of Installation
 
-The result should be a newly created directory named `peerassess`, which is the root plugin directory. The plugin will **not** work without the proper name.
+Please note that if you have installed the plugin via `Method 2`, the plugin will **not** work without the proper name.
+
+At the end of installation, regardless of the method used, the result should be a newly created directory named `peerassess`, which is the root plugin directory.
 
 ```
 /path/to/moodle/mod/peerassess
 ```
 
-Upon starting Moodle and entering the `Site Administration` page, Moodle should perform dependency checks and automatically prompt you to `Upgrade Database`.
+Upon starting Moodle and entering the `Site Administration` page, expect Moodle to perform dependency checks and automatically prompt you to `Upgrade Database` if it has not already done so during installation.
 
 ### How to Run and Use it
 
