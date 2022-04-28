@@ -37,7 +37,7 @@ Develop a Moodle plugin to automatically record PAs, calculate scores and studen
 
 In order to get the Moodle plugin to work, a Moodle instance running on a LAMP environment must first be set up.
 
-The following steps are:
+Please ensure the following steps have been completed before proceeding.
 
 1.  Install Linux, Apache, MySQL and PHP
 2.  Install Moodle and its dependencies
@@ -46,17 +46,18 @@ The following steps are:
 
 ### Plugin Installation
 
-##### Method 1)
+##### Method 1 – Moodle Plugin Installer
 
 Log in to Moodle as an admin, go to `Administration > Site administration > Plugins > Install plugins`, and upload the zip file in the Moodle Plugin Installer. If the plugin is not automatically detected, we will be prompted to add extra details in the ‘Show more’ section. Also, if the target directory is not writeable, a warning message will appear.
 
-##### Method 2) 
+##### Method 2 – Manual Deployment
 
-Deploy the plugin manually at the server. The plugin folder should be copied or cloned to the server file system location where the activity modules and resources are, which is `/path/to/moodle/mod/`, and then head to `Site administration > Notifications` on Moodle to check for an installation message.
+The plugin folder should be copied or cloned to the server activity modules folder at `/path/to/moodle/mod/` **and with the folder renamed to `peerassess`**. Then, head to `Site administration > Notifications` on Moodle to check for an installation message.
 
 ##### Confirmation of Installation
 
-The result should be a newly created directory.
+The result should be a newly created directory named `peerassess`, which is the root plugin directory. The plugin will **not** work without the proper name.
+
 ```
 /path/to/moodle/mod/peerassess
 ```
