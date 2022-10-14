@@ -80,3 +80,10 @@ As administrators, click on `Turn editing on` then `Add an activity or resource`
 * Allow students to see their comments received and overall peer ratings for each question.
 * Add other peer factors and grades calculation methods.
 * Add mobile support to our plugin.
+
+---
+
+### Developer Notes
+
+- [Setting up WSL](/docs/wsl.md)
+- [Setting up Development Environment](/docs/dev.md)
