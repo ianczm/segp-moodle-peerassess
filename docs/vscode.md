@@ -30,7 +30,7 @@ code .
 To help with development, here are several recommended plugins:
 
 - PHP Debug
-- PHP Inteliphense
+- PHP Intelephense
 - PHP Sniffer
 - MySQL
 
