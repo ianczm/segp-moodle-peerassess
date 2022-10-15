@@ -63,7 +63,7 @@ wsl --import <instanceName> <installation/directory> <path/to/downloaded/tar>
 An example is like this:
 
 ```
-wsl --import segp .\segp .\ubuntu-base-22.04-base-amd64.tar
+wsl --import segp .\segp .\ubuntu-base-22.04-base-amd64.tar.gz
 ```
 
 ---
