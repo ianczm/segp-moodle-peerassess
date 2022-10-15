@@ -62,7 +62,7 @@ sudo ./<path/to/file>
 
 ### Set Up Database User
 
-Start all the servers then go to `http://localhost` to load the XAMPP welcome page.
+Start all the servers then go to `http://localhost` in your Windows browser to load the XAMPP welcome page.
 
 Access the phpMyAdmin dashboard and create a new database user with details:
 
