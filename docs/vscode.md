@@ -14,10 +14,10 @@ sudo apt install wget
 
 ## Launch VSCode
 
-Set your active directory to the `peerassess` folder and run the `code` command to launch VSCode in that folder:
+Set your active directory to the `mod/peerassess` folder and run the `code` command to launch VSCode in that folder:
 
 ```bash
-cd <path/to/peerassess>
+cd /opt/lampp/htdocs/mod/peerassess
 code .
 ```
 
