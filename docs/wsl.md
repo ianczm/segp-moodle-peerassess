@@ -1,10 +1,12 @@
 # Windows Subsystem for Linux
 
-This guide will exclusively use Windows PowerShell for all Windows commands and Bash for all WSL commands.
+This guide will exclusively use Windows PowerShell and assume you are always the `root` user. Edit permissions accordingly to follow along with a non-root user.
 
 ---
 
-## Installing WSL2
+<br>
+
+## Install WSL2
 
 Since this step depends on your version of windows, please refer to these links instead.
 
@@ -19,14 +21,18 @@ wsl --status
 
 ---
 
-## Installing Linux
+<br>
 
-This guide is for manually setting up a completely fresh Ubuntu 22.04 installation on your WSL.
+## Install Linux
+
+This guide is for manually setting up a completely fresh **Ubuntu 22.04** installation on your WSL.
 
 If you have already installed Ubuntu from the Microsoft Store or elsewhere, you can
 
 - Still follow these steps to set up a separate version of Ubuntu from the one you installed (recommended)
 - Verify that your own version of Ubuntu is set up correctly
+
+<br>
 
 ### Identify Architecture
 
@@ -36,11 +42,15 @@ Figure out your `processor_architecture` by typing the following command into Po
 echo $env:PROCESSOR_ARCHITECTURE
 ```
 
-The output can be `AMD64`, `ARM64` or others.
+The output can be `AMD64` or `ARM64`, among others.
+
+<br>
 
 ### Download Distribution
 
-Download the base distribution `.tar` for your architecture [here](http://cdimage.ubuntu.com/ubuntu-base/releases/22.04/release/).
+Download the base distribution `.tar.gz` for your architecture [here](http://cdimage.ubuntu.com/ubuntu-base/releases/22.04/release/).
+
+<br>
 
 ### Install Distribution
 
@@ -58,6 +68,8 @@ wsl --import segp .\segp .\ubuntu-base-22.04-base-amd64.tar
 
 ---
 
+<br>
+
 ## Set Up Ubuntu
 
 Run the following command to boot into the WSL terminal for your Ubuntu instance:
@@ -74,6 +86,8 @@ If you are the root user, you may set up your password by running the command be
 passwd
 ```
 
+<br>
+
 ### Install Base Packages
 
 Update your repositories and install `sudo` for admin permissions and `nano` as a lightweight text editor:
@@ -84,46 +98,11 @@ apt install sudo
 apt install nano
 ```
 
-### Set Up Non-Root User
+---
 
-Configure your non-root user:
+<br>
 
-```bash
-adduser <username>
-adduser <username> sudo
-```
-
-### Configure WSL Startup
-
-You may choose to set WSL to login to your non-root account by running as `root`:
-
-```bash
-nano /etc/wsl.conf
-```
-
-and adding the following file contents:
-
-```
-[user]
-default=<username>
-```
-
-### Restart WSL
-
-Logout of WSL:
-
-```bash
-exit
-```
-
-Reboot and log back into WSL:
-
-```powershell
-wsl --terminate <instanceName>
-wsl -d <instanceName>
-```
-
-### WSL Filesystem
+## WSL Filesystem
 
 While logged into WSL, you may choose to view your Linux filesystem in Windows with:
 
@@ -132,6 +111,8 @@ explorer.exe .
 ```
 
 ---
+
+<br>
 
 ## Next: Set Up Development Environment
 

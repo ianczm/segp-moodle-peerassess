@@ -3,23 +3,23 @@
 ### COMP 2019 Software Engineering Group Project
 #### Moodle Plugin for Peer Assessment
 
-| Item | Detail |
-| - | - |
-| Date | 28-04-2022 |
-| Prepared by | Group 10A |
-| Supervisor | Mr Radu Muschevici |
+| Item        | Detail             |
+| ----------- | ------------------ |
+| Date        | 28-04-2022         |
+| Prepared by | Group 10A          |
+| Supervisor  | Mr Radu Muschevici |
 
 ---
 
 ### Group 10A Members
-| Member | Student ID | Email |
-| --- | --- | --- |
-| Ian Chong Zhen Ming | 20313229 | hcyic1@nottingham.edu.my |
-| Tan Lik Wei | 20208762 | hfylt4@nottingham.edu.my |
-| Abdul Mateen Bin Abdul Saheed | 20194744 | hfyaa8@nottingam.edu.my |
-| Gan Chi Hung | 20203996 | hfycg1@nottingham.edu.my |
-| Chow Wen Jun | 20204046 | hfywc8@nottingham.edu.my |
-| Tan Jun Yi | 20203636 | hfyjt4@nottingham.edu.my |
+| Member                        | Student ID | Email                    |
+| ----------------------------- | ---------- | ------------------------ |
+| Ian Chong Zhen Ming           | 20313229   | hcyic1@nottingham.edu.my |
+| Tan Lik Wei                   | 20208762   | hfylt4@nottingham.edu.my |
+| Abdul Mateen Bin Abdul Saheed | 20194744   | hfyaa8@nottingam.edu.my  |
+| Gan Chi Hung                  | 20203996   | hfycg1@nottingham.edu.my |
+| Chow Wen Jun                  | 20204046   | hfywc8@nottingham.edu.my |
+| Tan Jun Yi                    | 20203636   | hfyjt4@nottingham.edu.my |
 
 ---
 
@@ -85,5 +85,8 @@ As administrators, click on `Turn editing on` then `Add an activity or resource`
 
 ### Developer Notes
 
-- [Setting up WSL](/docs/wsl.md)
-- [Setting up Development Environment](/docs/dev.md)
+1. [Setting up WSL](/docs/wsl.md)
+2. [Setting up Development Environment](/docs/dev.md)
+3. [Installing Moodle](/docs/moodle.md)
+4. [Installing Peerassess Plugin](/docs/plugin.md)
+5. [Configuring VSCode](/docs/vscode.md)

@@ -1,73 +1,83 @@
 # Moodle
 
-## Download and Configure Moodle
+This will guide you to install Moodle 3.11.10+.
 
-Your XAMPP installation will be located under the path `/opt/lampp`. Change to that directory and make a backup of the `htdocs` folder which contains your web files:
+---
+
+<br>
+
+## Download Moodle
+
+Your XAMPP installation is located under the path `/opt/lampp`.
+
+The following commands will change to this path and make a backup of `htdocs` before replacing the contents with Moodle:
 
 ```bash
 cd /opt/lampp
 sudo cp -r htdocs htdocs-backup
+sudo rm -rf htdocs/*
+sudo git clone -b MOODLE_311_STABLE https://github.com/moodle/moodle.git htdocs
 ```
 
-Enter your `htdocs` folder and remove everything inside:
+---
 
-```bash
-cd htdocs
-sudo rm -rf *
-```
+<br>
 
-Clone the `MOODLE_311_STABLE` branch into `htdocs`, this folder will also be known as your `moodle` folder:
+## Directory Permissions
 
-```bash
-sudo git clone -b MOODLE_311_STABLE https://github.com/moodle/moodle.git .
-```
+### Identify Web User
 
-Once you have cloned all the files, you have to set up further permissions for accessing `moodle` files.
+The web server interacts with the XAMPP filesystem as the webuser. Appropriate permissions have to be assigned to allow normal operations.
 
-Figure out which user the `apache2` web server service is using:
+Figure out the webuser with:
 
 ```bash
 ps aux | egrep '(apache|httpd)'
 ```
 
-For XAMPP, it is typically `daemon`, while standalone Apache2 installations can be `www-data`. We will refer to this as the `webusername`.
+The output can be `www-data` or `daemon` among others, and will be referred to as `<webuser>` from now on.
 
-Create a new user group called `webadmin` and include into it your user as well as the `webusername`.
+<br>
+
+### Configure `htdocs`
+
+This directory contains source files.
+
+- The owner should be `root` or whichever user is responsible for maintaining Moodle.
+- `webuser` should be given write permissions here to save configuration files.
+
+Set configuration:
 
 ```bash
-addgroup webadmin
-adduser <webusername> webadmin
-adduser <username> webadmin
+cd /opt/lampp
+sudo chown -R <owner>:<webuser> /opt/lampp/htdocs
+sudo chmod -R 0775 /opt/lampp/htdocs
 ```
 
-Go back to your `/opt/lampp` directory and make a new folder called `moodledata`. This is required for Moodle to function:
+<br>
+
+### Create `moodledata` Directory
+
+This directory allows Moodle to cache and store data, which should be kept separate from the source files in `htdocs`.
+
+Create `/opt/lampp/moodledata`:
 
 ```bash
 cd /opt/lampp
 sudo mkdir moodledata
 ```
 
-Set permissions to allow all `webadmin` group users to read, write and execute files under the `htdocs` and `moodledata` folders. Other users will only have read access:
+Give ownership of `moodledata` to the webuser, and read+execute permissions to other users.
 
 ```bash
-sudo chown -R <webusername>:webadmin /opt/lampp/htdocs
-sudo chown -R <webusername>:webadmin /opt/lampp/moodledata
-sudo chmod -R 0775 /opt/lampp/htdocs
+cd /opt/lampp
+sudo chown -R <webuser>:<webuser> /opt/lampp/moodledata
 sudo chmod -R 0775 /opt/lampp/moodledata
 ```
 
-Reboot WSL and log back in for permissions to take effect.
-
-```bash
-exit
-```
-
-```powershell
-wsl --terminate <instanceName>
-wsl -d <instanceName>
-```
-
 ---
+
+<br>
 
 ## Install Moodle
 
@@ -75,24 +85,26 @@ If Moodle has been configured correctly, accessing `http://localhost` should red
 
 These are the default settings if you have followed this guide completely:
 
-```
-Moodle Directory:   /opt/lampp/htdocs
-Data Directory:     /opt/lampp/moodledata
-Database Driver:    MariaDB (functionally similar to MySQL)
-Database Host:      localhost
-Database Name:      moodle
-Database User:      moodle
-Database Password:  moodle
-Tables Prefix:      mdl_
-Database Port:      <blank>
-Unix Socket:        <blank>
-```
+| Settings          | Value                                   |
+| ----------------- | --------------------------------------- |
+| Moodle Directory  | `/opt/lampp/htdocs`                     |
+| Data Directory    | `/opt/lampp/moodledata`                 |
+| Database Driver   | MariaDB (functionally similar to MySQL) |
+| Database Host     | localhost                               |
+| Database Name     | moodle                                  |
+| Database User     | moodle                                  |
+| Database Password | moodle                                  |
+| Tables Prefix     | mdl_                                    |
+| Database Port     | `<blank>`                               |
+| Unix Socket       | `<blank>`                               |
 
 Moodle will then begin all compatibility checks and install all core plugins. Keep following the prompts to perform the General and Admin User setups.
 
 When installation completes successfully, you should see the Moodle Dashboard.
 
 ---
+
+<br>
 
 ## Additional Developer Settings
 
@@ -102,14 +114,16 @@ You may configure this to your liking under `Site Administration > Development >
 
 Here are some suggested changes:
 
-```
-Debug Messages:           DEVELOPER
-Display Debug Messages:   Yes
-Performance Info:         Yes
-Show Page Information:    Yes
-```
+| Settings               | Value     |
+| ---------------------- | --------- |
+| Debug Messages         | DEVELOPER |
+| Display Debug Messages | Yes       |
+| Performance Info       | Yes       |
+| Show Page Information  | Yes       |
 
 ---
+
+<br>
 
 ## Next: Install Peerassess Plugin
 
